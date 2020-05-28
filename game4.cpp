@@ -8,7 +8,7 @@
 using namespace std;
 
 
-SceneID game4b1;
+SceneID scene_g4;
 ObjectID g4c1, g4jumpbutton,g4startbutton, g4restartbutton,g4obj[20] ;
 TimerID g4timer1, g4timer2, g4obmove;
 SoundID g4theme;
@@ -59,12 +59,12 @@ void g4jump1() {
     if (g4isjumping1)
     {
         g4c1y += g4gravity;
-        locateObject(g4c1, game4b1, 210, g4c1y);
+        locateObject(g4c1, scene_g4, 210, g4c1y);
     }
     else
     {
         g4c1y -= g4gravity;
-        locateObject(g4c1, game4b1, 210, g4c1y);
+        locateObject(g4c1, scene_g4, 210, g4c1y);
         
     }
 
@@ -93,11 +93,11 @@ void g4jump2() {
     if (g4jumping2process) {
         if (g4isjumping2)
         {   g4c1y += g4gravity;
-            locateObject(g4c1, game4b1, 210, g4c1y);
+            locateObject(g4c1, scene_g4, 210, g4c1y);
         }
         else
         {   g4c1y -= g4gravity;
-            locateObject(g4c1, game4b1, 210, g4c1y);
+            locateObject(g4c1, scene_g4, 210, g4c1y);
             
         }
 
@@ -198,10 +198,10 @@ void g4obstaclemove(ObjectID obstacle,SceneID scene,int movetype,int currentx,in
 }
 
 void g4update() {
-    //g4placeobstacle(g4obj[0], game4b1, 1300, 210, true);
+    //g4placeobstacle(g4obj[0], scene_g4, 1300, 210, true);
     
     for ( int i= 0; i < 4; i++) {
-        g4obstaclemove(g4obj[i], game4b1, 1, g4objx[i], g4objy[i],i);
+        g4obstaclemove(g4obj[i], scene_g4, 1, g4objx[i], g4objy[i],i);
     }
     g4death();
 }
@@ -214,7 +214,7 @@ void g4gamestart() {
         int rndvalue = num % 5;
         g4objx[i] = 1300 + 320*i+rndvalue * 20;
         g4objy[i] = 210;
-        g4placeobstacle(g4obj[i], game4b1, g4objx[i], g4objy[i], true);
+        g4placeobstacle(g4obj[i], scene_g4, g4objx[i], g4objy[i], true);
     }
     startTimer(g4obmove);
 }
@@ -222,10 +222,10 @@ void g4gamestart() {
 void g4gamerestart() {
     g4gamestart();
     g4c1y = 210;
-    locateObject(g4c1, game4b1, 210,g4c1y);
+    locateObject(g4c1, scene_g4, 210,g4c1y);
 }
 
-void g4mouseCallback(ObjectID object, int x, int y, MouseAction action) {
+void Game4_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	if(object == g4jumpbutton) {
         if (!g4jumping1process) {
@@ -252,7 +252,7 @@ void g4mouseCallback(ObjectID object, int x, int y, MouseAction action) {
     }
 
 }
-void g4timerCallback(TimerID timer) {
+void Game4_timerCallback(TimerID timer) {
 	if (timer == g4timer1) {//점프 1
         
             g4jump1();
@@ -273,34 +273,27 @@ void g4timerCallback(TimerID timer) {
     }
     
 }
-void g4soundCallback(SoundID sound) {
+void Game4_soundCallback(SoundID sound) {
 	if (sound == g4theme) {
 
 	}
 
 }
-void maingame4() {
+void Game4_main() {
 
 
-	setMouseCallback(g4mouseCallback);
-	setTimerCallback(g4timerCallback);
-	setSoundCallback(g4soundCallback);
-
-	game4b1 = createScene("game4", "image/game4/background.png");
-    g4jumpbutton = g4createObject("image/game4/확인.png", game4b1, 800, 110, true);
-    g4startbutton = g4createObject("image/game4/확인.png", game4b1, 500, 110, true);
-    g4restartbutton = g4createObject("image/game4/다시시작.png", game4b1, 600, 500, true);
-	g4c1 = g4createObject("image/game4/c1.png", game4b1, 210, 210, true);
+	scene_g4 = createScene("game4", "image/game4/background.png");
+    g4jumpbutton = g4createObject("image/game4/확인.png", scene_g4, 800, 110, true);
+    g4startbutton = g4createObject("image/game4/확인.png", scene_g4, 500, 110, true);
+    g4restartbutton = g4createObject("image/game4/다시시작.png", scene_g4, 600, 500, true);
+	g4c1 = g4createObject("image/game4/c1.png", scene_g4, 210, 210, true);
     for (int i = 0; i < 20; i++) {        
-        g4obj[i] = g4createObject(g4objfile[g4objnumber[(i-(i%4))/4]], game4b1, 1300, 210, true);
+        g4obj[i] = g4createObject(g4objfile[g4objnumber[(i-(i%4))/4]], scene_g4, 1300, 210, true);
     }
 	g4timer1 = createTimer(0.01f);
     g4timer2 = createTimer(0.01f);
     g4obmove = createTimer(0.01f);
     
     
-
-	startGame(game4b1);
-
 
 }

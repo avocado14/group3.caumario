@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-SceneID scene1, scene2;
+SceneID scene1_g2, scene2_g2;
 ObjectID startbutton, restartbutton, endbutton, heart1, heart2, heart3;
 ObjectID target[20] = { 0, };
 TimerID timer1;
@@ -48,7 +48,7 @@ void locationMaker(int num) {		// 표적 위치 저장할 정수 배열 만들기 (표적 개수 �
 		arrX[i] = 100 + x;
 		arrY[i] = 100 + y;
 
-		target[i] = createObject("images/5.png", scene2, arrX[i], arrY[i], false);
+		target[i] = createObject("images/5.png", scene2_g2, arrX[i], arrY[i], false);
 	}
 }
 
@@ -128,11 +128,11 @@ void judge(ObjectID object, int i) {
 }
 
 
-void mouseCallback(ObjectID object, int x, int y, MouseAction action) {
+void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	if (object == startbutton) {
 
-		enterScene(scene2);
+		enterScene(scene2_g2);
 
 		locationMaker(targetNum);
 		setTimer(timer1, duration);
@@ -159,7 +159,7 @@ void mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 }
 
-void timerCallback(TimerID timer) {
+void Game2_timerCallback(TimerID timer) {
 
 	showObject(target[count]);
 
@@ -172,27 +172,23 @@ void timerCallback(TimerID timer) {
 
 
 }
-void maingame2() {
+void Game2_main() {
 
-	setMouseCallback(mouseCallback);
-	setTimerCallback(timerCallback);
+	scene1_g2 = createScene("준비 화면", "image/game2/배경.png");
+	scene2_g2 = createScene("메모리 슈팅", "image/game2/배경.png");
 
-	scene1 = createScene("준비 화면", "image/game2/배경.png");
-	scene2 = createScene("메모리 슈팅", "image/game2/배경.png");
+	startbutton = createObject("image/game2/시작.png", scene1_g2, 610, 70, true);
+	restartbutton = createObject("image/game2/다시시작.png", scene2_g2, 610, 400, false);
+	endbutton = createObject("image/game2/확인.png", scene2_g2, 610, 350, false);
 
-	startbutton = createObject("image/game2/시작.png", scene1, 610, 70, true);
-	restartbutton = createObject("image/game2/다시시작.png", scene2, 610, 400, false);
-	endbutton = createObject("image/game2/확인.png", scene2, 610, 350, false);
-
-	heart1 = createObject("image/game2/heart.png", scene2, 830, 650, true);
+	heart1 = createObject("image/game2/heart.png", scene2_g2, 830, 650, true);
 	scaleObject(heart1, 0.05f);
-	heart2 = createObject("image/game2/heart.png", scene2, 900, 650, true);
+	heart2 = createObject("image/game2/heart.png", scene2_g2, 900, 650, true);
 	scaleObject(heart2, 0.05f);
-	heart3 = createObject("image/game2/heart.png", scene2, 970, 650, true);
+	heart3 = createObject("image/game2/heart.png", scene2_g2, 970, 650, true);
 	scaleObject(heart3, 0.05f);
 
 	timer1 = createTimer(duration);
 
-	startGame(scene1);
 	
 }
