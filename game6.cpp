@@ -33,18 +33,7 @@ bool monsterIsShown[MONSTER_NUMBER];
 int num;
 int monsterCount = 0;
 
-
-ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size) {
-
-	ObjectID object = createObject(name);
-	locateObject(object, scene, x, y);
-	scaleObject(object, size);
-
-	if (shown == true)
-		showObject(object);
-
-	return object;
-}
+extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size);
 
 int random() {
 

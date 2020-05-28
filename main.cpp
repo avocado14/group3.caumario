@@ -26,6 +26,17 @@ extern void Game6_timerCallback(TimerID timer);
 extern void Game6_keyboardCallback(KeyCode code, KeyState state);
 
 
+ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size) {
+
+	ObjectID object = createObject(name);
+	locateObject(object, scene, x, y);
+	scaleObject(object, size);
+
+	if (shown)
+		showObject(object);
+
+	return object;
+}
 
 void mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	
