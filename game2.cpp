@@ -12,6 +12,7 @@ int arrX[20] = { 0, }, arrY[20] = { 0, };
 int count = 0, clear = 0, life = 3, targetNum = 4, round = 0;
 char info[50] = { 0, };
 float duration = 1.0f;
+bool lock = false;
 
 ObjectID createObject(const char* image, SceneID scene, int x, int y, bool shown) {
 
@@ -74,7 +75,6 @@ void ending() {		// 게임 종료
 
 	sprintf_s(info, "라운드 수 : %d", round);
 	showMessage(info);
-	//bgmloop = false;
 
 	showObject(restartbutton);
 	showObject(endbutton);
@@ -130,6 +130,10 @@ void judge(ObjectID object, int i) {
 
 void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
+	if (lock == true) {
+		return;
+	}
+
 	if (object == startbutton) {
 
 		enterScene(scene2_g2);
@@ -164,12 +168,13 @@ void Game2_timerCallback(TimerID timer) {
 	showObject(target[count]);
 
 	count++;
+	lock = true;
 
 	if (count != targetNum) {
 		setTimer(timer1, duration);
 		startTimer(timer1);
 	}
-
+	else lock = false;
 
 }
 void Game2_main() {
