@@ -165,16 +165,19 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 void Game2_timerCallback(TimerID timer) {
 
-	showObject(target[count]);
+	if (timer == timer1) {
+	
+		showObject(target[count]);
 
-	count++;
-	lock = true;
+		count++;
+		lock = true;
 
-	if (count != targetNum) {
-		setTimer(timer1, duration);
-		startTimer(timer1);
+		if (count != targetNum) {
+			setTimer(timer1, duration);
+			startTimer(timer1);
+		}
+		else lock = false;
 	}
-	else lock = false;
 
 }
 void Game2_main() {
