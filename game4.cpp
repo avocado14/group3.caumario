@@ -14,16 +14,25 @@ TimerID g4timer1, g4timer2, g4obmove;
 SoundID g4theme;
 
 const char* g4objfile[5] =
-{ "image/game4/c2.png" ,"image/game4/c3.png" ,"image/game4/c4.png" ,"image/game4/c5.png" ,"image/game4/c6.png"  };
+{ "image/game4/장애물1 애니메이션 1.png" ,"image/game4/c3.png" ,"image/game4/c4.png" ,"image/game4/c5.png" ,"image/game4/c6.png"  };
 int g4objnumber[20] ={ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 };
-//0123 c2   4567 c3   891011 c4  12131415 c5  16171819 c6
+//0123 지네   4567 c3   891011 c4  12131415 c5  16171819 c6
 int movetype;
 int g4objx[20], g4objy[20];
-bool alive = true;
+ 
+
+int g4obj1animationimage[20];
+const char* g4obj1animationfile[4] =
+{ "image/game4/장애물1 애니메이션 1.png","image/game4/장애물1 애니메이션 2.png","image/game4/장애물1 애니메이션 3.png","image/game4/장애물1 애니메이션 2.png" };
+
 
 int g4c1y=210,g4gravity=20, g4c1yjump2start;
 bool g4isjumping1, g4isjumping2,g4isBottom,g4jumping1process=false, g4jumping2process = false;
-
+const char* g4c1animationfile[10] =
+{"image/game4/마리오 애니메이션1.png","image/game4/마리오 애니메이션2.png","image/game4/마리오 애니메이션3.png","image/game4/마리오 애니메이션4.png",
+"image/game4/마리오 애니메이션5.png","image/game4/마리오 애니메이션6.png" ,"image/game4/마리오 애니메이션7.png" ,"image/game4/마리오 애니메이션8.png" 
+,"image/game4/마리오 애니메이션9.png" ,"image/game4/마리오 애니메이션10.png" };
+int g4c1animationimage;
 
 
 ObjectID g4createObject(const char* image, SceneID scene, int x, int y, bool shown) {
@@ -35,6 +44,66 @@ ObjectID g4createObject(const char* image, SceneID scene, int x, int y, bool sho
     return(object);
 }
 
+void g4c1animation() {
+    switch (g4c1animationimage % 10) {
+    case 0:
+        setObjectImage(g4c1, g4c1animationfile[0]);
+        break;
+    case 1:
+        setObjectImage(g4c1, g4c1animationfile[1]);
+        break;
+    case 2:
+        setObjectImage(g4c1, g4c1animationfile[2]);
+        break;
+    case 3:
+        setObjectImage(g4c1, g4c1animationfile[3]);
+        break;
+    case 4:
+        setObjectImage(g4c1, g4c1animationfile[4]);
+        break;
+    case 5:
+        setObjectImage(g4c1, g4c1animationfile[5]);
+    case 6:
+        setObjectImage(g4c1, g4c1animationfile[6]);
+        break;
+    case 7:
+        setObjectImage(g4c1, g4c1animationfile[7]);
+        break;
+    case 8:
+        setObjectImage(g4c1, g4c1animationfile[8]);
+        break;
+    case 9:
+        setObjectImage(g4c1, g4c1animationfile[9]);
+        break;
+        
+
+
+    }
+    g4c1animationimage++;
+}
+
+void g4obj1animation() {
+    for (int i = 0; i < 4; i++) {
+        
+    
+    switch (g4obj1animationimage[i] % 4) {
+    case 0:
+        setObjectImage(g4obj[i], g4obj1animationfile[0]);
+        break;
+    case 1:
+        setObjectImage(g4obj[i], g4obj1animationfile[1]);
+        break;
+    case 2:
+        setObjectImage(g4obj[i], g4obj1animationfile[2]);
+        break;
+    case 3:
+        setObjectImage(g4obj[i], g4obj1animationfile[3]);
+        break;
+    }
+    g4obj1animationimage[i]++;
+    }
+}
+
 void g4death() {
     if (g4c1y < 290) {
         for (int i = 0; i < 4; i++) {
@@ -43,7 +112,7 @@ void g4death() {
                 stopTimer(g4timer2);
                 stopTimer(g4obmove);
                 showMessage("dead");
-                alive = false;
+                //alive = false;
             }
             else {
 
@@ -255,9 +324,9 @@ void Game4_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 void Game4_timerCallback(TimerID timer) {
 	if (timer == g4timer1) {//점프 1
         
-            g4jump1();
-            setTimer(g4timer1, 0.01f);
-            startTimer(g4timer1);
+     g4jump1();
+     setTimer(g4timer1, 0.01f);
+     startTimer(g4timer1);
         
 	}
     else if (timer == g4timer2) {//점프 2
@@ -265,8 +334,10 @@ void Game4_timerCallback(TimerID timer) {
         setTimer(g4timer2, 0.01f);
         startTimer(g4timer2);
     }
-    if (timer == g4obmove) {//점프 2
-        
+    if (timer == g4obmove) {//장애물 움직임
+        g4c1animation();
+        g4obj1animation();
+
         setTimer(g4obmove, 0.01f);
         startTimer(g4obmove);
         g4update();
@@ -286,7 +357,7 @@ void Game4_main() {
     g4jumpbutton = g4createObject("image/game4/확인.png", scene_g4, 800, 110, true);
     g4startbutton = g4createObject("image/game4/확인.png", scene_g4, 500, 110, true);
     g4restartbutton = g4createObject("image/game4/다시시작.png", scene_g4, 600, 500, true);
-	g4c1 = g4createObject("image/game4/c1.png", scene_g4, 210, 210, true);
+	g4c1 = g4createObject("image/game4/마리오 애니메이션1.png", scene_g4, 210, 210, true);
     for (int i = 0; i < 20; i++) {        
         g4obj[i] = g4createObject(g4objfile[g4objnumber[(i-(i%4))/4]], scene_g4, 1300, 210, true);
     }
