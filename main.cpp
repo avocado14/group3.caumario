@@ -23,6 +23,7 @@ extern void Game4_soundCallback(SoundID sound);
 extern void Game6_main();
 extern void Game6_mouseCallback(ObjectID object, int x, int y, MouseAction action);
 extern void Game6_timerCallback(TimerID timer);
+extern void Game6_soundCallback(SoundID sound);
 extern void Game6_keyboardCallback(KeyCode code, KeyState state);
 
 
@@ -61,6 +62,7 @@ void soundCallback(SoundID sound) {
 
 	Game1_soundCallback(sound);
 	Game4_soundCallback(sound);
+	Game6_soundCallback(sound);
 
 }
 

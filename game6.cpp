@@ -1,5 +1,5 @@
 #include <bangtal.h>
-#include<stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #define PLAYER_ANIMATION_TIME		0.05f
@@ -8,14 +8,16 @@
 #define MONSTER_SPEED				7
 #define MONSTER_NUMBER				10
 #define ENDMONSTER_STATE			2	//마지막 몬스터 레벨(게임 끝나는 레벨)
-#define PLAYER_IMAGE_SIZE			78
-#define MONSTER_IMAGE_SIZE			78
+#define PLAYER_IMAGE_SIZE			100
+#define MONSTER_IMAGE_SIZE			100
 
 SceneID scene_g6;
 ObjectID startButton_g6;
 ObjectID player;
 ObjectID monster[MONSTER_NUMBER];
-TimerID playerTimer, monsterTimer;
+ObjectID countDown;
+TimerID countDownTimer, playerTimer, monsterTimer;
+SoundID bgm_g6;
 
 int playerX = 640, playerY = 360;
 int monsterX[MONSTER_NUMBER] = { 500,900,500,900,400,700,1000,400,700,1000 };
@@ -25,13 +27,14 @@ int dx = 0, dy = 0, dmx = 0, dmy = 0;
 int playerState = 1;	//플레이어 상태(크기) : 처음은 1단계
 int monsterState[MONSTER_NUMBER] = { 1,1,1,1,2,2,2,2,2,2 };	//몬스터 상태
 int monsterNumber[ENDMONSTER_STATE] = { 4,6 };		//state별 몬스터 마리수
-float monsterSize[MONSTER_NUMBER] = { 54.6f,54.6f,54.6f,54.6f,78,78,78,78,78,78 };
-float playerSize = 54.6f;
+float monsterSize[MONSTER_NUMBER] = { 70,70,70,70,100,100,100,100,100,100 };
+float playerSize = monsterSize[0];
 
 bool monsterIsShown[MONSTER_NUMBER];
 
 int num;
 int monsterCount = 0;
+int countDownNum = 1;
 
 extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size);
 
@@ -46,9 +49,9 @@ int random() {
 void Game6_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	if (object == startButton_g6) {		//타이머 켜지면서(오브젝트 이동 시작) 게임시작
+		showObject(countDown);
+		startTimer(countDownTimer);
 		hideObject(startButton_g6);
-		startTimer(playerTimer);
-		startTimer(monsterTimer);	
 	}
 
 }
@@ -72,6 +75,27 @@ void Game6_keyboardCallback(KeyCode code, KeyState state)
 
 void Game6_timerCallback(TimerID timer)
 {
+
+	if (timer == countDownTimer) {
+		countDownNum++;
+
+		if (countDownNum == 2) {
+			setObjectImage(countDown, "image/game6/2.png");
+			setTimer(timer, 1.0f);
+			startTimer(timer);
+		}
+		else if (countDownNum == 3) {
+			setObjectImage(countDown, "image/game6/1.png");
+			setTimer(timer, 1.0f);
+			startTimer(timer);
+		}
+		else {
+			hideObject(countDown);
+			startTimer(playerTimer);
+			startTimer(monsterTimer);
+		}
+	}
+
 	//공 조작
 	if (timer == playerTimer) {
 		if (playerX + dx > 1280 - playerSize || playerX + dx < 0 || playerY + dy > 720 - playerSize || playerY + dy < 0) {}	//테두리 나가면 이동 안시키기
@@ -117,8 +141,10 @@ void Game6_timerCallback(TimerID timer)
 				}
 			}
 		}
+
 		setTimer(timer, PLAYER_ANIMATION_TIME);
 		startTimer(timer);
+
 	}
 
 	//몬스터 랜덤 이동
@@ -155,26 +181,37 @@ void Game6_timerCallback(TimerID timer)
 	}
 }
 
+void Game6_soundCallback(SoundID sound) {
+
+	if (sound == bgm_g6)
+		playSound(bgm_g6);
+
+}
+
 
 void Game6_main()
 {
-	scene_g6 = createScene("게임6", "image/game6/배경.png");
-	player = createObject("image/game6/player.png", scene_g6, playerX, playerY, true, (float)playerSize / PLAYER_IMAGE_SIZE);
+	scene_g6 = createScene("하늘 맵", "image/game6/하늘배경.png");
+	player = createObject("image/game6/날개마리오.png", scene_g6, playerX, playerY, true, (float)playerSize / PLAYER_IMAGE_SIZE);
 
 	//레벨1 몬스터 스폰
 	for (int i = 0; i < monsterNumber[0]; i++) {
-		monster[i] = createObject("image/game6/monster1.png", scene_g6, monsterX[i], monsterY[i], true, (float)monsterSize[i] / MONSTER_IMAGE_SIZE);
+		monster[i] = createObject("image/game6/날개굼바.png", scene_g6, monsterX[i], monsterY[i], true, (float)monsterSize[i] / MONSTER_IMAGE_SIZE);
 		monsterIsShown[i] = true;
 	}
 	//레벨2 몬스터 스폰	
 	for (int i = monsterNumber[0]; i < monsterNumber[0] + monsterNumber[1]; i++) {
-		monster[i] = createObject("image/game6/monster2.png", scene_g6, monsterX[i], monsterY[i], true, (float)monsterSize[i] / MONSTER_IMAGE_SIZE);
+		monster[i] = createObject("image/game6/날개초록굼바.png", scene_g6, monsterX[i], monsterY[i], true, (float)monsterSize[i] / MONSTER_IMAGE_SIZE);
 		monsterIsShown[i] = true;
 	}
 
-	startButton_g6 = createObject("image/game6/게임시작.png", scene_g6, 500, 250, true, 2.0f);
+	startButton_g6 = createObject("image/game6/게임시작.png", scene_g6, 500, 150, true, 2.0f);
+	countDown = createObject("image/game6/3.png", scene_g6, 600, 300, false, 5.0f);
 
 	playerTimer = createTimer(PLAYER_ANIMATION_TIME);
 	monsterTimer = createTimer(MONSTER_ANIMATION_TIME);
+	countDownTimer = createTimer(0.7f);
+
+	bgm_g6 = createSound("image/game6/하늘브금.mp3");
 
 }
