@@ -32,6 +32,8 @@ const char* g4c1animationfile[10] =
 {"image/game4/마리오 애니메이션1.png","image/game4/마리오 애니메이션2.png","image/game4/마리오 애니메이션3.png","image/game4/마리오 애니메이션4.png",
 "image/game4/마리오 애니메이션5.png","image/game4/마리오 애니메이션6.png" ,"image/game4/마리오 애니메이션7.png" ,"image/game4/마리오 애니메이션8.png" 
 ,"image/game4/마리오 애니메이션9.png" ,"image/game4/마리오 애니메이션10.png" };
+const char* g4c1jumpanimationfile[3] =
+{ "image/game4/마리오 애니메이션 점프 1.png","image/game4/마리오 애니메이션 점프 2.png","image/game4/마리오 애니메이션 점프 3.png" };
 int g4c1animationimage;
 
 
@@ -45,47 +47,48 @@ ObjectID g4createObject(const char* image, SceneID scene, int x, int y, bool sho
 }
 
 void g4c1animation() {
-    switch (g4c1animationimage % 10) {
-    case 0:
-        setObjectImage(g4c1, g4c1animationfile[0]);
-        break;
-    case 1:
-        setObjectImage(g4c1, g4c1animationfile[1]);
-        break;
-    case 2:
-        setObjectImage(g4c1, g4c1animationfile[2]);
-        break;
-    case 3:
-        setObjectImage(g4c1, g4c1animationfile[3]);
-        break;
-    case 4:
-        setObjectImage(g4c1, g4c1animationfile[4]);
-        break;
-    case 5:
-        setObjectImage(g4c1, g4c1animationfile[5]);
-    case 6:
-        setObjectImage(g4c1, g4c1animationfile[6]);
-        break;
-    case 7:
-        setObjectImage(g4c1, g4c1animationfile[7]);
-        break;
-    case 8:
-        setObjectImage(g4c1, g4c1animationfile[8]);
-        break;
-    case 9:
-        setObjectImage(g4c1, g4c1animationfile[9]);
-        break;
-        
-
-
+    
+    if((g4jumping1process == true)||(g4jumping2process ==true)){
     }
-    g4c1animationimage++;
+    else {
+
+        switch (g4c1animationimage % 10) {
+        case 0:
+            setObjectImage(g4c1, g4c1animationfile[0]);
+            break;
+        case 1:
+            setObjectImage(g4c1, g4c1animationfile[1]);
+            break;
+        case 2:
+            setObjectImage(g4c1, g4c1animationfile[2]);
+            break;
+        case 3:
+            setObjectImage(g4c1, g4c1animationfile[3]);
+            break;
+        case 4:
+            setObjectImage(g4c1, g4c1animationfile[4]);
+            break;
+        case 5:
+            setObjectImage(g4c1, g4c1animationfile[5]);
+        case 6:
+            setObjectImage(g4c1, g4c1animationfile[6]);
+            break;
+        case 7:
+            setObjectImage(g4c1, g4c1animationfile[7]);
+            break;
+        case 8:
+            setObjectImage(g4c1, g4c1animationfile[8]);
+            break;
+        case 9:
+            setObjectImage(g4c1, g4c1animationfile[9]);
+            break;
+        }
+        g4c1animationimage++;
+    }
 }
 
 void g4obj1animation() {
-    for (int i = 0; i < 4; i++) {
-        
-    
+    for (int i = 0; i < 4; i++) {     
     switch (g4obj1animationimage[i] % 4) {
     case 0:
         setObjectImage(g4obj[i], g4obj1animationfile[0]);
@@ -111,8 +114,7 @@ void g4death() {
                 stopTimer(g4timer1);
                 stopTimer(g4timer2);
                 stopTimer(g4obmove);
-                showMessage("dead");
-                //alive = false;
+                showMessage("dead");               
             }
             else {
 
@@ -129,12 +131,13 @@ void g4jump1() {
     {
         g4c1y += g4gravity;
         locateObject(g4c1, scene_g4, 210, g4c1y);
+        setObjectImage(g4c1, g4c1jumpanimationfile[0]);
     }
     else
     {
         g4c1y -= g4gravity;
         locateObject(g4c1, scene_g4, 210, g4c1y);
-        
+        setObjectImage(g4c1, g4c1jumpanimationfile[2]);
     }
 
     //Y가 계속해서 증가하는걸 막기위해 바닥을 지정.
@@ -163,10 +166,12 @@ void g4jump2() {
         if (g4isjumping2)
         {   g4c1y += g4gravity;
             locateObject(g4c1, scene_g4, 210, g4c1y);
+            setObjectImage(g4c1, g4c1jumpanimationfile[1]);
         }
         else
         {   g4c1y -= g4gravity;
             locateObject(g4c1, scene_g4, 210, g4c1y);
+            setObjectImage(g4c1, g4c1jumpanimationfile[2]);
             
         }
 
@@ -292,6 +297,8 @@ void g4gamerestart() {
     g4gamestart();
     g4c1y = 210;
     locateObject(g4c1, scene_g4, 210,g4c1y);
+    g4jumping1process = false;
+    g4jumping2process = false;
 }
 
 void Game4_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
