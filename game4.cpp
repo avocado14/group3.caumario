@@ -7,6 +7,10 @@
 #include<ctime>
 using namespace std;
 
+#define g4_character_size_width 30 
+#define g4_character_size_width 30 
+
+
 
 SceneID scene_g4;
 ObjectID g4c1, g4jumpbutton,g4startbutton, g4restartbutton,g4obj[20] ;
