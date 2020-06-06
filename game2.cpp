@@ -7,7 +7,7 @@ SceneID scene1_g2, scene2_g2;
 ObjectID startbutton, restartbutton, endbutton, heart1, heart2, heart3;
 ObjectID target[20] = { 0, };
 TimerID timer1;
-SoundID bgm, finalHit, finalHit1, normalHit, normalHit1, normalHit2, normalHit3, normalHit4;
+SoundID bgm;
 int arrX[20] = { 0, }, arrY[20] = { 0, };
 int count = 0, clear = 0, life = 3, targetNum = 4, round = 0;
 char info[50] = { 0, };
@@ -40,16 +40,16 @@ void locationMaker(int num) {		// 표적 위치 저장할 정수 배열 만들기 (표적 개수 �
 		if (i != 0) {
 			do {
 				x = rand() % 1000;
-			} while (x - arrX[i - 1] > -50 && x - arrX[i - 1] < 50);
+			} while (x - arrX[i - 1] > -200 && x - arrX[i - 1] < 200);
 			do {
 				y = rand() % 500;
-			} while (y - arrX[i - 1] > -50 && y - arrX[i - 1] < 50);
+			} while (y - arrX[i - 1] > -200 && y - arrX[i - 1] < 200);
 		}
 
 		arrX[i] = 100 + x;
 		arrY[i] = 100 + y;
 
-		target[i] = createObject("images/5.png", scene2_g2, arrX[i], arrY[i], false);
+		target[i] = createObject("images/target.png", scene2_g2, arrX[i], arrY[i], false);
 	}
 }
 
@@ -107,11 +107,11 @@ void judge(ObjectID object, int i) {
 					hideObject(target[j]);
 				}
 
-				if (targetNum < 12) {	// 타겟 수 증가 (최대 12개)
+				if (targetNum < 10) {	// 타겟 수 증가 (최대 10개)
 					targetNum++;
 				}
 
-				if (duration > 0.3f) {	// 타겟 등장 주기 감소 (최소 0.3초)
+				if (duration > 0.5f) {	// 타겟 등장 주기 감소 (최소 0.3초)
 					duration -= 0.05f;
 				}
 
@@ -141,6 +141,8 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		locationMaker(targetNum);
 		setTimer(timer1, duration);
 		startTimer(timer1);
+
+		playSound(bgm, true);
 	}
 
 	else if (object == restartbutton) {
@@ -182,6 +184,9 @@ void Game2_timerCallback(TimerID timer) {
 }
 void Game2_main() {
 
+	setMouseCallback(Game2_mouseCallback);
+	setTimerCallback(Game2_timerCallback);
+
 	scene1_g2 = createScene("준비 화면", "image/game2/배경.png");
 	scene2_g2 = createScene("메모리 슈팅", "image/game2/배경.png");
 
@@ -195,6 +200,8 @@ void Game2_main() {
 	scaleObject(heart2, 0.05f);
 	heart3 = createObject("image/game2/heart.png", scene2_g2, 970, 650, true);
 	scaleObject(heart3, 0.05f);
+
+	bgm = createSound("sound/bgm.wav");
 
 	timer1 = createTimer(duration);
 
