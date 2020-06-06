@@ -20,6 +20,12 @@ extern void Game4_mouseCallback(ObjectID object, int x, int y, MouseAction actio
 extern void Game4_timerCallback(TimerID timer);
 extern void Game4_soundCallback(SoundID sound);
 
+extern void Game5_main();
+extern void Game5_mouseCallback(ObjectID object, int x, int y, MouseAction action);
+extern void Game5_timerCallback(TimerID timer);
+extern void Game5_soundCallback(SoundID sound);
+extern void Game5_keyboardCallback(KeyCode code, KeyState state);
+
 extern void Game6_main();
 extern void Game6_mouseCallback(ObjectID object, int x, int y, MouseAction action);
 extern void Game6_timerCallback(TimerID timer);
@@ -45,6 +51,7 @@ void mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	Game1_mouseCallback(object, x, y, action);
 	Game2_mouseCallback(object, x, y, action);
 	Game4_mouseCallback(object, x, y, action);
+	Game5_mouseCallback(object, x, y, action);
 	Game6_mouseCallback(object, x, y, action);
 
 }
@@ -54,6 +61,7 @@ void timerCallback(TimerID timer) {
 	Game1_timerCallback(timer);
 	Game2_timerCallback(timer);
 	Game4_timerCallback(timer);
+	Game5_timerCallback(timer);
 	Game6_timerCallback(timer);
 
 }
@@ -62,6 +70,7 @@ void soundCallback(SoundID sound) {
 
 	Game1_soundCallback(sound);
 	Game4_soundCallback(sound);
+	Game5_soundCallback(sound);
 	Game6_soundCallback(sound);
 
 }
@@ -69,6 +78,7 @@ void soundCallback(SoundID sound) {
 void keyboardCallback(KeyCode code, KeyState state) {
 
 	Game1_keyboardCallback(code, state);
+	Game5_keyboardCallback(code, state);
 	Game6_keyboardCallback(code, state);
 
 }
@@ -86,6 +96,7 @@ int main() {
 	Game1_main();
 	Game2_main();
 	Game4_main();
+	Game5_main();
 	Game6_main();
 
 

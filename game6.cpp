@@ -13,22 +13,22 @@
 
 SceneID scene_g6;
 ObjectID startButton_g6;
-ObjectID player;
+ObjectID player_g6;
 ObjectID monster[MONSTER_NUMBER];
 ObjectID countDown;
-TimerID countDownTimer, playerTimer, monsterTimer;
+TimerID countDownTimer, playTimer_g6, monsterTimer_g6;
 SoundID bgm_g6;
 
-int playerX = 640, playerY = 360;
+int playerX_g6 = 640, playerY_g6 = 360;
 int monsterX[MONSTER_NUMBER] = { 500,900,500,900,400,700,1000,400,700,1000 };
 int monsterY[MONSTER_NUMBER] = { 200,200,400,400,150,150,150,500,500,500 };
-int dx = 0, dy = 0, dmx = 0, dmy = 0;
+int dx_g6 = 0, dy_g6 = 0, dmx = 0, dmy = 0;
 
-int playerState = 1;	//플레이어 상태(크기) : 처음은 1단계
+int playerState_g6 = 1;	//플레이어 상태(크기) : 처음은 1단계
 int monsterState[MONSTER_NUMBER] = { 1,1,1,1,2,2,2,2,2,2 };	//몬스터 상태
 int monsterNumber[ENDMONSTER_STATE] = { 4,6 };		//state별 몬스터 마리수
 float monsterSize[MONSTER_NUMBER] = { 70,70,70,70,100,100,100,100,100,100 };
-float playerSize = monsterSize[0];
+float playerSize_g6 = monsterSize[0];
 
 bool monsterIsShown[MONSTER_NUMBER];
 
@@ -59,16 +59,16 @@ void Game6_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 void Game6_keyboardCallback(KeyCode code, KeyState state)
 {
 	if (code == 23) {			// UP
-		dy += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		dy_g6 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
 	}
 	else if (code == 19) {		// DOWN
-		dy -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		dy_g6 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
 	}
 	else if (code == 4) {		// RIGHT
-		dx += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		dx_g6 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
 	}
 	else if (code == 1) {		// LEFT
-		dx -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		dx_g6 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
 	}
 
 }
@@ -91,39 +91,39 @@ void Game6_timerCallback(TimerID timer)
 		}
 		else {
 			hideObject(countDown);
-			startTimer(playerTimer);
-			startTimer(monsterTimer);
+			startTimer(playTimer_g6);
+			startTimer(monsterTimer_g6);
 		}
 	}
 
 	//공 조작
-	if (timer == playerTimer) {
-		if (playerX + dx > 1280 - playerSize || playerX + dx < 0 || playerY + dy > 720 - playerSize || playerY + dy < 0) {}	//테두리 나가면 이동 안시키기
+	if (timer == playTimer_g6) {
+		if (playerX_g6 + dx_g6 > 1280 - playerSize_g6 || playerX_g6 + dx_g6 < 0 || playerY_g6 + dy_g6 > 720 - playerSize_g6 || playerY_g6 + dy_g6 < 0) {}	//테두리 나가면 이동 안시키기
 
 		else {
-			playerX += dx; playerY += dy;
-			locateObject(player, scene_g6, playerX, playerY);
+			playerX_g6 += dx_g6; playerY_g6 += dy_g6;
+			locateObject(player_g6, scene_g6, playerX_g6, playerY_g6);
 		}
 		for (int i = 0; i < MONSTER_NUMBER; i++) {
 			if (monsterIsShown[i] == true) {			//죽은(안보이는) 몬스터에는 반응x
-				if (monsterX[i] - playerX <= playerSize && monsterX[i] - playerX >= -monsterSize[i] &&		//플레이어가 몬스터랑 x축 부딪히고
-					monsterY[i] - playerY <= playerSize && monsterY[i] - playerY >= -monsterSize[i]) {		//y축도 부딪히면
+				if (monsterX[i] - playerX_g6 <= playerSize_g6 && monsterX[i] - playerX_g6 >= -monsterSize[i] &&		//플레이어가 몬스터랑 x축 부딪히고
+					monsterY[i] - playerY_g6 <= playerSize_g6 && monsterY[i] - playerY_g6 >= -monsterSize[i]) {		//y축도 부딪히면
 
-					if (playerState == monsterState[i]) {		//부딪혔는데 레벨이 똑같으면
+					if (playerState_g6 == monsterState[i]) {		//부딪혔는데 레벨이 똑같으면
 						hideObject(monster[i]);					//몬스터 죽임
 						monsterIsShown[i] = false;				//안보이는 상태임을 배열에 저장
 						monsterCount++;
 
-						if (monsterCount == monsterNumber[playerState - 1]) {				//지금 레벨 몬스터 다 죽이면
-							if (playerState != ENDMONSTER_STATE) {						//클리어가 아니면
-								playerSize = monsterSize[monsterNumber[playerState]];			//플레이어 사이즈 다음 레벨 몬스터와 같게 만들고
-								playerState++;													//플레이어 레벨 올림
-								scaleObject(player, (float)playerSize / PLAYER_IMAGE_SIZE);		//플레이어 사이즈 바꿔줌
+						if (monsterCount == monsterNumber[playerState_g6 - 1]) {				//지금 레벨 몬스터 다 죽이면
+							if (playerState_g6 != ENDMONSTER_STATE) {						//클리어가 아니면
+								playerSize_g6 = monsterSize[monsterNumber[playerState_g6]];			//플레이어 사이즈 다음 레벨 몬스터와 같게 만들고
+								playerState_g6++;													//플레이어 레벨 올림
+								scaleObject(player_g6, (float)playerSize_g6 / PLAYER_IMAGE_SIZE);		//플레이어 사이즈 바꿔줌
 								monsterCount = 0;
 							}
 							else {															//	<게임클리어>
-								stopTimer(monsterTimer);
-								stopTimer(playerTimer);
+								stopTimer(monsterTimer_g6);
+								stopTimer(playTimer_g6);
 								showMessage("게임클리어");
 								return;
 							}
@@ -131,9 +131,9 @@ void Game6_timerCallback(TimerID timer)
 					}
 
 					else {										//부딪혔는데 몬스터 레벨이 더 크면
-						hideObject(player);						//플레이어 죽음		<게임오버>
-						stopTimer(monsterTimer);
-						stopTimer(playerTimer);
+						hideObject(player_g6);						//플레이어 죽음		<게임오버>
+						stopTimer(monsterTimer_g6);
+						stopTimer(playTimer_g6);
 						showMessage("게임오버");
 						return;
 
@@ -148,7 +148,7 @@ void Game6_timerCallback(TimerID timer)
 	}
 
 	//몬스터 랜덤 이동
-	if (timer == monsterTimer) {
+	if (timer == monsterTimer_g6) {
 
 		for (int j = 0; j < MONSTER_NUMBER; j++) {
 			if (monsterIsShown[j] == true) {			//죽은(안보이는) 몬스터에는 반응x
@@ -192,7 +192,7 @@ void Game6_soundCallback(SoundID sound) {
 void Game6_main()
 {
 	scene_g6 = createScene("하늘 맵", "image/game6/하늘배경.png");
-	player = createObject("image/game6/날개마리오.png", scene_g6, playerX, playerY, true, (float)playerSize / PLAYER_IMAGE_SIZE);
+	player_g6 = createObject("image/game6/날개마리오.png", scene_g6, playerX_g6, playerY_g6, true, (float)playerSize_g6 / PLAYER_IMAGE_SIZE);
 
 	//레벨1 몬스터 스폰
 	for (int i = 0; i < monsterNumber[0]; i++) {
@@ -208,8 +208,8 @@ void Game6_main()
 	startButton_g6 = createObject("image/game6/게임시작.png", scene_g6, 500, 150, true, 2.0f);
 	countDown = createObject("image/game6/3.png", scene_g6, 600, 300, false, 5.0f);
 
-	playerTimer = createTimer(PLAYER_ANIMATION_TIME);
-	monsterTimer = createTimer(MONSTER_ANIMATION_TIME);
+	playTimer_g6 = createTimer(PLAYER_ANIMATION_TIME);
+	monsterTimer_g6 = createTimer(MONSTER_ANIMATION_TIME);
 	countDownTimer = createTimer(0.7f);
 
 	bgm_g6 = createSound("image/game6/하늘브금.mp3");
