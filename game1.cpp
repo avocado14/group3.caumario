@@ -6,6 +6,8 @@
 #include<conio.h>
 #include<ctime>
 
+#define g1_character_size_x 30 
+#define g1_character_size_y 40 
 
 
 SceneID scene_g1;
@@ -186,7 +188,7 @@ void score(){
 void g1death() {
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 6; j++) {
-			if ((g1c1x < (obj1x[j][i] + 10)) && (g1c1x + 30 > obj1x[j][i]) && (g1c1y < (obj1y[j][i] + 10)) && (g1c1y + 40 > obj1y[j][i])) {
+			if ((g1c1x < (obj1x[j][i] + 10)) && (g1c1x + g1_character_size_x > obj1x[j][i]) && (g1c1y < (obj1y[j][i] + 10)) && (g1c1y + g1_character_size_y > obj1y[j][i])) {
 				stopTimer(g1timer1);
 				stopTimer(g1c1move);
 				showMessage("end");
@@ -201,7 +203,7 @@ void g1death() {
 	}
 	for (int i = 0; i < 30; i++) {
 
-		if ((g1c1x < (obj1_1x[i] + 10)) && (g1c1x + 30 > obj1_1x[i]) && (g1c1y < (obj1_1y[i] + 10)) && (g1c1y + 40 > obj1_1y[i])) {
+		if ((g1c1x < (obj1_1x[i] + 10)) && (g1c1x + g1_character_size_x > obj1_1x[i]) && (g1c1y < (obj1_1y[i] + 10)) && (g1c1y + g1_character_size_y > obj1_1y[i])) {
 			stopTimer(g1timer1);
 			stopTimer(g1c1move);
 			showMessage("end");
