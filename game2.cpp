@@ -4,12 +4,12 @@
 #include <time.h>
 
 SceneID scene1_g2, scene2_g2;
-ObjectID startbutton, restartbutton, endbutton, heart1, heart2, heart3;
+ObjectID startbutton, restartbutton, endbutton, heart1, heart2, heart3, hiteffect;
 ObjectID target[20] = { 0, };
-TimerID timer1;
+TimerID timer1, hitting;
 SoundID bgm;
 int arrX[20] = { 0, }, arrY[20] = { 0, };
-int count = 0, clear = 0, life = 3, targetNum = 4, round = 0;
+int count = 0, clear = 0, life = 3, targetNum = 4, round = 0, memory = 0;
 char info[50] = { 0, };
 float duration = 1.0f;
 bool lock = false;
@@ -101,6 +101,14 @@ void judge(ObjectID object, int i) {
 
 			clear++;
 
+			memory = i;
+
+			locateObject(hiteffect, scene2_g2, arrX[memory], arrY[memory]);
+			showObject(hiteffect);
+
+			setTimer(hitting, 0.5f);
+			startTimer(hitting);
+
 			if (clear == targetNum) {		// 스테이지마다 난이도 상승 조건들
 
 				for (int j = 0; j < targetNum; j++) {	// 다 쓴 타켓 치우기
@@ -181,6 +189,10 @@ void Game2_timerCallback(TimerID timer) {
 		else lock = false;
 	}
 
+	if (timer == hitting) {
+		hideObject(hiteffect);
+	}
+
 }
 void Game2_main() {
 
@@ -194,6 +206,8 @@ void Game2_main() {
 	restartbutton = createObject("image/game2/다시시작.png", scene2_g2, 610, 400, false);
 	endbutton = createObject("image/game2/확인.png", scene2_g2, 610, 350, false);
 
+	hiteffect = createObject("images/hit.png", scene2_g2, 610, 400, false);
+
 	heart1 = createObject("image/game2/heart.png", scene2_g2, 830, 650, true);
 	scaleObject(heart1, 0.05f);
 	heart2 = createObject("image/game2/heart.png", scene2_g2, 900, 650, true);
@@ -204,6 +218,7 @@ void Game2_main() {
 	bgm = createSound("sound/bgm.wav");
 
 	timer1 = createTimer(duration);
+	hitting = createTimer(0.5f);
 
 	
 }
