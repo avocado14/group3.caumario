@@ -4,12 +4,12 @@
 #include <time.h>
 
 SceneID scene1_g2, scene2_g2;
-ObjectID startbutton, restartbutton, endbutton, heart1, heart2, heart3, hiteffect;
+ObjectID startbutton, restartbutton, endbutton, heart1, heart2, heart3, hiteffect, damaged;
 ObjectID target[20] = { 0, };
-TimerID timer1, hitting;
+TimerID timer1, hitting, damageTime;
 SoundID bgm;
 int arrX[20] = { 0, }, arrY[20] = { 0, };
-int count = 0, clear = 0, life = 3, targetNum = 4, round = 0, memory = 0;
+int count = 0, clear = 0, life = 3, targetNum = 4, round = 0;
 char info[50] = { 0, };
 float duration = 1.0f;
 bool lock = false;
@@ -101,9 +101,7 @@ void judge(ObjectID object, int i) {
 
 			clear++;
 
-			memory = i;
-
-			locateObject(hiteffect, scene2_g2, arrX[memory], arrY[memory]);
+			locateObject(hiteffect, scene2_g2, arrX[i], arrY[i]);
 			showObject(hiteffect);
 
 			setTimer(hitting, 0.5f);
@@ -130,6 +128,11 @@ void judge(ObjectID object, int i) {
 		}
 
 		else {
+
+			showObject(damaged);
+			setTimer(damageTime, 0.2f);
+			startTimer(damageTime);
+
 			minusHeart();
 		}
 	}
@@ -193,8 +196,15 @@ void Game2_timerCallback(TimerID timer) {
 		hideObject(hiteffect);
 	}
 
+	if (timer == damageTime) {
+		hideObject(damaged);
+	}
+
 }
 void Game2_main() {
+
+	setMouseCallback(Game2_mouseCallback);
+	setTimerCallback(Game2_timerCallback);
 
 	scene1_g2 = createScene("준비 화면", "image/game2/배경.png");
 	scene2_g2 = createScene("메모리 슈팅", "image/game2/배경.png");
@@ -203,7 +213,8 @@ void Game2_main() {
 	restartbutton = createObject("image/game2/다시시작.png", scene2_g2, 610, 400, false);
 	endbutton = createObject("image/game2/확인.png", scene2_g2, 610, 350, false);
 
-	hiteffect = createObject("images/hit.png", scene2_g2, 610, 400, false);
+	hiteffect = createObject("images/game2/hit.png", scene2_g2, 610, 400, false);
+	damaged = createObject("images/game2/damage.png", scene2_g2, 0, 0, false);
 
 	heart1 = createObject("image/game2/heart.png", scene2_g2, 830, 650, true);
 	scaleObject(heart1, 0.05f);
@@ -215,10 +226,8 @@ void Game2_main() {
 	bgm = createSound("image/game2/bgm.wav");
 
 	timer1 = createTimer(duration);
-<<<<<<< HEAD
 	hitting = createTimer(0.5f);
+	damageTime = createTimer(0.2f);
 
-=======
->>>>>>> 0c6e27b6642b7f4325a509b922c3d35ed101c059
 	
 }
