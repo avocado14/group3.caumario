@@ -9,7 +9,7 @@ using namespace std;
 
 #define g4_character_size_width 70 
 #define g4_character_size_length 100 
-#define g4_obj1_size_width 30 
+#define g4_obj1_size_width 35
 #define g4_obj1_size_length 100 
 #define g4_obj2_size_width 85 
 #define g4_obj2_size_length 100 

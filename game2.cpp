@@ -141,7 +141,7 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	if (lock == true) {
 		return;
 	}
-
+	
 	if (object == startbutton) {
 
 		enterScene(scene2_g2);
@@ -196,9 +196,6 @@ void Game2_timerCallback(TimerID timer) {
 }
 void Game2_main() {
 
-	setMouseCallback(Game2_mouseCallback);
-	setTimerCallback(Game2_timerCallback);
-
 	scene1_g2 = createScene("준비 화면", "image/game2/배경.png");
 	scene2_g2 = createScene("메모리 슈팅", "image/game2/배경.png");
 
@@ -215,10 +212,13 @@ void Game2_main() {
 	heart3 = createObject("image/game2/heart.png", scene2_g2, 970, 650, true);
 	scaleObject(heart3, 0.05f);
 
-	bgm = createSound("sound/bgm.wav");
+	bgm = createSound("image/game2/bgm.wav");
 
 	timer1 = createTimer(duration);
+<<<<<<< HEAD
 	hitting = createTimer(0.5f);
 
+=======
+>>>>>>> 0c6e27b6642b7f4325a509b922c3d35ed101c059
 	
 }
