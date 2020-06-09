@@ -202,7 +202,7 @@ void Game3_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 		zeroCheck();
 
-		//playSound(bgm, true);
+		playSound(bgm, true);
 
 		setTimer(check, duration);
 		startTimer(check);
@@ -334,7 +334,7 @@ int main() {
 
 	damaged = createObject("image/game3/damage.png", scene2_g3, 0, 0, false);
 
-	bgm = createSound("image/game3/BGM.wav");
+	bgm = createSound("image/game3/bgm.wav");
 	normalHit = createSound("image/game3/normalHit.wav");
 	normalHit1 = createSound("image/game3/normalHit1.wav");
 	normalHit2 = createSound("image/game3/normalHit2.wav");
