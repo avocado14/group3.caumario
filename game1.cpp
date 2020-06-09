@@ -8,6 +8,8 @@
 
 #define g1_character_size_x 30 
 #define g1_character_size_y 40 
+#define g1_obj1_size_width 10 
+#define g1_obj1_size_hight 10 
 
 
 SceneID scene_g1;
@@ -52,22 +54,22 @@ void g1obj1firstposition() {// 리턴 해주어야 하나?.. i가 가로j가 세로
 	for (int i = 0; i < 10; i++) {
 		obj1x[0][i] = i * 128 ;
 		obj1y[0][i] = 721; //-------------
-		g1obj1[0][i] = g1createObject("image/game1/10pixel.png", scene_g1, obj1x[0][i], obj1y[0][i], true);
+		g1obj1[0][i] = g1createObject("image/game1/부끄부끄/20.png", scene_g1, obj1x[0][i], obj1y[0][i], true);
 	}
 	for (int j = 0; j < 6; j++) {
 		//|           |
 		//|           |
-		obj1x[j][0] = 0 - 11;
+		obj1x[j][0] = 0 - g1_obj1_size_width;
 		obj1y[j][0] = 720 - j * 120;
-		g1obj1[j][0] = g1createObject("image/game1/10pixel.png", scene_g1, obj1x[j][0], obj1y[j][0], true);
+		g1obj1[j][0] = g1createObject("image/game1/부끄부끄/20.png", scene_g1, obj1x[j][0], obj1y[j][0], true);
 		obj1x[j][9] = 1281;
 		obj1y[j][9] = 720 - j * 120;
-		g1obj1[j][9] = g1createObject("image/game1/10pixel.png", scene_g1, obj1x[j][9], obj1y[j][9], true);
+		g1obj1[j][9] = g1createObject("image/game1/부끄부끄/20-2.png", scene_g1, obj1x[j][9], obj1y[j][9], true);
 	}
 	for (int i = 0; i < 10; i++) {
 		obj1x[5][i] = i * 128;
-		obj1y[5][i] = 0 - 11; //-------------
-		g1obj1[5][i] = g1createObject("image/game1/10pixel.png", scene_g1, obj1x[5][i], obj1y[5][i], true);
+		obj1y[5][i] = 0 - g1_obj1_size_hight; //-------------
+		g1obj1[5][i] = g1createObject("image/game1/부끄부끄/20.png", scene_g1, obj1x[5][i], obj1y[5][i], true);
 	}
 }
 void g1obj1_1firstposition() {
@@ -94,7 +96,7 @@ void g1obj1_1firstposition() {
 			obj1_1x[i] = 50 + 150 * g1obj1_1placernd;
 			obj1_1y[i] = 721;
 		}
-		g1obj1_1[i] = g1createObject("image/game1/10pixel1.png", scene_g1, obj1_1x[i], obj1_1y[i], true);
+		g1obj1_1[i] = g1createObject("image/game1/부끄부끄/20.png", scene_g1, obj1_1x[i], obj1_1y[i], true);
 
 	}
 }
@@ -188,13 +190,13 @@ void score(){
 void g1death() {
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 6; j++) {
-			if ((g1c1x < (obj1x[j][i] + 10)) && (g1c1x + g1_character_size_x > obj1x[j][i]) && (g1c1y < (obj1y[j][i] + 10)) && (g1c1y + g1_character_size_y > obj1y[j][i])) {
+			if ((g1c1x < (obj1x[j][i] + g1_obj1_size_width)) && (g1c1x + g1_character_size_x > obj1x[j][i]) && (g1c1y < (obj1y[j][i] + g1_obj1_size_hight)) && (g1c1y + g1_character_size_y > obj1y[j][i])) {
 				stopTimer(g1timer1);
 				stopTimer(g1c1move);
 				showMessage("end");
 				score();
 			}
-			else if (g1c1x < 0 || g1c1x > 1280 || g1c1y < 0 || g1c1y > 720) {
+			else if (g1c1x < 0- g1_character_size_x+1 || g1c1x > 1280 || g1c1y < 0- g1_character_size_y +1|| g1c1y > 720) {
 				stopTimer(g1timer1);
 				stopTimer(g1c1move);
 				showMessage("out of bounds");
@@ -219,7 +221,7 @@ void g1death() {
 //setTimer(g1levelupgrade, 0.01f);
 
 
-	void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
+void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 
 		if (object == g1startbutton) {
@@ -237,6 +239,9 @@ void g1death() {
 
 		}
 		else if (object == g1restartbutton) {
+			g1c1x = 540, g1c1y = 360;
+			locateObject(g1c1, scene_g1, g1c1x, g1c1y);
+
 			g1clearobj();
 			g1obj1firstposition();
 			g1obj1_1firstposition();
@@ -293,9 +298,11 @@ void Game1_keyboardCallback(KeyCode code, KeyState state)
 	}
 	else if (code == 83) {		// RIGHT
 		g1dx += (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
+		setObjectImage(g1c1, "image/game1/마리오오른쪽/마리오 애니메이션1.png");
 	}
 	else if (code == 82) {		// LEFT
 		g1dx -= (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
+		setObjectImage(g1c1, "image/game1/마리오왼쪽/마리오 애니메이션1.png");
 	}
 }
 
@@ -307,7 +314,7 @@ void Game1_main() {
 	
 	scene_g1 = createScene("game1", "image/game1/배경.png");
 
-	g1c1 = g1createObject("image/game1/c1.png", scene_g1, g1c1x, g1c1y, true);	
+	g1c1 = g1createObject("image/game1/마리오오른쪽/마리오 애니메이션1.png", scene_g1, g1c1x, g1c1y, true);	
 	scaleObject(g1c1, 0.5f);
 	
 	

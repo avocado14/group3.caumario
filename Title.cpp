@@ -37,11 +37,14 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 void Title_main() {
 
-	titleScene = createScene("타이틀(임시)", "image/Title/배경.png");
+	titleScene = createScene("타이틀(임시)", "image/Title/map ui.png");
 
 
-	for (int i = 0; i < 6; i++) {
-		sprintf_s(path, "image/Title/game%d.png", i + 1);
-		GameButton[i] = createObject(path, titleScene, 200 + 150 * i, 300, true, 1.3f);
-	}
+	
+	GameButton[0] = createObject("image/Title/game1.png", titleScene, 78, 80, true, 1.f);
+	GameButton[1] = createObject("image/Title/game2.png", titleScene, 215, 405, true, 1.f);
+	GameButton[2] = createObject("image/Title/game3.png", titleScene, 560, 155, true, 1.3f);
+	GameButton[3] = createObject("image/Title/game4.png", titleScene, 810, 380, true, 1.3f);
+	GameButton[4] = createObject("image/Title/game5.png", titleScene, 1130, 250, true, 1.3f);
+	GameButton[5] = createObject("image/Title/game6.png", titleScene, 1070, 450, true, 1.3f);
 }
