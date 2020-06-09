@@ -50,6 +50,9 @@
     <ClCompile Include="Title.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="game3.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="group-project.rc">
