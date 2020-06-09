@@ -4,9 +4,9 @@
 #include <time.h>
 
 SceneID scene1_g2, scene2_g2;
-ObjectID startbutton, restartbutton, endbutton, heart1, heart2, heart3;
+ObjectID startbutton, restartbutton, endbutton, heart1, heart2, heart3, hiteffect, damaged;
 ObjectID target[20] = { 0, };
-TimerID timer1;
+TimerID timer1, hitting, damageTime;
 SoundID bgm;
 int arrX[20] = { 0, }, arrY[20] = { 0, };
 int count = 0, clear = 0, life = 3, targetNum = 4, round = 0;
@@ -101,17 +101,23 @@ void judge(ObjectID object, int i) {
 
 			clear++;
 
+			locateObject(hiteffect, scene2_g2, arrX[i], arrY[i]);
+			showObject(hiteffect);
+
+			setTimer(hitting, 0.5f);
+			startTimer(hitting);
+
 			if (clear == targetNum) {		// 스테이지마다 난이도 상승 조건들
 
 				for (int j = 0; j < targetNum; j++) {	// 다 쓴 타켓 치우기
 					hideObject(target[j]);
 				}
 
-				if (targetNum < 10) {	// 타겟 수 증가 (최대 10개)
+				if (targetNum < 7) {	// 타겟 수 증가 (최대 7개)
 					targetNum++;
 				}
 
-				if (duration > 0.5f) {	// 타겟 등장 주기 감소 (최소 0.3초)
+				if (duration > 0.5f) {	// 타겟 등장 주기 감소 (최소 0.5초)
 					duration -= 0.05f;
 				}
 
@@ -122,6 +128,11 @@ void judge(ObjectID object, int i) {
 		}
 
 		else {
+
+			showObject(damaged);
+			setTimer(damageTime, 0.2f);
+			startTimer(damageTime);
+
 			minusHeart();
 		}
 	}
@@ -181,15 +192,29 @@ void Game2_timerCallback(TimerID timer) {
 		else lock = false;
 	}
 
+	if (timer == hitting) {
+		hideObject(hiteffect);
+	}
+
+	if (timer == damageTime) {
+		hideObject(damaged);
+	}
+
 }
 void Game2_main() {
 
+	setMouseCallback(Game2_mouseCallback);
+	setTimerCallback(Game2_timerCallback);
+
 	scene1_g2 = createScene("준비 화면", "image/game2/배경.png");
-	scene2_g2 = createScene("메모리 슈팅", "image/game2/배경.png");
+	scene2_g2 = createScene("메모리 슈팅", "image/game2/배경1.png");
 
 	startbutton = createObject("image/game2/시작.png", scene1_g2, 610, 70, true);
 	restartbutton = createObject("image/game2/다시시작.png", scene2_g2, 610, 400, false);
 	endbutton = createObject("image/game2/확인.png", scene2_g2, 610, 350, false);
+
+	hiteffect = createObject("images/game2/hit.png", scene2_g2, 610, 400, false);
+	damaged = createObject("images/game2/damage.png", scene2_g2, 0, 0, false);
 
 	heart1 = createObject("image/game2/heart.png", scene2_g2, 830, 650, true);
 	scaleObject(heart1, 0.05f);
@@ -201,5 +226,8 @@ void Game2_main() {
 	bgm = createSound("image/game2/bgm.wav");
 
 	timer1 = createTimer(duration);
+	hitting = createTimer(0.5f);
+	damageTime = createTimer(0.2f);
+
 	
 }
