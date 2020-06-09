@@ -38,9 +38,6 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 void Title_main() {
 
 	titleScene = createScene("타이틀(임시)", "image/Title/map ui.png");
-
-
-	
 	GameButton[0] = createObject("image/Title/game1.png", titleScene, 78, 80, true, 1.f);
 	GameButton[1] = createObject("image/Title/game2.png", titleScene, 215, 405, true, 1.f);
 	GameButton[2] = createObject("image/Title/game3.png", titleScene, 560, 155, true, 1.3f);
