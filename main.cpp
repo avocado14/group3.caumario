@@ -15,6 +15,10 @@ extern void Game2_main();
 extern void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action);
 extern void Game2_timerCallback(TimerID timer);
 
+extern void Game3_main();
+extern void Game3_mouseCallback(ObjectID object, int x, int y, MouseAction action);
+extern void Game3_timerCallback(TimerID timer);
+
 extern void Game4_main();
 extern void Game4_mouseCallback(ObjectID object, int x, int y, MouseAction action);
 extern void Game4_timerCallback(TimerID timer);
@@ -50,6 +54,7 @@ void mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	Title_mouseCallback(object, x, y, action);
 	Game1_mouseCallback(object, x, y, action);
 	Game2_mouseCallback(object, x, y, action);
+	Game3_mouseCallback(object, x, y, action);
 	Game4_mouseCallback(object, x, y, action);
 	Game5_mouseCallback(object, x, y, action);
 	Game6_mouseCallback(object, x, y, action);
@@ -60,6 +65,7 @@ void timerCallback(TimerID timer) {
 	
 	Game1_timerCallback(timer);
 	Game2_timerCallback(timer);
+	Game3_timerCallback(timer);
 	Game4_timerCallback(timer);
 	Game5_timerCallback(timer);
 	Game6_timerCallback(timer);
@@ -95,6 +101,7 @@ int main() {
 	Title_main();
 	Game1_main();
 	Game2_main();
+	Game3_main();
 	Game4_main();
 	Game5_main();
 	Game6_main();
