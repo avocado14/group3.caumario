@@ -49,7 +49,7 @@ void locationMaker(int num) {		// 표적 위치 저장할 정수 배열 만들기 (표적 개수 �
 		arrX[i] = 100 + x;
 		arrY[i] = 100 + y;
 
-		target[i] = createObject("images/target.png", scene2_g2, arrX[i], arrY[i], false);
+		target[i] = createObject("image/game2/target.png", scene2_g2, arrX[i], arrY[i], false);
 	}
 }
 
@@ -203,9 +203,6 @@ void Game2_timerCallback(TimerID timer) {
 }
 void Game2_main() {
 
-	setMouseCallback(Game2_mouseCallback);
-	setTimerCallback(Game2_timerCallback);
-
 	scene1_g2 = createScene("준비 화면", "image/game2/배경.png");
 	scene2_g2 = createScene("메모리 슈팅", "image/game2/배경1.png");
 
@@ -213,8 +210,8 @@ void Game2_main() {
 	restartbutton = createObject("image/game2/다시시작.png", scene2_g2, 610, 400, false);
 	endbutton = createObject("image/game2/확인.png", scene2_g2, 610, 350, false);
 
-	hiteffect = createObject("images/game2/hit.png", scene2_g2, 610, 400, false);
-	damaged = createObject("images/game2/damage.png", scene2_g2, 0, 0, false);
+	hiteffect = createObject("image/game2/hit.png", scene2_g2, 610, 400, false);
+	damaged = createObject("image/game2/damage.png", scene2_g2, 0, 0, false);
 
 	heart1 = createObject("image/game2/heart.png", scene2_g2, 830, 650, true);
 	scaleObject(heart1, 0.05f);
