@@ -113,11 +113,11 @@ void judge(ObjectID object, int i) {
 					hideObject(target[j]);
 				}
 
-				if (targetNum < 10) {	// 타겟 수 증가 (최대 10개)
+				if (targetNum < 7) {	// 타겟 수 증가 (최대 7개)
 					targetNum++;
 				}
 
-				if (duration > 0.5f) {	// 타겟 등장 주기 감소 (최소 0.3초)
+				if (duration > 0.5f) {	// 타겟 등장 주기 감소 (최소 0.5초)
 					duration -= 0.05f;
 				}
 
@@ -207,7 +207,7 @@ void Game2_main() {
 	setTimerCallback(Game2_timerCallback);
 
 	scene1_g2 = createScene("준비 화면", "image/game2/배경.png");
-	scene2_g2 = createScene("메모리 슈팅", "image/game2/배경.png");
+	scene2_g2 = createScene("메모리 슈팅", "image/game2/배경1.png");
 
 	startbutton = createObject("image/game2/시작.png", scene1_g2, 610, 70, true);
 	restartbutton = createObject("image/game2/다시시작.png", scene2_g2, 610, 400, false);
