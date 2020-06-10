@@ -11,7 +11,7 @@ using namespace std;
 #define g4_character_size_length 100 
 #define g4_obj1_size_width 30
 #define g4_obj1_size_length 100 
-#define g4_obj2_size_width 80
+#define g4_obj2_size_width 70
 #define g4_obj2_size_length 90 
 #define g4_obj3_size_width 80 
 #define g4_obj3_size_length 100 
@@ -26,7 +26,7 @@ using namespace std;
 
 SceneID scene_g4;
 ObjectID g4c1, g4jumpbutton,g4startbutton, g4restartbutton,g4obj1[4], g4obj2[4], g4obj3[4], g4obj4[4], g4obj5[4],g4floor1,g4floor2;
-TimerID g4timer1, g4timer2, g4obmove;
+TimerID g4timer1, g4timer2, g4obmove,g4difficult;
 SoundID g4theme;
 
 const char* g4objfile[5] =
@@ -34,6 +34,9 @@ const char* g4objfile[5] =
 int g4objnumber[20] ={ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 };
 //0123 지네   4567 c3   891011 c4  12131415 c5  16171819 c6
 int movetype;
+int g4difficulty;
+double g4score=0;
+
 //-----------선인---------
 
 double g4obj1x[4], g4obj1y[4];
@@ -254,9 +257,16 @@ void g4flooranimation() {
         
     }
     else {
-        g4floor1x = g4floor1x - 5;
-        g4floor2x = g4floor2x - 5;
+        g4floor1x = g4floor1x - 10;
+        g4floor2x = g4floor2x - 10;
+        g4score = g4score + 0.05;
     }
+}
+
+void g4scoremessage() {
+    char buf[256];
+    sprintf_s(buf, "간 거리 : %0.f m", g4score, scene_g4);
+    showMessage(buf);
 }
 
 void g4death() {
@@ -267,21 +277,28 @@ void g4death() {
                 stopTimer(g4timer1);
                 stopTimer(g4timer2);
                 stopTimer(g4obmove);
-                showMessage("dead");               
+                showMessage("dead");         
+                g4scoremessage();
             }
-            if ((210 < (g4obj2x[i] + g4_obj2_size_width)) && (210 + g4_character_size_width > g4obj2x[i]) &&
-                (g4c1y < (g4obj2y[i] + g4_obj2_size_length)) && (g4c1y + g4_character_size_length > g4obj2y[i])) {
-                stopTimer(g4timer1);
-                stopTimer(g4timer2);
-                stopTimer(g4obmove);
-                showMessage("dead");
+            if (g4score > 20) {
+                if ((210 < (g4obj2x[i] + g4_obj2_size_width)) && (210 + g4_character_size_width > g4obj2x[i]) &&
+                    (g4c1y < (g4obj2y[i] + g4_obj2_size_length)) && (g4c1y + g4_character_size_length > g4obj2y[i])) {
+                    stopTimer(g4timer1);
+                    stopTimer(g4timer2);
+                    stopTimer(g4obmove);
+                    showMessage("dead");
+                    g4scoremessage();
+                }
             }
-            if ((210 < (g4obj3x[i] + g4_obj3_size_width)) && (210 + g4_character_size_width > g4obj3x[i]) &&
-                (g4c1y < (g4obj3y[i] + g4_obj3_size_length)) && (g4c1y + g4_character_size_length > g4obj3y[i])) {
-                stopTimer(g4timer1);
-                stopTimer(g4timer2);
-                stopTimer(g4obmove);
-                showMessage("dead");
+            if (g4score > 50) {
+                if ((210 < (g4obj3x[i] + g4_obj3_size_width)) && (210 + g4_character_size_width > g4obj3x[i]) &&
+                    (g4c1y < (g4obj3y[i] + g4_obj3_size_length)) && (g4c1y + g4_character_size_length > g4obj3y[i])) {
+                    stopTimer(g4timer1);
+                    stopTimer(g4timer2);
+                    stopTimer(g4obmove);
+                    showMessage("dead");
+                    g4scoremessage();
+                }
             }
             if ((210 < (g4obj4x[i] + g4_obj4_size_width)) && (210 + g4_character_size_width > g4obj4x[i]) &&
                 (g4c1y < (g4obj4y[i] + g4_obj4_size_length)) && (g4c1y + g4_character_size_length > g4obj4y[i])) {
@@ -289,11 +306,14 @@ void g4death() {
                 stopTimer(g4timer2);
                 stopTimer(g4obmove);
                 showMessage("dead");
+                g4scoremessage();
             }
             
         }
     
 }
+
+
 void g4jump1_1() {
     double g4c1ycache;
     if (jump1_1xcache >= 100 || jump1_1xcache < -100) {//계산 밖일때
@@ -327,7 +347,7 @@ void g4jump2_1(double g4c1positiony) {
 
 }
 
-void g4jump1() {
+/*void g4jump1() {
     
     //점프중 = y감소
     //점프끝 = y증가
@@ -398,7 +418,7 @@ void g4jump2() {
         }        
     }
     
-}
+}*/
 
 void g4placeobstacle(ObjectID obstacle, SceneID scene, int x, int y, bool shown) {
     if (shown) {
@@ -416,10 +436,15 @@ void g4obstaclemove(ObjectID obstacle,SceneID scene,int movetype,int objID) {
            srand((unsigned int)time(NULL));
            int num = rand();
            int rndvalue = num % 5;
-           g4obj1x[objID] = 1300 + rndvalue * 20;
+           if (objID == 1 || objID == 2 || objID == 3) {
+               g4obj1x[objID] = g4obj1x[objID - 1] + 320+(500-g4difficulty *10)+rndvalue * 50;
+           }
+           else if (objID == 0) {
+               g4obj1x[objID] = g4obj1x[3] + 320+ (500 - g4difficulty * 10)+rndvalue * 50;
+           }
        }
        else {
-           g4obj1x[objID] = g4obj1x[objID] - 5;
+           g4obj1x[objID] = g4obj1x[objID] - 10;
        }
     }
     if (movetype == 2) {
@@ -428,10 +453,15 @@ void g4obstaclemove(ObjectID obstacle,SceneID scene,int movetype,int objID) {
             srand((unsigned int)time(NULL));
             int num = rand();
             int rndvalue = num % 5;
-            g4obj2x[objID] = 1300 + rndvalue * 20;
+            if (objID == 1 || objID == 2 || objID == 3) {
+                g4obj2x[objID] = g4obj2x[objID - 1] + 320 + (500 - g4difficulty * 10) + rndvalue * 50;
+            }
+            else if (objID == 0) {
+                g4obj2x[objID] = g4obj2x[3] + 320 + (500 - g4difficulty * 10)+rndvalue * 50;
+            }
         }
         else {
-            g4obj2x[objID] = g4obj2x[objID] - 10;
+            g4obj2x[objID] = g4obj2x[objID] - 15;
         }
     }
     if (movetype == 3) {       
@@ -442,15 +472,61 @@ void g4obstaclemove(ObjectID obstacle,SceneID scene,int movetype,int objID) {
             
             //g4obj3startx[objID] = 1300 + rndvalue * 20;
            // g4obj3starty[objID] = 400 + rndvalue * 30;
-            g4obj3x[objID] = 1300 + rndvalue * 20;
-            
+            if (objID == 1 || objID == 2 || objID == 3) {
+                g4obj3x[objID] = g4obj3x[objID - 1] + 320 + (500 - g4difficulty * 10) + rndvalue * 50;
+            }
+            else if (objID == 0) {
+                g4obj3x[objID] = g4obj3x[3] + 320 + (500 - g4difficulty * 10) + rndvalue * 50;
+            }
             g4obj3starty[objID] = 400 + rndvalue * 30;
             g4obj3y[objID] = g4obj3starty[objID];
         }
         else {
-            g4obj3x[objID] = g4obj3x[objID] - 3;
-            g4obj3y[objID] = 50*sin((0.1)*g4obj3x[objID])+ g4obj3starty[objID];
+            g4obj3x[objID] = g4obj3x[objID] - 7;
+            g4obj3y[objID] = 50*sin((0.03)*g4obj3x[objID])+ g4obj3starty[objID];
         }
+    }
+}
+
+void g4objselectshow() {
+    for (int i = 0; i < 4; i++) {
+        if ((0 < (g4obj1x[i] + g4_obj1_size_width)) && 1280 > g4obj1x[i])  {
+            showObject(g4obj1[i]);
+        }
+        else {
+            hideObject(g4obj1[i]);
+        }
+        if (g4score > 20) {
+            if ((0 < (g4obj2x[i] + g4_obj1_size_width)) && 1280 > g4obj2x[i]) {
+                showObject(g4obj2[i]);
+            }
+            else {
+                hideObject(g4obj2[i]);
+            }
+        }
+        else {
+            hideObject(g4obj2[i]);
+        }
+        if (g4score > 50) {
+            if ((0 < (g4obj3x[i] + g4_obj1_size_width)) && 1280 > g4obj3x[i]) {
+                showObject(g4obj3[i]);
+            }
+            else {
+                hideObject(g4obj3[i]);
+            }
+        }
+        else {
+            hideObject(g4obj3[i]);
+        }
+        if ((210 < (g4obj4x[i] + g4_obj4_size_width)) && (210 + g4_character_size_width > g4obj4x[i]) &&
+            (g4c1y < (g4obj4y[i] + g4_obj4_size_length)) && (g4c1y + g4_character_size_length > g4obj4y[i])) {
+            stopTimer(g4timer1);
+            stopTimer(g4timer2);
+            stopTimer(g4obmove);
+            showMessage("dead");
+            g4scoremessage();
+        }
+
     }
 }
 
@@ -460,7 +536,8 @@ void g4update() {
     g4obj2animation();
     g4obj3animation();
     g4flooranimation();
-    g4death();
+   g4death();
+   g4objselectshow();
     //-------좌표이동
     for (int i = 0; i < 4; i++) {
         g4obstaclemove(g4obj1[i], scene_g4, 1, i);
@@ -500,7 +577,7 @@ void g4gamestart() {
         srand((unsigned int)time(NULL));          
         int num = rand();
         int rndvalue = num % 5;
-        g4obj1x[i] = 1300 + 320*i+rndvalue * 20;
+        g4obj1x[i] = 1300 + 500*i+rndvalue * 20;
         g4obj1y[i] = 110;
         g4placeobstacle(g4obj1[i], scene_g4, g4obj1x[i], g4obj1y[i], true);
     }
@@ -508,7 +585,7 @@ void g4gamestart() {
         //srand((unsigned int)time(NULL));
         int num = rand();
         int rndvalue = num % 5;
-        g4obj2x[i] = 1300 + 320 * i + rndvalue * 20;
+        g4obj2x[i] = 1300 + 700 * i + rndvalue * 20;
         g4obj2y[i] = 110;
         g4placeobstacle(g4obj2[i], scene_g4, g4obj2x[i], g4obj2y[i], true);
     }
@@ -517,26 +594,26 @@ void g4gamestart() {
         //srand((unsigned int)time(NULL));
         int num = rand();
         int rndvalue = num % 5;
-        g4obj3x[i] = 1300 + 320 * i + rndvalue * 20;
+        g4obj3x[i] = 1300 + 800 * i + rndvalue * 20;
         g4obj3starty[i] = 400 + rndvalue * 30;
         g4obj3y[i] = g4obj3starty[i];
         g4placeobstacle(g4obj3[i], scene_g4, g4obj3x[i], g4obj3y[i], true);
     }
     startTimer(g4obmove);
-    startTimer(g4timer1);//----------실험용
+    startTimer(g4timer1);
+    startTimer(g4difficult);
 }
 
 void g4gamerestart() {
     g4gamestart();
     g4c1y = 110;
     locateObject(g4c1, scene_g4, 210,g4c1y);
-    g4jumping1process = false;
-    g4jumping2process = false;
+    g4score = 0;
 }
 
 void Game4_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
-	if(object == g4jumpbutton) {
+	/*if(object == g4jumpbutton) {
       if (!g4jumping1process) {
             g4isjumping1 = true;
             g4isBottom = false;
@@ -552,8 +629,8 @@ void Game4_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
                 startTimer(g4timer2);
             }
         }
-	}
-    else if (object == g4startbutton) {
+	}*/
+    if (object == g4startbutton) {
         g4gamestart();
     }
     else if (object == g4restartbutton) {
@@ -590,6 +667,12 @@ void Game4_timerCallback(TimerID timer) {
         setTimer(g4obmove, 0.01f);
         startTimer(g4obmove);
         g4update();
+    }
+    if (timer == g4difficult) {//장애물 움직임
+        g4difficulty++;
+        setTimer(g4difficult, g4difficulty);
+        startTimer(g4difficult);
+        
     }
     
 }
@@ -646,7 +729,7 @@ void Game4_main() {
 	g4timer1 = createTimer(0.01f);
     g4timer2 = createTimer(0.01f);
     g4obmove = createTimer(0.01f);
-    
+    g4difficult = createTimer(5.f);
     
 
 }

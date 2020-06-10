@@ -14,11 +14,11 @@
 
 SceneID scene_g1;
 ObjectID g1c1, g1obj1[6][10],g1startbutton, g1restartbutton;//[세로][가로][j][i]
-TimerID g1timer1, g1c1move,g1levelupgrade,g1score;
+TimerID g1timer1, g1c1move,g1levelupgrade,g1score, g1difficult;
 SoundID theme;
 
-int obj1x[6][10], obj1y[6][10];
-int obj1speed=10;
+int obj1x[6][10] = { 0 }, obj1y[6][10] = { 0 };
+int obj1speed=12;
 double g1obj1moveblockx[6][10], g1obj1moveblocky[6][10];
 
 
@@ -30,9 +30,31 @@ int g1c1x=500, g1c1y=200;
 int g1dx = 0, g1dy = 0;
 
 ObjectID g1obj1_1[30];
-int g1difficulty, obj1_1x[30], obj1_1y[30];
-int obj1_1speed = 15;
+int g1difficulty=0, obj1_1x[30], obj1_1y[30];//g1difficulty는 추가된 오브젝트 개수
+int obj1_1speed = 19;
 double g1obj1_1moveblockx[30], g1obj1_1moveblocky[30];
+
+//---애니메이션----
+//---마리오---
+int g1c1heading;
+double g1c1animationcache, g1c1animationcache1;//1이 계속 증가하는 값이고 0가 나머지 잠시 저장하는 변수
+const char* g1c1animationfilefront[10] =
+{ "image/game1/마리오앞/1.png","image/game1/마리오앞/2.png","image/game1/마리오앞/3.png","image/game1/마리오앞/4.png","image/game1/마리오앞/5.png",
+"image/game1/마리오앞/6.png","image/game1/마리오앞/7.png","image/game1/마리오앞/8.png","image/game1/마리오앞/9.png","image/game1/마리오앞/10.png" };
+
+const char* g1c1animationfileback[6] =
+{ "image/game1/마리오뒤/1.png", "image/game1/마리오뒤/2.png", "image/game1/마리오뒤/3.png", 
+"image/game1/마리오뒤/4.png", "image/game1/마리오뒤/5.png", "image/game1/마리오뒤/6.png" };
+
+const char* g1c1animationfileleft[10] =
+{ "image/game1/마리오왼쪽/1.png", "image/game1/마리오왼쪽/2.png", "image/game1/마리오왼쪽/3.png", "image/game1/마리오왼쪽/4.png", "image/game1/마리오왼쪽/5.png",
+ "image/game1/마리오왼쪽/6.png",  "image/game1/마리오왼쪽/7.png",  "image/game1/마리오왼쪽/8.png",  "image/game1/마리오왼쪽/9.png",  "image/game1/마리오왼쪽/10.png" };
+
+const char* g1c1animationfileright[10] =
+{ "image/game1/마리오오른쪽/1.png","image/game1/마리오오른쪽/2.png","image/game1/마리오오른쪽/3.png","image/game1/마리오오른쪽/4.png","image/game1/마리오오른쪽/5.png",
+"image/game1/마리오오른쪽/6.png", "image/game1/마리오오른쪽/7.png", "image/game1/마리오오른쪽/8.png", "image/game1/마리오오른쪽/9.png", "image/game1/마리오오른쪽/10.png"};
+
+
 
 
 ObjectID g1createObject(const char* image, SceneID scene, int x, int y, bool shown) {
@@ -42,6 +64,142 @@ ObjectID g1createObject(const char* image, SceneID scene, int x, int y, bool sho
 		showObject(object);
 	}
 	return(object);
+}
+
+void g1c1animation() {
+	if (g1c1heading == 0) {//앞
+		g1c1animationcache = fmod(g1c1animationcache1, 10);
+		if (g1c1animationcache >= 0 && g1c1animationcache < 1) {
+			setObjectImage(g1c1, g1c1animationfilefront[0]);
+		}
+		else  if (g1c1animationcache >= 1 && g1c1animationcache < 2) {
+			setObjectImage(g1c1, g1c1animationfilefront[1]);
+		}
+		else  if (g1c1animationcache >= 2 && g1c1animationcache < 3) {
+			setObjectImage(g1c1, g1c1animationfilefront[2]);
+		}
+		else  if (g1c1animationcache >= 3 && g1c1animationcache < 4) {
+			setObjectImage(g1c1, g1c1animationfilefront[3]);
+		}
+		else  if (g1c1animationcache >= 4 && g1c1animationcache < 5) {
+			setObjectImage(g1c1, g1c1animationfilefront[4]);
+		}
+		else  if (g1c1animationcache >= 5 && g1c1animationcache < 6) {
+			setObjectImage(g1c1, g1c1animationfilefront[5]);
+		}
+		else  if (g1c1animationcache >= 6 && g1c1animationcache < 7) {
+			setObjectImage(g1c1, g1c1animationfilefront[6]);
+		}
+		else  if (g1c1animationcache >= 7 && g1c1animationcache < 8) {
+			setObjectImage(g1c1, g1c1animationfilefront[7]);
+		}
+		else  if (g1c1animationcache >= 8 && g1c1animationcache < 9) {
+			setObjectImage(g1c1, g1c1animationfilefront[8]);
+		}
+		else  if (g1c1animationcache >= 9 && g1c1animationcache < 10) {
+			setObjectImage(g1c1, g1c1animationfilefront[9]);
+		}
+
+		g1c1animationcache1 = g1c1animationcache1 + 1;
+
+	}
+	else if (g1c1heading == 1) {//뒤
+		g1c1animationcache = fmod(g1c1animationcache1, 6);
+		if (g1c1animationcache >= 0 && g1c1animationcache < 1) {
+			setObjectImage(g1c1, g1c1animationfileback[0]);
+		}
+		else  if (g1c1animationcache >= 1 && g1c1animationcache < 2) {
+			setObjectImage(g1c1, g1c1animationfileback[1]);
+		}
+		else  if (g1c1animationcache >= 2 && g1c1animationcache < 3) {
+			setObjectImage(g1c1, g1c1animationfileback[2]);
+		}
+		else  if (g1c1animationcache >= 3 && g1c1animationcache < 4) {
+			setObjectImage(g1c1, g1c1animationfileback[3]);
+		}
+		else  if (g1c1animationcache >= 4 && g1c1animationcache < 5) {
+			setObjectImage(g1c1, g1c1animationfileback[4]);
+		}
+		else  if (g1c1animationcache >= 5 && g1c1animationcache < 6) {
+			setObjectImage(g1c1, g1c1animationfileback[5]);
+		}
+		
+
+		g1c1animationcache1 = g1c1animationcache1 +1;
+
+	}
+	else if (g1c1heading == 2) {//왼쪽
+		g1c1animationcache = fmod(g1c1animationcache1, 10);
+		if (g1c1animationcache >= 0 && g1c1animationcache < 1) {
+			setObjectImage(g1c1, g1c1animationfileleft[0]);
+		}
+		else  if (g1c1animationcache >= 1 && g1c1animationcache < 2) {
+			setObjectImage(g1c1, g1c1animationfileleft[1]);
+		}
+		else  if (g1c1animationcache >= 2 && g1c1animationcache < 3) {
+			setObjectImage(g1c1, g1c1animationfileleft[2]);
+		}
+		else  if (g1c1animationcache >= 3 && g1c1animationcache < 4) {
+			setObjectImage(g1c1, g1c1animationfileleft[3]);
+		}
+		else  if (g1c1animationcache >= 4 && g1c1animationcache < 5) {
+			setObjectImage(g1c1, g1c1animationfileleft[4]);
+		}
+		else  if (g1c1animationcache >= 5 && g1c1animationcache < 6) {
+			setObjectImage(g1c1, g1c1animationfileleft[5]);
+		}
+		else  if (g1c1animationcache >= 6 && g1c1animationcache < 7) {
+			setObjectImage(g1c1, g1c1animationfileleft[6]);
+		}
+		else  if (g1c1animationcache >= 7 && g1c1animationcache < 8) {
+			setObjectImage(g1c1, g1c1animationfileleft[7]);
+		}
+		else  if (g1c1animationcache >= 8 && g1c1animationcache < 9) {
+			setObjectImage(g1c1, g1c1animationfileleft[8]);
+		}
+		else  if (g1c1animationcache >= 9 && g1c1animationcache < 10) {
+			setObjectImage(g1c1, g1c1animationfileleft[9]);
+		}
+
+		g1c1animationcache1 = g1c1animationcache1 + 0.7;
+
+	}
+	else if (g1c1heading == 3) {//오른쪽
+	g1c1animationcache = fmod(g1c1animationcache1, 10);
+		if (g1c1animationcache >= 0 && g1c1animationcache < 1) {
+			setObjectImage(g1c1, g1c1animationfileright[0]);
+		}
+		else  if (g1c1animationcache >= 1 && g1c1animationcache < 2) {
+			setObjectImage(g1c1, g1c1animationfileright[1]);
+		}
+		else  if (g1c1animationcache >= 2 && g1c1animationcache < 3) {
+			setObjectImage(g1c1, g1c1animationfileright[2]);
+		}
+		else  if (g1c1animationcache >= 3 && g1c1animationcache < 4) {
+			setObjectImage(g1c1, g1c1animationfileright[3]);
+		}
+		else  if (g1c1animationcache >= 4 && g1c1animationcache < 5) {
+			setObjectImage(g1c1, g1c1animationfileright[4]);
+		}
+		else  if (g1c1animationcache >= 5 && g1c1animationcache < 6) {
+			setObjectImage(g1c1, g1c1animationfileright[5]);
+		}
+		else  if (g1c1animationcache >= 6 && g1c1animationcache < 7) {
+			setObjectImage(g1c1, g1c1animationfileright[6]);
+		}
+		else  if (g1c1animationcache >= 7 && g1c1animationcache < 8) {
+			setObjectImage(g1c1, g1c1animationfileright[7]);
+		}
+		else  if (g1c1animationcache >= 8 && g1c1animationcache < 9) {
+			setObjectImage(g1c1, g1c1animationfileright[8]);
+		}
+		else  if (g1c1animationcache >= 9 && g1c1animationcache < 10) {
+			setObjectImage(g1c1, g1c1animationfileright[9]);
+		}
+
+		g1c1animationcache1 = g1c1animationcache1 + 0.7;
+
+	}
 }
 
 void g1obj1firstposition() {// 리턴 해주어야 하나?.. i가 가로j가 세로
@@ -54,22 +212,22 @@ void g1obj1firstposition() {// 리턴 해주어야 하나?.. i가 가로j가 세로
 	for (int i = 0; i < 10; i++) {
 		obj1x[0][i] = i * 128 ;
 		obj1y[0][i] = 721; //-------------
-		g1obj1[0][i] = g1createObject("image/game1/부끄부끄/20.png", scene_g1, obj1x[0][i], obj1y[0][i], true);
+		
 	}
 	for (int j = 0; j < 6; j++) {
 		//|           |
 		//|           |
 		obj1x[j][0] = 0 - g1_obj1_size_width;
 		obj1y[j][0] = 720 - j * 120;
-		g1obj1[j][0] = g1createObject("image/game1/부끄부끄/20.png", scene_g1, obj1x[j][0], obj1y[j][0], true);
+		
 		obj1x[j][9] = 1281;
 		obj1y[j][9] = 720 - j * 120;
-		g1obj1[j][9] = g1createObject("image/game1/부끄부끄/20-2.png", scene_g1, obj1x[j][9], obj1y[j][9], true);
+		
 	}
 	for (int i = 0; i < 10; i++) {
 		obj1x[5][i] = i * 128;
 		obj1y[5][i] = 0 - g1_obj1_size_hight; //-------------
-		g1obj1[5][i] = g1createObject("image/game1/부끄부끄/20.png", scene_g1, obj1x[5][i], obj1y[5][i], true);
+		
 	}
 }
 void g1obj1_1firstposition() {
@@ -96,7 +254,7 @@ void g1obj1_1firstposition() {
 			obj1_1x[i] = 50 + 150 * g1obj1_1placernd;
 			obj1_1y[i] = 721;
 		}
-		g1obj1_1[i] = g1createObject("image/game1/부끄부끄/20.png", scene_g1, obj1_1x[i], obj1_1y[i], true);
+		
 
 	}
 }
@@ -104,12 +262,15 @@ void g1obj1_1firstposition() {
 void g1clearobj() {
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 6; j++) {
-			hideObject(g1obj1[j][i]);
+			obj1x[j][i]=1280;
+			obj1y[j][i] = 720;
 
 		}
 	}
 	for (int i = 0; i < 30; i++) {		
-			hideObject(g1obj1_1[i]);		
+		obj1_1x[i] = 1280;
+		obj1_1y[i] = 720;
+
 	}
 	
 }
@@ -166,16 +327,34 @@ void g1obj1move() {
 			else {
 				obj1x[j][i] += g1obj1moveblockx[j][i];
 				obj1y[j][i] += g1obj1moveblocky[j][i];
-				locateObject(g1obj1[j][i], scene_g1, obj1x[j][i], obj1y[j][i]);
+				
 			}
 		}
 	}
 	for (int i = 0; i < 30; i++) {
 		obj1_1x[i] += g1obj1_1moveblockx[i];
 		obj1_1y[i] += g1obj1_1moveblocky[i];
-		locateObject(g1obj1_1[i], scene_g1, obj1_1x[i], obj1_1y[i]);
+		
 	}
 	
+}
+
+void g1obj1locate() {
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 6; j++) {
+			if (obj1x[j][i] == 0 && obj1y[j][i] == 0) {//pass
+			}
+			else {
+				
+				locateObject(g1obj1[j][i], scene_g1, obj1x[j][i], obj1y[j][i]);
+			}
+		}
+	}
+	for (int i = 0; i < 30; i++) {
+		
+		locateObject(g1obj1_1[i], scene_g1, obj1_1x[i], obj1_1y[i]);
+	}
+
 }
 
 void score(){
@@ -183,7 +362,7 @@ void score(){
 	double g1result;
 	g1result = getTimer(g1score);
 	char buf[256];
-	sprintf_s(buf, "버틴시간 : %0.2f초", (100-g1result), scene_g1);
+	sprintf_s(buf, "버틴시간 : %0.2f초", (9999-g1result), scene_g1);
 	showMessage(buf);
 }
 
@@ -193,28 +372,49 @@ void g1death() {
 			if ((g1c1x < (obj1x[j][i] + g1_obj1_size_width)) && (g1c1x + g1_character_size_x > obj1x[j][i]) && (g1c1y < (obj1y[j][i] + g1_obj1_size_hight)) && (g1c1y + g1_character_size_y > obj1y[j][i])) {
 				stopTimer(g1timer1);
 				stopTimer(g1c1move);
+				stopTimer(g1difficult);
 				showMessage("end");
 				score();
 			}
 			else if (g1c1x < 0- g1_character_size_x+1 || g1c1x > 1280 || g1c1y < 0- g1_character_size_y +1|| g1c1y > 720) {
 				stopTimer(g1timer1);
 				stopTimer(g1c1move);
+				stopTimer(g1difficult);
 				showMessage("out of bounds");
 			}
 		}
 	}
-	for (int i = 0; i < 30; i++) {
+	for (int i = 0; i < g1difficulty; i++) {
 
 		if ((g1c1x < (obj1_1x[i] + 10)) && (g1c1x + g1_character_size_x > obj1_1x[i]) && (g1c1y < (obj1_1y[i] + 10)) && (g1c1y + g1_character_size_y > obj1_1y[i])) {
 			stopTimer(g1timer1);
 			stopTimer(g1c1move);
-			showMessage("end");
+			stopTimer(g1difficult);
+			showMessage("end1");
 			score();
 		}
 	}
 }
 	
+void g1update() {
+	g1obj1movepinpoint();
+	g1obj1move();
+	g1obj1locate();
+	//g1death();
+}
 
+void g1restart() {
+	g1c1x = 540, g1c1y = 360;
+	locateObject(g1c1, scene_g1, g1c1x, g1c1y);
+
+	g1obj1firstposition();
+	g1obj1_1firstposition();
+
+	g1obj1locate();
+	startTimer(g1c1move);
+	startTimer(g1timer1);
+	startTimer(g1difficult);
+}
 
 
 //g1difficulty++;
@@ -228,52 +428,48 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			startTimer(g1c1move);
 			//g1objmovepinpoint();
 			startTimer(g1timer1);
+			setTimer(g1difficult, 1.0f);
+			startTimer(g1difficult);
 
 
 
-
-			setTimer(g1score, 100);
+			setTimer(g1score, 9999);
 			showTimer(g1score);
 			startTimer(g1score);
-
+			
 
 		}
 		else if (object == g1restartbutton) {
-			g1c1x = 540, g1c1y = 360;
-			locateObject(g1c1, scene_g1, g1c1x, g1c1y);
+			
 
-			g1clearobj();
-			g1obj1firstposition();
-			g1obj1_1firstposition();
-			g1difficulty = 0;
-			startTimer(g1c1move);
+			g1restart();
 
-			startTimer(g1timer1);
-
-
-
-			setTimer(g1score, 100);
+			setTimer(g1score, 9999);
 			showTimer(g1score);
 			startTimer(g1score);
+			startTimer(g1difficult);
 		}
 	}
 		
 
 void Game1_timerCallback(TimerID timer) {// 크리에이트 타이머!!!!!!!!!!!
 	if (timer == g1timer1) {//장애물움직이는거 전용
+		
 		setTimer(g1timer1, 0.01f);
 		startTimer(g1timer1);
-		g1obj1movepinpoint();
-		g1obj1move();
-		g1death();
+		g1update();
+		
+		
 		
 
 	}
 	if (timer == g1c1move) {//캐릭터움직이는거 전용
 		g1c1x += g1dx; g1c1y += g1dy;
+		g1c1animation();
 		locateObject(g1c1, scene_g1, g1c1x, g1c1y);
 		setTimer(g1c1move, 0.01f);
 		startTimer(g1c1move);
+		
 	}
 	if (timer == g1levelupgrade) {//캐릭터움직이는거 전용		
 		startTimer(g1levelupgrade);
@@ -281,10 +477,16 @@ void Game1_timerCallback(TimerID timer) {// 크리에이트 타이머!!!!!!!!!!!
 	if (timer == g1score) {
 		
 	}
+	if (timer == g1difficult) {
+		g1obj1_1[g1difficulty] = g1createObject("image/game1/부끄부끄/20-1.png", scene_g1, obj1_1x[g1difficulty], obj1_1y[g1difficulty], true);
+		g1difficulty++;
+		setTimer(g1difficult, g1difficulty*2);
+		startTimer(g1difficult);
+	}
 }
 void Game1_soundCallback(SoundID sound) {
 	if (sound == theme) {
-
+		
 	}
 
 }
@@ -292,17 +494,19 @@ void Game1_keyboardCallback(KeyCode code, KeyState state)
 {
 	if (code == 84) {			// UP
 		g1dy += (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
+		g1c1heading = 1;
 	}
 	else if (code == 85) {		// DOWN
 		g1dy -= (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
+		g1c1heading = 0;
 	}
 	else if (code == 83) {		// RIGHT
 		g1dx += (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
-		setObjectImage(g1c1, "image/game1/마리오오른쪽/마리오 애니메이션1.png");
+		g1c1heading = 3;
 	}
 	else if (code == 82) {		// LEFT
 		g1dx -= (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
-		setObjectImage(g1c1, "image/game1/마리오왼쪽/마리오 애니메이션1.png");
+		g1c1heading = 2;
 	}
 }
 
@@ -324,11 +528,17 @@ void Game1_main() {
 	g1startbutton = g1createObject("image/game1/확인.png", scene_g1, 500, 110, true);
 	g1restartbutton = g1createObject("image/game1/다시시작.png", scene_g1, 600, 500, true);
 
-
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 6; j++) {
+			g1obj1[j][i] = g1createObject("image/game1/부끄부끄/20.png", scene_g1, obj1x[j][i], obj1y[j][i], true);
+		}
+	}
+	
 	
 	
 	g1timer1 = createTimer(0.01f);
 	g1c1move = createTimer(0.01f);
 	g1score = createTimer(100);
+	g1difficult = createTimer(4.f);
 	
 }
