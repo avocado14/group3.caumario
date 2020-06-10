@@ -4,17 +4,17 @@
 #include <time.h>
 
 SceneID scene1_g2, scene2_g2;
-ObjectID startbutton, restartbutton, endbutton, heart1, heart2, heart3, hiteffect, damaged;
+ObjectID startbutton_g2, restartbutton_g2, endbutton_g2, heart1_g2, heart2_g2, heart3_g2, hiteffect_g2, damaged_g2;
 ObjectID target[20] = { 0, };
-TimerID timer1, hitting, damageTime;
-SoundID bgm;
+TimerID appear, hitting, damageTime_g2;
+SoundID bgm_g2;
 int arrX[20] = { 0, }, arrY[20] = { 0, };
-int count = 0, clear = 0, life = 3, targetNum = 4, round = 0;
-char info[50] = { 0, };
-float duration = 1.0f;
+int count_g2 = 0, clear_g2 = 0, life_g2 = 3, targetNum = 4, round = 0;
+char info_g2[50] = { 0, };
+float duration_g2 = 1.0f;
 bool lock = false;
 
-ObjectID createObject(const char* image, SceneID scene, int x, int y, bool shown) {
+ObjectID createObject_g2(const char* image, SceneID scene, int x, int y, bool shown) {
 
 	ObjectID object = createObject(image);
 
@@ -27,7 +27,7 @@ ObjectID createObject(const char* image, SceneID scene, int x, int y, bool shown
 	return object;
 }
 
-void locationMaker(int num) {		// 표적 위치 저장할 정수 배열 만들기 (표적 개수 입력)
+void locationMaker_g2(int num) {		// 표적 위치 저장할 정수 배열 만들기 (표적 개수 입력)
 
 	int i, x, y, temp;
 
@@ -49,65 +49,65 @@ void locationMaker(int num) {		// 표적 위치 저장할 정수 배열 만들기 (표적 개수 �
 		arrX[i] = 100 + x;
 		arrY[i] = 100 + y;
 
-		target[i] = createObject("image/game2/target.png", scene2_g2, arrX[i], arrY[i], false);
+		target[i] = createObject_g2("images/target.png", scene2_g2, arrX[i], arrY[i], false);
 	}
 }
 
-void clearing() {
+void clearing_g2() {
 
 	for (int i = 0; i < 20; i++) target[i] = 0;
 	for (int i = 0; i < 20; i++) arrX[i] = 0;
 	for (int i = 0; i < 20; i++) arrY[i] = 0;
 
-	clear = 0;
-	count = 0;
+	clear_g2 = 0;
+	count_g2 = 0;
 
-	locationMaker(targetNum);
-	setTimer(timer1, duration);
-	startTimer(timer1);
+	locationMaker_g2(targetNum);
+	setTimer(appear, duration_g2);
+	startTimer(appear);
 }
 
-void ending() {		// 게임 종료
+void ending_g2() {		// 게임 종료
 
 	for (int j = 0; j < targetNum; j++) {	// 다 쓴 타켓 치우기
 		hideObject(target[j]);
 	}
 
-	sprintf_s(info, "라운드 수 : %d", round);
-	showMessage(info);
+	sprintf_s(info_g2, "라운드 수 : %d", round);
+	showMessage(info_g2);
 
-	showObject(restartbutton);
-	showObject(endbutton);
+	showObject(restartbutton_g2);
+	showObject(endbutton_g2);
 
 }
 
-void minusHeart() {			// 오답 시 목숨 감소
-	life--;
-	if (life == 2) hideObject(heart3);
-	else if (life == 1) hideObject(heart2);
-	else if (life == 0) {
-		hideObject(heart1);
-		ending();
+void minusHeart_g2() {			// 오답 시 목숨 감소
+	life_g2--;
+	if (life_g2 == 2) hideObject(heart3_g2);
+	else if (life_g2 == 1) hideObject(heart2_g2);
+	else if (life_g2 == 0) {
+		hideObject(heart1_g2);
+		ending_g2();
 	}
 }
 
-void judge(ObjectID object, int i) {
+void judge_g2(ObjectID object, int i) {
 
 	if (object == target[i]) {
 
-		if (clear == i) {
+		if (clear_g2 == i) {
 
 			hideObject(target[i]);
 
-			clear++;
+			clear_g2++;
 
-			locateObject(hiteffect, scene2_g2, arrX[i], arrY[i]);
-			showObject(hiteffect);
+			locateObject(hiteffect_g2, scene2_g2, arrX[i], arrY[i]);
+			showObject(hiteffect_g2);
 
 			setTimer(hitting, 0.5f);
 			startTimer(hitting);
 
-			if (clear == targetNum) {		// 스테이지마다 난이도 상승 조건들
+			if (clear_g2 == targetNum) {		// 스테이지마다 난이도 상승 조건들
 
 				for (int j = 0; j < targetNum; j++) {	// 다 쓴 타켓 치우기
 					hideObject(target[j]);
@@ -117,23 +117,23 @@ void judge(ObjectID object, int i) {
 					targetNum++;
 				}
 
-				if (duration > 0.5f) {	// 타겟 등장 주기 감소 (최소 0.5초)
-					duration -= 0.05f;
+				if (duration_g2 > 0.5f) {	// 타겟 등장 주기 감소 (최소 0.5초)
+					duration_g2 -= 0.05f;
 				}
 
 				round++;
 
-				clearing();
+				clearing_g2();
 			}
 		}
 
 		else {
 
-			showObject(damaged);
-			setTimer(damageTime, 0.2f);
-			startTimer(damageTime);
+			showObject(damaged_g2);
+			setTimer(damageTime_g2, 0.2f);
+			startTimer(damageTime_g2);
 
-			minusHeart();
+			minusHeart_g2();
 		}
 	}
 }
@@ -145,32 +145,32 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		return;
 	}
 	
-	if (object == startbutton) {
+	if (object == startbutton_g2) {
 
 		enterScene(scene2_g2);
 
-		locationMaker(targetNum);
-		setTimer(timer1, duration);
-		startTimer(timer1);
+		locationMaker_g2(targetNum);
+		setTimer(appear, duration_g2);
+		startTimer(appear);
 
-		playSound(bgm, true);
+		playSound(bgm_g2, true);
 	}
 
-	else if (object == restartbutton) {
+	else if (object == restartbutton_g2) {
 
-		hideObject(restartbutton);
-		hideObject(endbutton);
+		hideObject(restartbutton_g2);
+		hideObject(endbutton_g2);
 
-		clearing();
+		clearing_g2();
 	}
 
-	else if (object == endbutton) {
+	else if (object == endbutton_g2) {
 
 		endGame();
 	}
 	else {											// 무슨 타켓을 클릭했는지 검사
 		for (int i = 0; i < targetNum; i++) {
-			judge(object, i);
+			judge_g2(object, i);
 		}
 	}
 
@@ -178,53 +178,56 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 void Game2_timerCallback(TimerID timer) {
 
-	if (timer == timer1) {
+	if (timer == appear) {
 	
-		showObject(target[count]);
+		showObject(target[count_g2]);
 
-		count++;
+		count_g2++;
 		lock = true;
 
-		if (count != targetNum) {
-			setTimer(timer1, duration);
-			startTimer(timer1);
+		if (count_g2 != targetNum) {
+			setTimer(appear, duration_g2);
+			startTimer(appear);
 		}
 		else lock = false;
 	}
 
 	if (timer == hitting) {
-		hideObject(hiteffect);
+		hideObject(hiteffect_g2);
 	}
 
-	if (timer == damageTime) {
-		hideObject(damaged);
+	if (timer == damageTime_g2) {
+		hideObject(damaged_g2);
 	}
 
 }
 void Game2_main() {
 
+	setMouseCallback(Game2_mouseCallback);
+	setTimerCallback(Game2_timerCallback);
+
 	scene1_g2 = createScene("준비 화면", "image/game2/배경.png");
 	scene2_g2 = createScene("메모리 슈팅", "image/game2/배경1.png");
 
-	startbutton = createObject("image/game2/시작.png", scene1_g2, 610, 70, true);
-	restartbutton = createObject("image/game2/다시시작.png", scene2_g2, 610, 400, false);
-	endbutton = createObject("image/game2/확인.png", scene2_g2, 610, 350, false);
+	startbutton_g2 = createObject_g2("image/game2/시작.png", scene1_g2, 610, 70, true);
+	restartbutton_g2 = createObject_g2("image/game2/다시시작.png", scene2_g2, 610, 400, false);
+	endbutton_g2 = createObject_g2("image/game2/확인.png", scene2_g2, 610, 350, false);
 
-	hiteffect = createObject("image/game2/hit.png", scene2_g2, 610, 400, false);
-	damaged = createObject("image/game2/damage.png", scene2_g2, 0, 0, false);
+	hiteffect_g2 = createObject_g2("images/game2/hit.png", scene2_g2, 610, 400, false);
+	damaged_g2 = createObject_g2("images/game2/damage.png", scene2_g2, 0, 0, false);
 
-	heart1 = createObject("image/game2/heart.png", scene2_g2, 830, 650, true);
-	scaleObject(heart1, 0.05f);
-	heart2 = createObject("image/game2/heart.png", scene2_g2, 900, 650, true);
-	scaleObject(heart2, 0.05f);
-	heart3 = createObject("image/game2/heart.png", scene2_g2, 970, 650, true);
-	scaleObject(heart3, 0.05f);
+	heart1_g2 = createObject_g2("image/game2/heart.png", scene2_g2, 830, 650, true);
+	scaleObject(heart1_g2, 0.05f);
+	heart2_g2 = createObject_g2("image/game2/heart.png", scene2_g2, 900, 650, true);
+	scaleObject(heart2_g2, 0.05f);
+	heart3_g2 = createObject_g2("image/game2/heart.png", scene2_g2, 970, 650, true);
+	scaleObject(heart3_g2, 0.05f);
 
-	bgm = createSound("image/game2/bgm.wav");
+	bgm_g2 = createSound("image/game2/bgm.wav");
 
-	timer1 = createTimer(duration);
+	appear = createTimer(duration_g2);
 	hitting = createTimer(0.5f);
-	damageTime = createTimer(0.2f);
+	damageTime_g2 = createTimer(0.2f);
 
 	
 }
