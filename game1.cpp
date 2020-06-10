@@ -400,7 +400,7 @@ void g1update() {
 	g1obj1movepinpoint();
 	g1obj1move();
 	g1obj1locate();
-	//g1death();
+	g1death();
 }
 
 void g1restart() {
