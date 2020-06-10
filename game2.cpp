@@ -203,9 +203,6 @@ void Game2_timerCallback(TimerID timer) {
 }
 void Game2_main() {
 
-	setMouseCallback(Game2_mouseCallback);
-	setTimerCallback(Game2_timerCallback);
-
 	scene1_g2 = createScene("game2 info", "image/game2/배경.png");
 	scene2_g2 = createScene("game2", "image/game2/배경1.png");
 

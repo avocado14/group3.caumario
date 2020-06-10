@@ -3,34 +3,76 @@
 #include <stdlib.h>
 
 #define PLAYER_SPEED				20
-#define fire_SPEED				    20
+#define FIRE_SPEED				    25
+#define KOOPA_FIRE_SPEED            15
+#define KFIRE_COOLTIME              5.0f
+#define KBALL_COOLTIME              5.0f
+#define KRAIN_COOLTIME              30.0f
 #define PLAYER_ANIMATION_TIME		0.05f
+#define GAP                         20
 
 SceneID scene_g5;
 ObjectID player_g5, koopa;
 ObjectID attackButton, startButton_g5;
 ObjectID fire1[4], fire2[4];
+ObjectID koopaFire1, koopaFire2, koopaFire1Ball;
 ObjectID HPbar, HPbarLine, HPbarBlank, HPright;
-TimerID playTimer_g5, jumpTimer_g5, fire1MoveTimer, fire2MoveTimer, koopaDamageTimer;
+ObjectID playerHP[3], playerFrame, koopaFrame;
+TimerID playTimer_g5, jumpTimer_g5, koopaJumpTimer, fire1MoveTimer, fire2MoveTimer, koopaDamageTimer, deadCheckTimer;
+TimerID kFireMoveTimer1, kFireMoveTimer2, kBallMoveTimer;
+TimerID kFireCoolTimer1, kFireCoolTimer2, kBallCoolTimer, koopaJumpCoolTimer;
+SoundID bgm_g5;
 
 int dx_g5 = 0, dy_g5 = 0;
+bool isJumping = false;
 
 float playerSize_g5 = 100;
-float koopaSizeX = 180, koopaSizeY = 240;
+float koopaSizeX = 230, koopaSizeY = 300;
 float fireSize = 45;
 
-int playerX_g5 = 100, playerY_g5 = 150, playerBottom = playerY_g5, playerTop = 500, gravity_g5 = 25;
+int playerX_g5 = 100, playerY_g5 = 150, playerBottom = playerY_g5, playerTop = 450, gravity_g5 = 25, koopaTop = 500;
+int playerLife = 3;
+bool playerDead = false;
 bool isRising_g5, isLanded = true;
 
-int koopaX = 800, koopaY = 200;
+int koopaX = 950, koopaY = 200;
 int koopaCount = 0;
 int koopaHP = 500;
 
+//마리오 불 공격
 int fire1X[4], fire1Y, fire2X[4], fire2Y;
 int fire1Num = 0, fire2Num = 0;
 bool attacking1 = false, attacking2 = false;
 
+//쿠파 불 공격
+int kFire1X, kFire1Y;
+int kFire2X, kFire2Y;
+int kBallX, kBallY;
+float kFireSizeX = 100, kFireSizeY = 50;
+float kBallSize = 70;
+bool kBallisRising;
+bool koopaisRising, koopaisLanded;
+bool playerDamaged[3] = { 0,0,0 };
+
+
 extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size);
+
+void endGame5() {
+
+    stopTimer(playTimer_g5);
+    stopTimer(kFireCoolTimer1);
+    stopTimer(kFireCoolTimer2);
+    stopTimer(kBallCoolTimer);
+    stopTimer(koopaJumpCoolTimer);
+    stopTimer(jumpTimer_g5);
+    stopTimer(fire1MoveTimer);
+    stopTimer(fire2MoveTimer);
+    stopTimer(kFireMoveTimer1);
+    stopTimer(kFireMoveTimer2);
+    stopTimer(kBallMoveTimer);
+    stopTimer(koopaDamageTimer);
+    stopTimer(deadCheckTimer);
+}
 
 void jump_g5() {
 
@@ -56,6 +98,7 @@ void jump_g5() {
         if (playerY_g5 < playerBottom) {    //착지 끝나면
             playerY_g5 += gravity_g5;
             isLanded = true;
+            stopTimer(jumpTimer_g5);
         }
 
         locateObject(playerX_g5, scene_g5, playerX_g5, playerY_g5);
@@ -64,9 +107,43 @@ void jump_g5() {
             setTimer(jumpTimer_g5, 0.01f);
             startTimer(jumpTimer_g5);
         }
+    }
+}
 
+void koopaJump() {
+
+    if (koopaisRising)    //상승
+    {
+        koopaY += gravity_g5;
+
+        if (koopaY > koopaTop) {     //상승 끝나면 -> else
+            koopaY -= gravity_g5;
+            koopaisRising = false;
+        }
+
+        locateObject(koopa, scene_g5, koopaX, koopaY);
+
+        setTimer(koopaJumpTimer, 0.01f);
+        startTimer(koopaJumpTimer);
     }
 
+    else  //착지
+    {
+        koopaY -= gravity_g5;
+
+        if (koopaY < playerBottom) {    //착지 끝나면
+            koopaY += gravity_g5;
+            koopaisLanded = true;
+            stopTimer(koopaJumpTimer);
+        }
+
+        locateObject(koopa, scene_g5, koopaX, koopaY);
+
+        if (koopaisLanded == false) {        //착지 전까지는 타이머 계속
+            setTimer(koopaJumpTimer, 0.01f);
+            startTimer(koopaJumpTimer);
+        }
+    }
 }
 
 void attack1() {
@@ -115,22 +192,68 @@ void koopaDamage() {
 
     if (koopaHP == 0) {
         showMessage("클리어");
+        endGame5();
         hideObject(koopa);
-        stopTimer(playTimer_g5);
     }
 
+}
+
+//플레이어 향해서 불 발사
+void koopaFire1Attack() {
+
+    kFire1X = koopaX;
+    kFire1Y = playerY_g5;
+
+    locateObject(koopaFire1, scene_g5, kFire1X, kFire1Y);
+    showObject(koopaFire1);
+
+    startTimer(kFireMoveTimer1);
 
 }
+
+void koopaFire2Attack() {
+
+    kFire2X = koopaX;
+    kFire2Y = playerY_g5;
+
+    locateObject(koopaFire2, scene_g5, kFire2X, kFire2Y);
+    showObject(koopaFire2);
+
+    startTimer(kFireMoveTimer2);
+
+}
+
+//튕기는 불공 바닥으로 던지기
+void koopaBallAttack() {
+    
+    kBallX = koopaX;
+    kBallY = koopaY + 200;
+
+    locateObject(koopaFire1Ball, scene_g5, kBallX, kBallY);
+    showObject(koopaFire1Ball);
+
+    startTimer(kBallMoveTimer);
+
+}
+
+
 
 void Game5_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
    if (object == startButton_g5) {
         startTimer(playTimer_g5);
         hideObject(startButton_g5);
+        startTimer(kFireCoolTimer1);
+        startTimer(kFireCoolTimer2);
+        startTimer(kBallCoolTimer);
+        startTimer(koopaJumpCoolTimer);
+        startTimer(deadCheckTimer);
     }
 
     else if (object == attackButton) {
-        if (attacking1 == false) {
+       
+       
+       if (attacking1 == false) {
             attack1();
             attacking1 = true;
         }
@@ -145,10 +268,38 @@ void Game5_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 void Game5_timerCallback(TimerID timer) {
 
+    if (timer == deadCheckTimer) {
+        
+        for (int i = 0; i < 3; i++) {
+            if (playerDamaged[i] == true) {
+                playerLife--;
+                playerDamaged[i] = false;
+            }
+        }
+
+
+        if (playerLife >= 0) {
+            for (int i = playerLife; i < 3; i++) {
+                hideObject(playerHP[i]);
+            }
+        }
+
+        if (playerLife <= 0) {
+            
+            for (int i = 0; i < 3; i++) {
+                hideObject(playerHP[i]);
+            }
+
+            showMessage("게임오버");
+            endGame5();
+            return;
+        }
+        setTimer(deadCheckTimer, 0.1f);
+        startTimer(deadCheckTimer);
+    }
+    
     if (timer == jumpTimer_g5) {
         jump_g5();
-        setTimer(jumpTimer_g5, 0.01f);
-        startTimer(jumpTimer_g5);
     }
 
     if (timer == playTimer_g5) {
@@ -158,14 +309,20 @@ void Game5_timerCallback(TimerID timer) {
             playerX_g5 += dx_g5; playerY_g5 += dy_g5;
             locateObject(player_g5, scene_g5, playerX_g5, playerY_g5);
 
-            if (koopaX - playerX_g5 <= playerSize_g5 && koopaX - playerX_g5 >= -koopaSizeX &&		//플레이어가 쿠파랑 x축 부딪히고
-                koopaY - playerY_g5 <= playerSize_g5 && koopaY - playerY_g5 >= -koopaSizeY) {       //y축도 부딪히면
-            }
-
         }
 
-        setTimer(timer, PLAYER_ANIMATION_TIME);
-        startTimer(timer);
+        if (isJumping == true) {
+            
+            if (isLanded == true) {//바닥에 있을 때만 점프
+                isRising_g5 = true;
+                isLanded = false;
+                startTimer(jumpTimer_g5);
+            }
+        }
+
+         setTimer(timer, PLAYER_ANIMATION_TIME);
+         startTimer(timer);
+        
     }
 
     if (timer == fire1MoveTimer) {
@@ -183,7 +340,7 @@ void Game5_timerCallback(TimerID timer) {
 
         //불 이동
         for (int i = 0; i < 4; i++) {
-            fire1X[i] += fire_SPEED;
+            fire1X[i] += FIRE_SPEED;
             locateObject(fire1[i], scene_g5, fire1X[i], fire1Y);
         }
 
@@ -228,7 +385,7 @@ void Game5_timerCallback(TimerID timer) {
 
         
         for (int i = 0; i < 4; i++) {      
-            fire2X[i] += fire_SPEED;
+            fire2X[i] += FIRE_SPEED;
             locateObject(fire2[i], scene_g5, fire2X[i], fire2Y);
         }
 
@@ -271,6 +428,120 @@ void Game5_timerCallback(TimerID timer) {
             startTimer(koopaDamageTimer);
         }
     }
+
+    if (timer == kFireMoveTimer1) {
+
+        kFire1X -= KOOPA_FIRE_SPEED;
+        locateObject(koopaFire1, scene_g5, kFire1X, kFire1Y);
+
+        if (kFire1X < 10)        //화면 밖으로 나가면 사라짐
+            hideObject(koopaFire1);
+
+        else if (kFire1X >= playerX_g5 - kFireSizeX + GAP && kFire1X <= playerX_g5 + playerSize_g5 - GAP &&
+                 kFire1Y >= playerY_g5 - kFireSizeY + GAP && kFire1Y <= playerY_g5 + playerSize_g5 - GAP) {     //마리오랑 부딪히면
+
+            playerDamaged[0] = true;
+
+            hideObject(koopaFire1);
+        }
+
+        else {
+            setTimer(kFireMoveTimer1, 0.05f);
+            startTimer(kFireMoveTimer1);
+        }
+
+    }
+
+    if (timer == kFireMoveTimer2) {
+
+        kFire2X -= KOOPA_FIRE_SPEED + 10;
+        locateObject(koopaFire2, scene_g5, kFire2X, kFire2Y);
+
+        if (kFire2X < 10)        //화면 밖으로 나가면 사라짐
+            hideObject(koopaFire2);
+
+        else if (kFire2X >= playerX_g5 - kFireSizeX + GAP && kFire2X <= playerX_g5 + playerSize_g5 - GAP &&
+                 kFire2Y >= playerY_g5 - kFireSizeY + GAP && kFire2Y <= playerY_g5 + playerSize_g5 - GAP) {     //마리오랑 부딪히면
+
+            playerDamaged[1] = true;
+
+            hideObject(koopaFire2);
+
+       }
+
+        else {
+            setTimer(kFireMoveTimer2, 0.05f);
+            startTimer(kFireMoveTimer2);
+        }
+
+    }
+
+    if (timer == kBallMoveTimer) {
+
+        kBallX -= KOOPA_FIRE_SPEED + 5;
+
+        if (kBallisRising == false)
+            kBallY -= KOOPA_FIRE_SPEED - 5;
+
+        else
+            kBallY += KOOPA_FIRE_SPEED - 5;
+
+        if (kBallY <= playerBottom)         //바닥에 닿으면 위로 튕기기
+            kBallisRising = true;
+
+        locateObject(koopaFire1Ball, scene_g5, kBallX, kBallY);
+
+        if (kBallX < 10 || kBallY > 600)        //화면 밖으로 나가면 사라짐
+            hideObject(koopaFire1Ball);
+
+        else if (kBallX >= playerX_g5 - kBallSize + GAP && kBallX <= playerX_g5 + playerSize_g5 - GAP &&
+                 kBallY >= playerY_g5 - kBallSize + GAP && kBallY <= playerY_g5 + playerSize_g5 - GAP) {     //마리오랑 부딪히면
+
+            playerDamaged[2] = true;
+
+            hideObject(koopaFire1Ball);
+        }
+
+        else {
+            setTimer(kBallMoveTimer, 0.05f);
+            startTimer(kBallMoveTimer);
+        }
+    }
+
+    if (timer == koopaJumpTimer) {
+        koopaJump();
+    }
+
+    if (timer == koopaJumpCoolTimer) {
+        koopaisRising = true;
+        koopaisLanded = false;
+        setTimer(koopaJumpTimer, 0.01f);
+        startTimer(koopaJumpTimer);
+        setTimer(koopaJumpCoolTimer, 4.0f);
+        startTimer(koopaJumpCoolTimer);
+    }
+
+    if (timer == kFireCoolTimer1) {
+        koopaFire1Attack();
+        setTimer(kFireCoolTimer1, KFIRE_COOLTIME);
+        startTimer(kFireCoolTimer1);
+    
+    }
+
+    if (timer == kFireCoolTimer2) {
+        koopaFire2Attack();
+        setTimer(kFireCoolTimer2, KFIRE_COOLTIME);
+        startTimer(kFireCoolTimer2);
+
+    }
+
+    if (timer == kBallCoolTimer) {
+        kBallisRising = false;
+        koopaBallAttack();
+        setTimer(kBallCoolTimer, KBALL_COOLTIME);
+        startTimer(kBallCoolTimer);
+    }
+ 
 }
 
 void Game5_keyboardCallback(KeyCode code, KeyState state) {
@@ -283,12 +554,7 @@ void Game5_keyboardCallback(KeyCode code, KeyState state) {
     }
 
     if (code == 23) {			// Jump
-        if (isLanded == true) {//바닥에 있을 때만 점프
-            isRising_g5 = true;
-            isLanded = false;
-            startTimer(jumpTimer_g5);
-        }
-
+        isJumping += (state == KeyState::KEYBOARD_PRESSED ? 1 : -1);
     }
 }
 
@@ -296,16 +562,14 @@ void Game5_keyboardCallback(KeyCode code, KeyState state) {
 
 void Game5_soundCallback(SoundID sound) {
 
-
-
+    if (sound == bgm_g5)
+        playSound(bgm_g5);
 }
-
-
 
 
 void Game5_main() {
 
-	scene_g5 = createScene("쿠파 성", "image/game5/배경.png");
+	scene_g5 = createScene("쿠파 성", "image/game5/쿠파성배경.png");
 
     startButton_g5 = createObject("image/game5/게임시작.png", scene_g5, 500, 100, true, 1.0f);
     attackButton = createObject("image/game5/공격.png", scene_g5, 300, 100, true, 1.0f);
@@ -315,8 +579,19 @@ void Game5_main() {
     HPright = createObject("image/game5/체력바배경.png", scene_g5, 1140, 640, true, 1.0f);
     HPbarLine = createObject("image/game5/체력바테두리.png", scene_g5, 640, 640, true, 1.0f);
 
+    playerFrame = createObject("image/game5/마리오그림.png", scene_g5, 240, 640, true, 1.3f);
+    koopaFrame = createObject("image/game5/쿠파그림.png", scene_g5, 560, 640, true, 1.3f);
+
+    for (int i = 0; i < 3; i++) {
+        playerHP[i] = createObject("image/game5/하트.png", scene_g5, 320 + 55 * i, 640, true, 1.0f);
+    }
+
 	player_g5 = createObject("image/game5/마리오.png", scene_g5, playerX_g5, playerBottom, true, 1.0f);
 	koopa = createObject("image/game5/쿠파.png", scene_g5, koopaX, koopaY, true, 1.0f);
+
+    koopaFire1 = createObject("image/game5/쿠파불.png", scene_g5, 1, 1, false, 1.0f);
+    koopaFire2 = createObject("image/game5/쿠파불.png", scene_g5, 1, 1, false, 1.0f);
+    koopaFire1Ball = createObject("image/game5/쿠파불공.png", scene_g5, 1, 1, false, 1.0f);
 
     char path_g5[256];
 
@@ -331,6 +606,17 @@ void Game5_main() {
     fire1MoveTimer = createTimer(0.05f);
     fire2MoveTimer = createTimer(0.05f);
     koopaDamageTimer = createTimer(0.05f);
+    deadCheckTimer = createTimer(0.1f);
 
+    koopaJumpTimer = createTimer(0.01f);
+    kFireMoveTimer1 = createTimer(0.05f);
+    kFireMoveTimer2 = createTimer(0.05f);
+    kBallMoveTimer = createTimer(0.05f);
 
+    koopaJumpCoolTimer = createTimer(4.0f);
+    kFireCoolTimer1 = createTimer(2.0f);
+    kFireCoolTimer2 = createTimer(2.0f + KFIRE_COOLTIME / 2);
+    kBallCoolTimer = createTimer(3.0f);
+
+    bgm_g5 = createSound("image/game5/쿠파성브금.mp3");
 }

@@ -311,7 +311,7 @@ void Game3_timerCallback(TimerID timer) {
 	}
 }
 
-int Game3_main() {
+void Game3_main() {
 
 	scene1_g3 = createScene("game3 info", "image/game3/cover.png");
 	scene2_g3 = createScene("game3", "image/game3/cover2.png");
