@@ -13,13 +13,14 @@
 #define GAP							10
 
 extern SceneID scene_g62, titleScene;
+extern SoundID buttonClickSound, gameOverSound;
 SceneID scene_g6;
 ObjectID startButton_g6, restartButton_g6, goMapButton_g6;
 ObjectID player_g6;
 ObjectID monster[MONSTER_NUMBER];
 ObjectID countDown;
 TimerID countDownTimer, playTimer_g6, monsterTimer_g6, growUpTimer_g6;
-SoundID bgm_g6, countDownSound_g6, catchSound1_g6, catchSound2_g6, gameOverSound_g6, gameClearSound_g6, growUpSound_g6, buttonSound_g6;
+SoundID bgm_g6, countDownSound_g6, catchSound1_g6, catchSound2_g6, growUpSound_g6, gameClearSound_g6;
 
 int nowGame6Stage = 1;
 int playerX_g6 = 600, playerY_g6 = 350;
@@ -100,7 +101,7 @@ void gameClear_g6() {
 
 void gameOver_g6() {
 
-	playSound(gameOverSound_g6);
+	playSound(gameOverSound);
 
 	hideObject(player_g6);
 	stopTimer(countDownTimer);
@@ -146,7 +147,7 @@ void Game6_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	}
 
 	else if (object == goMapButton_g6) {
-		playSound(buttonSound_g6);
+		playSound(buttonClickSound);
 		stopSound(bgm_g6);
 		enterScene(titleScene);
 	}
@@ -340,8 +341,6 @@ void Game6_main()
 	countDownSound_g6 = createSound("sounds/game6/카운트다운.mp3");
 	catchSound1_g6 = createSound("sounds/game6/정답1.mp3");
 	catchSound2_g6 = createSound("sounds/game6/정답2.mp3");
-	gameOverSound_g6 = createSound("sounds/game6/오답.wav");
-	gameClearSound_g6 = createSound("sounds/game6/스테이지클리어.mp3");
 	growUpSound_g6 = createSound("sounds/game6/파워업.wav");
-	buttonSound_g6 = createSound("sounds/공통/기본버튼클릭.wav");
+	gameClearSound_g6 = createSound("sounds/game6/스테이지클리어.mp3");
 }

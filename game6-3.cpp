@@ -19,7 +19,7 @@ ObjectID player_g63;
 ObjectID monster3[monster3_NUMBER];
 ObjectID countDown3;
 TimerID countDown3Timer, playTimer_g63, monster3Timer_g63, growUpTimer_g63;
-extern SoundID bgm_g6, countDownSound_g6, catchSound1_g6, catchSound2_g6, gameOverSound_g6, gameClearSound_g6, growUpSound_g6, buttonSound_g6;
+extern SoundID bgm_g6, countDownSound_g6, catchSound1_g6, catchSound2_g6, gameOverSound, gameClearSound, growUpSound_g6, buttonClickSound;
 
 int playerX_g63 = 600, playerY_g63 = 350;
 int setMonster3X[monster3_NUMBER] = { 200,1000,200,1000,  450,750,450,750,  130,580,1040,580 };
@@ -78,12 +78,15 @@ void restart_g63() {
 
 void gameClear_g63() {
 	
-	playSound(gameClearSound_g6);
+	stopSound(bgm_g6);
+	playSound(gameClearSound);
 
 	stopTimer(countDown3Timer);
 	stopTimer(monster3Timer_g63);
 	stopTimer(playTimer_g63);
 	stopTimer(growUpTimer_g63);
+
+	hideObject(player_g63);
 
 	showMessage("게임 클리어");
 
@@ -93,7 +96,7 @@ void gameClear_g63() {
 
 void gameOver_g63() {
 	
-	playSound(gameOverSound_g6);
+	playSound(gameOverSound);
 
 	hideObject(player_g63);			
 	stopTimer(countDown3Timer);
@@ -138,7 +141,7 @@ void Game63_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	}
 
 	else if (object == goMapButton_g63) {
-		playSound(buttonSound_g6);
+		playSound(buttonClickSound);
 		stopSound(bgm_g6);
 		enterScene(titleScene);
 	}

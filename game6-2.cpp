@@ -19,7 +19,7 @@ ObjectID player_g62;
 ObjectID monster2[monster2_NUMBER];
 ObjectID countDown2;
 TimerID countDown2Timer, playTimer_g62, monster2Timer_g62, growUpTimer_g62;
-extern SoundID bgm_g6, countDownSound_g6, catchSound1_g6, catchSound2_g6, gameOverSound_g6, gameClearSound_g6, growUpSound_g6, buttonSound_g6;
+extern SoundID bgm_g6, countDownSound_g6, catchSound1_g6, catchSound2_g6, gameOverSound, gameClearSound_g6, growUpSound_g6, buttonClickSound;
 
 extern int nowGame6Stage;
 int playerX_g62 = 100, playerY_g62 = 350;
@@ -93,7 +93,7 @@ void gameClear_g62() {
 
 void gameOver_g62() {
 
-	playSound(gameOverSound_g6);
+	playSound(gameOverSound);
 
 	hideObject(player_g62);
 	stopTimer(countDown2Timer);
@@ -138,7 +138,7 @@ void Game62_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	}
 
 	else if (object == goMapButton_g62) {
-		playSound(buttonSound_g6);
+		playSound(buttonClickSound);
 		stopSound(bgm_g6);
 		enterScene(titleScene);
 	}

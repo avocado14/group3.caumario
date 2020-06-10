@@ -47,6 +47,8 @@ extern void Game63_mouseCallback(ObjectID object, int x, int y, MouseAction acti
 extern void Game63_timerCallback(TimerID timer);
 extern void Game63_keyboardCallback(KeyCode code, KeyState state);
 
+SoundID buttonClickSound, gameClearSound, gameOverSound, gameEnterSound;
+
 
 ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size) {
 
@@ -125,6 +127,12 @@ int main() {
 	Game6_main();
 	Game62_main();
 	Game63_main();
+
+
+	buttonClickSound = createSound("sounds/공통/기본버튼클릭.wav");
+	gameClearSound = createSound("sounds/공통/게임클리어.wav");
+	gameOverSound = createSound("sounds/공통/게임오버.wav");
+	gameEnterSound = createSound("sounds/공통/게임입장.wav");
 
 
 	startGame(titleScene);
