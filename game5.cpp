@@ -26,7 +26,7 @@ SoundID bgm_g5, jumpSound_g5, playerFireSound1, playerFireSound2, koopaFireSound
 SoundID koopaDamageSound1, koopaDamageSound2, playerDamageSound;
 extern SoundID buttonClickSound, gameClearSound, gameOverSound;
 
-
+extern int nowGameSceneNum;
 int dx_g5 = 0, dy_g5 = 0;
 bool isJumping = false;
 
@@ -184,7 +184,7 @@ void jump_g5() {
             isRising_g5 = false;
         }
 
-        locateObject(playerX_g5, scene_g5, playerX_g5, playerY_g5);
+        locateObject(player_g5, scene_g5, playerX_g5, playerY_g5);
 
         setTimer(jumpTimer_g5, 0.01f);
         startTimer(jumpTimer_g5);
@@ -200,7 +200,7 @@ void jump_g5() {
             stopTimer(jumpTimer_g5);
         }
 
-        locateObject(playerX_g5, scene_g5, playerX_g5, playerY_g5);
+        locateObject(player_g5, scene_g5, playerX_g5, playerY_g5);
 
         if (isLanded == false) {        //착지 전까지는 타이머 계속
             setTimer(jumpTimer_g5, 0.01f);
@@ -692,28 +692,31 @@ void Game5_timerCallback(TimerID timer) {
 
 void Game5_keyboardCallback(KeyCode code, KeyState state) {
 
-    if (code == 83) {		// RIGHT
-        dx_g5 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
-    }
-    else if (code == 82) {		// LEFT
-        dx_g5 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
-    }
+    if (nowGameSceneNum == 5) {
 
-    if (code == 84) {			// Jump 
-        isJumping += (state == KeyState::KEYBOARD_PRESSED ? 1 : -1);
-    }
+        if (code == 83) {		// RIGHT
+            dx_g5 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+        }
+        else if (code == 82) {		// LEFT
+            dx_g5 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+        }
 
-    if (code == 75) {           // 불 발사 : 스페이스바
-        if (state == KeyState::KEYBOARD_PRESSED) {
-            
-            if (attacking1 == false) {
-                attack1();
-                attacking1 = true;
-            }
+        if (code == 84) {			// Jump 
+            isJumping += (state == KeyState::KEYBOARD_PRESSED ? 1 : -1);
+        }
 
-            else if (attacking2 == false) {
-                attack2();
-                attacking2 = true;
+        if (code == 75) {           // 불 발사 : 스페이스바
+            if (state == KeyState::KEYBOARD_PRESSED) {
+
+                if (attacking1 == false) {
+                    attack1();
+                    attacking1 = true;
+                }
+
+                else if (attacking2 == false) {
+                    attack2();
+                    attacking2 = true;
+                }
             }
         }
     }

@@ -22,6 +22,7 @@ ObjectID countDown;
 TimerID countDownTimer, playTimer_g6, monsterTimer_g6, growUpTimer_g6;
 SoundID bgm_g6, countDownSound_g6, catchSound1_g6, catchSound2_g6, growUpSound_g6, gameClearSound_g6;
 
+extern int nowGameSceneNum;
 int nowGame6Stage = 1;
 int playerX_g6 = 600, playerY_g6 = 350;
 int setMonsterX[MONSTER_NUMBER] = { 200,600,600,1000,  420,780,420,780 };
@@ -155,19 +156,21 @@ void Game6_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 void Game6_keyboardCallback(KeyCode code, KeyState state)
 {
-	if (code == 84) {			// UP
-		dy_g6 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
-	}
-	else if (code == 85) {		// DOWN
-		dy_g6 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
-	}
-	else if (code == 83) {		// RIGHT
-		dx_g6 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
-	}
-	else if (code == 82) {		// LEFT
-		dx_g6 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
-	}
+	if (nowGameSceneNum == 6) {
 
+		if (code == 84) {			// UP
+			dy_g6 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		}
+		else if (code == 85) {		// DOWN
+			dy_g6 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		}
+		else if (code == 83) {		// RIGHT
+			dx_g6 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		}
+		else if (code == 82) {		// LEFT
+			dx_g6 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		}
+	}
 }
 
 void Game6_timerCallback(TimerID timer)

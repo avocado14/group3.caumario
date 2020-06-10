@@ -17,6 +17,8 @@ ObjectID g1c1, g1obj1[6][10],g1startbutton, g1restartbutton;//[세로][가로][j][i]
 TimerID g1timer1, g1c1move,g1levelupgrade,g1score, g1difficult;
 SoundID theme;
 
+extern int nowGameSceneNum;
+
 int obj1x[6][10] = { 0 }, obj1y[6][10] = { 0 };
 int obj1speed=12;
 double g1obj1moveblockx[6][10], g1obj1moveblocky[6][10];
@@ -492,21 +494,24 @@ void Game1_soundCallback(SoundID sound) {
 }
 void Game1_keyboardCallback(KeyCode code, KeyState state)
 {
-	if (code == 84) {			// UP
-		g1dy += (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
-		g1c1heading = 1;
-	}
-	else if (code == 85) {		// DOWN
-		g1dy -= (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
-		g1c1heading = 0;
-	}
-	else if (code == 83) {		// RIGHT
-		g1dx += (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
-		g1c1heading = 3;
-	}
-	else if (code == 82) {		// LEFT
-		g1dx -= (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
-		g1c1heading = 2;
+	if (nowGameSceneNum == 1) {
+
+		if (code == 84) {			// UP
+			g1dy += (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
+			g1c1heading = 1;
+		}
+		else if (code == 85) {		// DOWN
+			g1dy -= (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
+			g1c1heading = 0;
+		}
+		else if (code == 83) {		// RIGHT
+			g1dx += (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
+			g1c1heading = 3;
+		}
+		else if (code == 82) {		// LEFT
+			g1dx -= (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
+			g1c1heading = 2;
+		}
 	}
 }
 

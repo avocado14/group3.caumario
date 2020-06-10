@@ -13,24 +13,42 @@ extern SoundID bgm_g5, bgm_g6;
 
 extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size);
 
+int nowGameSceneNum = 0;	//0은 타이틀
 extern int nowGame6Stage;
 
 void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
-	if (object == GameButton[0])
+	if (object == GameButton[0]) {
+		nowGameSceneNum = 3;
+
+		playSound(buttonClickSound);
 		enterScene(scene1_g3);
+	}
 
-	else if (object == GameButton[1])
+	else if (object == GameButton[1]) {
+		nowGameSceneNum = 4;
+
+		playSound(buttonClickSound);
 		enterScene(scene_g4);
+	}
 
-	else if (object == GameButton[2])
+	else if (object == GameButton[2]) {
+		nowGameSceneNum = 2;
+
+		playSound(buttonClickSound);
 		enterScene(scene1_g2);
+	}
 
-	else if (object == GameButton[3])
+	else if (object == GameButton[3]) {
+		nowGameSceneNum = 1;
+
+		playSound(buttonClickSound);
 		enterScene(scene_g1);
+	}
 
 	else if (object == GameButton[4]) {
-		
+		nowGameSceneNum = 6;
+	
 		switch (nowGame6Stage) {
 			case 1: 
 				enterScene(scene_g6);
@@ -42,13 +60,15 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 				enterScene(scene_g63);
 				break;
 		}
-		playSound(gameEnterSound);
+		playSound(buttonClickSound);
 		playSound(bgm_g6);
 	}
 
 	else if (object == GameButton[5]) {
+		nowGameSceneNum = 5;
+
 		enterScene(scene_g5);
-		playSound(gameEnterSound);
+		playSound(buttonClickSound);
 		playSound(bgm_g5);
 	}
 

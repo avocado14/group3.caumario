@@ -21,7 +21,7 @@ ObjectID countDown2;
 TimerID countDown2Timer, playTimer_g62, monster2Timer_g62, growUpTimer_g62;
 extern SoundID bgm_g6, countDownSound_g6, catchSound1_g6, catchSound2_g6, gameOverSound, gameClearSound_g6, growUpSound_g6, buttonClickSound;
 
-extern int nowGame6Stage;
+extern int nowGame6Stage, nowGameSceneNum;
 int playerX_g62 = 100, playerY_g62 = 350;
 int setMonster2X[monster2_NUMBER] = { 600,600,600,600,1100,1100,  350,350,350,850,850,850,  1070 };
 int setMonster2Y[monster2_NUMBER] = { 630,450,250,50,500,200,    550,350,150,550,350,150,   310 };
@@ -146,17 +146,20 @@ void Game62_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 void Game62_keyboardCallback(KeyCode code, KeyState state)
 {
-	if (code == 84) {			// UP
-		dy_g62 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
-	}
-	else if (code == 85) {		// DOWN
-		dy_g62 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
-	}
-	else if (code == 83) {		// RIGHT
-		dx_g62 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
-	}
-	else if (code == 82) {		// LEFT
-		dx_g62 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+	if (nowGameSceneNum == 6) {
+
+		if (code == 84) {			// UP
+			dy_g62 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		}
+		else if (code == 85) {		// DOWN
+			dy_g62 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		}
+		else if (code == 83) {		// RIGHT
+			dx_g62 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		}
+		else if (code == 82) {		// LEFT
+			dx_g62 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
+		}
 	}
 
 }

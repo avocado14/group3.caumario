@@ -22,7 +22,9 @@ using namespace std;
 
 #define floor_y 110
 
-
+//스페이스바 쓸 때 game5랑 코드가 충돌되길래 그 부분 방지할 수 있는 코드 추가 했습니다. 못보던 변수가 생겨서 당황하실까봐 주석 남깁니당
+//확인하시면 주석 삭제해주세용ㅎㅎ!
+extern int nowGameSceneNum;     
 
 SceneID scene_g4;
 ObjectID g4c1, g4jumpbutton,g4startbutton, g4restartbutton,g4obj1[4], g4obj2[4], g4obj3[4], g4obj4[4], g4obj5[4],g4floor1,g4floor2;
@@ -686,20 +688,22 @@ void Game4_soundCallback(SoundID sound) {
 void Game4_keyboardCallback(KeyCode code, KeyState state)
 {
     if (code == 75) {			// UP
-        //g4jumping1_1 = (state == KeyState::KEYBOARD_PRESSED ? true : false);
-        if (state == KeyState::KEYBOARD_PRESSED) {
-            if (g4jumping1_1 == false) {
-                g4jumping1_1 = true;
-            }
-            else if (g4jumping1_1 == true) {
-                if (g4jumping2_1 == false) {
-                    g4jump2_1firstpositioncache = g4c1y;
-                    stopTimer(g4timer1);
-                    startTimer(g4timer2);
-                    g4jumping2_1 = true;
+        if (nowGameSceneNum == 4) {
+            //g4jumping1_1 = (state == KeyState::KEYBOARD_PRESSED ? true : false);
+            if (state == KeyState::KEYBOARD_PRESSED) {
+                if (g4jumping1_1 == false) {
+                    g4jumping1_1 = true;
+                }
+                else if (g4jumping1_1 == true) {
+                    if (g4jumping2_1 == false) {
+                        g4jump2_1firstpositioncache = g4c1y;
+                        stopTimer(g4timer1);
+                        startTimer(g4timer2);
+                        g4jumping2_1 = true;
+                    }
                 }
             }
-        } 
+        }
     }
 }
 
