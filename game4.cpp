@@ -20,6 +20,7 @@ using namespace std;
 
 #define g4_character_jump_hight 250
 
+#define floor_y 110
 
 
 
@@ -59,6 +60,10 @@ double g4obj4x[4], g4obj4y[4];
 double g4c1y=210,g4gravity=20, g4c1yjump2start;
 bool g4isjumping1, g4isjumping2,g4isBottom,g4jumping1process=false, g4jumping2process = false;
 double g4c1jump1cache, g4c1jump2cache;
+
+//-------------
+double jump1_1xcache=-100, jump2_1xcache = -100, g4jump2_1firstpositioncache;
+bool g4jumping1_1, g4jumping2_1;
 
 
 
@@ -289,31 +294,36 @@ void g4death() {
         }
     
 }
-void g4jump11() {
-
-    if (g4jumping1process)
-    {
-        g4c1y= -(1/40)*g4c1jump1cache* g4c1jump1cache+250;
-        g4c1jump1cache = g4c1jump1cache + 10;
-        locateObject(g4c1, scene_g4, 210, g4c1y);
-        setObjectImage(g4c1, g4c1jumpanimationfile[0]);
+void g4jump1_1() {
+    double g4c1ycache;
+    if (jump1_1xcache >= 100 || jump1_1xcache < -100) {//계산 밖일때
+        jump1_1xcache = -100;
+        //g4jumping1_1 = false;
+        g4c1y = floor_y;
+        g4jumping1_1 = false;
     }
-    
-
-    //Y가 계속해서 증가하는걸 막기위해 바닥을 지정.
-    //Y가 증가한다는 것은 공룡이 아래로 내려온다는 뜻.
-    if (g4c1y < 110)
-    {
-        g4c1y = 110;
-        g4isBottom = true;
-        g4jumping1process = false;
-        
-        stopTimer(g4timer1);
-        g4c1jump1cache = -100;
+    else {
+        jump1_1xcache = jump1_1xcache +10;
     }
+    g4c1ycache = -(jump1_1xcache * jump1_1xcache)/40+ 250;
+    g4c1y = floor_y + g4c1ycache;
 
-    //점프의 맨 위를 찍으면 점프가 끝난 상황
-    
+}
+void g4jump2_1(double g4c1positiony) {
+    double g4c1ycache;
+    if (jump2_1xcache >= 100 || jump2_1xcache < -100) {//계산 밖일때
+        jump2_1xcache = -100;
+        //g4jumping1_1 = false;
+        g4c1y = g4c1positiony;
+        g4jumping2_1 = false;
+        startTimer(g4timer1);
+        stopTimer(g4timer2);
+    }
+    else {
+        jump2_1xcache = jump2_1xcache + 10;
+    }
+    g4c1ycache = -(jump2_1xcache * jump2_1xcache) / 40 + 250;
+    g4c1y = floor_y + g4c1positiony+ g4c1ycache;
 
 }
 
@@ -338,7 +348,7 @@ void g4jump1() {
     //Y가 증가한다는 것은 공룡이 아래로 내려온다는 뜻.
     if (g4c1y < 110)
     {
-        g4c1y = 110;
+        g4c1y = floor_y;
         g4isBottom = true;
         g4jumping1process = false;
         g4jumping2process = false;
@@ -461,6 +471,10 @@ void g4update() {
     for (int i = 0; i < 4; i++) {
         g4obstaclemove(g4obj3[i], scene_g4, 3, i);
     }
+   
+
+
+
     //-----배치
     for (int i=0; i < 4; i++) {
         locateObject(g4obj1[i], scene_g4, g4obj1x[i], g4obj1y[i]);
@@ -476,6 +490,9 @@ void g4update() {
     }    
     locateObject(g4floor1, scene_g4, g4floor1x, 0);
     locateObject(g4floor2, scene_g4, g4floor2x, 0);
+    locateObject(g4c1, scene_g4, 210, g4c1y);
+
+    
 }
 
 void g4gamestart() {
@@ -506,6 +523,7 @@ void g4gamestart() {
         g4placeobstacle(g4obj3[i], scene_g4, g4obj3x[i], g4obj3y[i], true);
     }
     startTimer(g4obmove);
+    startTimer(g4timer1);//----------실험용
 }
 
 void g4gamerestart() {
@@ -546,13 +564,25 @@ void Game4_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 void Game4_timerCallback(TimerID timer) {
 	if (timer == g4timer1) {//점프 1
         
-     g4jump1();
+    /* g4jump1();
      setTimer(g4timer1, 0.01f);
      startTimer(g4timer1);
-        
+        */
+        if (g4jumping1_1) {
+            g4jump1_1();
+           
+        }
+        setTimer(g4timer1, 0.01f);
+        startTimer(g4timer1);
 	}
     else if (timer == g4timer2) {//점프 2
-        g4jump2(); 
+        /*g4jump2(); 
+        setTimer(g4timer2, 0.01f);
+        startTimer(g4timer2);*/
+        if (g4jumping2_1) {
+            g4jump2_1(g4jump2_1firstpositioncache);
+
+        }
         setTimer(g4timer2, 0.01f);
         startTimer(g4timer2);
     }
@@ -569,6 +599,27 @@ void Game4_soundCallback(SoundID sound) {
 	}
 
 }
+
+void Game4_keyboardCallback(KeyCode code, KeyState state)
+{
+    if (code == 75) {			// UP
+        //g4jumping1_1 = (state == KeyState::KEYBOARD_PRESSED ? true : false);
+        if (state == KeyState::KEYBOARD_PRESSED) {
+            if (g4jumping1_1 == false) {
+                g4jumping1_1 = true;
+            }
+            else if (g4jumping1_1 == true) {
+                if (g4jumping2_1 == false) {
+                    g4jump2_1firstpositioncache = g4c1y;
+                    stopTimer(g4timer1);
+                    startTimer(g4timer2);
+                    g4jumping2_1 = true;
+                }
+            }
+        } 
+    }
+}
+
 void Game4_main() {
 
 
