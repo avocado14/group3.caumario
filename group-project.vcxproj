@@ -157,6 +157,8 @@
     <ClCompile Include="game2.cpp" />
     <ClCompile Include="game3.cpp" />
     <ClCompile Include="game5.cpp" />
+    <ClCompile Include="game6-3.cpp" />
+    <ClCompile Include="game6-2.cpp" />
     <ClCompile Include="game6.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="game4.cpp" />

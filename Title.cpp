@@ -6,11 +6,13 @@ ObjectID GameButton[6];
 
 char path[256];
 
-extern SceneID scene_g1, scene1_g2, scene1_g3, scene_g4, scene_g5, scene_g6;
+extern SceneID scene_g1, scene1_g2, scene1_g3, scene_g4, scene_g5, scene_g6, scene_g62, scene_g63;
 
 extern SoundID bgm_g5, bgm_g6;
 
 extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size);
+
+extern int nowGame6Stage;
 
 void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
@@ -27,7 +29,18 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		enterScene(scene_g1);
 
 	else if (object == GameButton[4]) {
-		enterScene(scene_g6);
+		
+		switch (nowGame6Stage) {
+			case 1: 
+				enterScene(scene_g6);
+				break;
+			case 2:
+				enterScene(scene_g62);
+				break;
+			case 3:
+				enterScene(scene_g63);
+				break;
+		}
 		playSound(bgm_g6);
 	}
 
