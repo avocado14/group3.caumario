@@ -37,6 +37,16 @@ extern void Game6_timerCallback(TimerID timer);
 extern void Game6_soundCallback(SoundID sound);
 extern void Game6_keyboardCallback(KeyCode code, KeyState state);
 
+extern void Game62_main();
+extern void Game62_mouseCallback(ObjectID object, int x, int y, MouseAction action);
+extern void Game62_timerCallback(TimerID timer);
+extern void Game62_keyboardCallback(KeyCode code, KeyState state);
+
+extern void Game63_main();
+extern void Game63_mouseCallback(ObjectID object, int x, int y, MouseAction action);
+extern void Game63_timerCallback(TimerID timer);
+extern void Game63_keyboardCallback(KeyCode code, KeyState state);
+
 
 ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size) {
 
@@ -59,6 +69,8 @@ void mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	Game4_mouseCallback(object, x, y, action);
 	Game5_mouseCallback(object, x, y, action);
 	Game6_mouseCallback(object, x, y, action);
+	Game62_mouseCallback(object, x, y, action);
+	Game63_mouseCallback(object, x, y, action);
 
 }
 
@@ -70,6 +82,8 @@ void timerCallback(TimerID timer) {
 	Game4_timerCallback(timer);
 	Game5_timerCallback(timer);
 	Game6_timerCallback(timer);
+	Game62_timerCallback(timer);
+	Game63_timerCallback(timer);
 
 }
 
@@ -88,6 +102,8 @@ void keyboardCallback(KeyCode code, KeyState state) {
 	Game4_keyboardCallback(code, state);
 	Game5_keyboardCallback(code, state);
 	Game6_keyboardCallback(code, state);
+	Game62_keyboardCallback(code, state);
+	Game63_keyboardCallback(code, state);
 
 }
 
@@ -107,6 +123,8 @@ int main() {
 	Game4_main();
 	Game5_main();
 	Game6_main();
+	Game62_main();
+	Game63_main();
 
 
 	startGame(titleScene);
