@@ -206,8 +206,8 @@ void Game2_main() {
 	setMouseCallback(Game2_mouseCallback);
 	setTimerCallback(Game2_timerCallback);
 
-	scene1_g2 = createScene("준비 화면", "image/game2/배경.png");
-	scene2_g2 = createScene("메모리 슈팅", "image/game2/배경1.png");
+	scene1_g2 = createScene("game2 info", "image/game2/배경.png");
+	scene2_g2 = createScene("game2", "image/game2/배경1.png");
 
 	startbutton_g2 = createObject_g2("image/game2/시작.png", scene1_g2, 610, 70, true);
 	restartbutton_g2 = createObject_g2("image/game2/다시시작.png", scene2_g2, 610, 400, false);

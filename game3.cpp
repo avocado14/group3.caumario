@@ -311,10 +311,10 @@ void Game3_timerCallback(TimerID timer) {
 	}
 }
 
-int main() {
+int Game3_main() {
 
-	scene1_g3 = createScene("스피드 스워드", "image/game3/cover.png");
-	scene2_g3 = createScene("적을 모두 무찌르세요!", "image/game3/cover2.png");
+	scene1_g3 = createScene("game3 info", "image/game3/cover.png");
+	scene2_g3 = createScene("game3", "image/game3/cover2.png");
 
 	startbutton_g3 = createObject_g3("image/game3/시작.png", scene1_g3, 610, 70, true);
 	restartbutton_g3 = createObject_g3("image/game3/다시시작.png", scene2_g3, 610, 400, false);
