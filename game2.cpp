@@ -49,7 +49,7 @@ void locationMaker_g2(int num) {		// 표적 위치 저장할 정수 배열 만들기 (표적 개�
 		arrX[i] = 100 + x;
 		arrY[i] = 100 + y;
 
-		target[i] = createObject_g2("images/target.png", scene2_g2, arrX[i], arrY[i], false);
+		target[i] = createObject_g2("image/game2/target.png", scene2_g2, arrX[i], arrY[i], false);
 	}
 }
 
@@ -210,8 +210,8 @@ void Game2_main() {
 	restartbutton_g2 = createObject_g2("image/game2/다시시작.png", scene2_g2, 610, 400, false);
 	endbutton_g2 = createObject_g2("image/game2/확인.png", scene2_g2, 610, 350, false);
 
-	hiteffect_g2 = createObject_g2("images/game2/hit.png", scene2_g2, 610, 400, false);
-	damaged_g2 = createObject_g2("images/game2/damage.png", scene2_g2, 0, 0, false);
+	hiteffect_g2 = createObject_g2("image/game2/hit.png", scene2_g2, 610, 400, false);
+	damaged_g2 = createObject_g2("image/game2/damage.png", scene2_g2, 0, 0, false);
 
 	heart1_g2 = createObject_g2("image/game2/heart.png", scene2_g2, 830, 650, true);
 	scaleObject(heart1_g2, 0.05f);
