@@ -77,7 +77,7 @@ void createEnemy_g3() {		// 적 오브젝트 생성
 	for (i = 0; i < 32; i++) {
 
 		if (pattern[i] != 0) {
-			sprintf_s(name, "images/%d.png", pattern[i]);
+			sprintf_s(name, "image/game3/%d.png", pattern[i]);
 			enemy[i] = createObject_g3(name, scene2_g3, 610, 720, false);
 		}
 	}
