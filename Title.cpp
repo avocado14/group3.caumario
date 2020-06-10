@@ -15,25 +15,25 @@ extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool
 void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	if (object == GameButton[0])
-		enterScene(scene_g1);
-
-	else if (object == GameButton[1])
-		enterScene(scene1_g2);
-
-	else if (object == GameButton[2])
 		enterScene(scene1_g3);
 
-	else if (object == GameButton[3])
+	else if (object == GameButton[1])
 		enterScene(scene_g4);
 
+	else if (object == GameButton[2])
+		enterScene(scene1_g2);
+
+	else if (object == GameButton[3])
+		enterScene(scene_g1);
+
 	else if (object == GameButton[4]) {
-		enterScene(scene_g5);
-		playSound(bgm_g5);
+		enterScene(scene_g6);
+		playSound(bgm_g6);
 	}
 
 	else if (object == GameButton[5]) {
-		enterScene(scene_g6);
-		playSound(bgm_g6);
+		enterScene(scene_g5);
+		playSound(bgm_g5);
 	}
 
 }
