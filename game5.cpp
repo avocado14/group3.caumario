@@ -21,7 +21,7 @@ ObjectID playerHP[3], playerFrame, koopaFrame;
 TimerID playTimer_g5, jumpTimer_g5, koopaJumpTimer, fire1MoveTimer, fire2MoveTimer, koopaDamageTimer, deadCheckTimer;
 TimerID kFireMoveTimer1, kFireMoveTimer2, kBallMoveTimer;
 TimerID kFireCoolTimer1, kFireCoolTimer2, kBallCoolTimer, koopaJumpCoolTimer;
-SoundID bgm_g5;
+SoundID bgm_g5, jumpSound_g5;
 
 int dx_g5 = 0, dy_g5 = 0;
 bool isJumping = false;
@@ -314,6 +314,8 @@ void Game5_timerCallback(TimerID timer) {
         if (isJumping == true) {
             
             if (isLanded == true) {//바닥에 있을 때만 점프
+                playSound(jumpSound_g5);
+                
                 isRising_g5 = true;
                 isLanded = false;
                 startTimer(jumpTimer_g5);
@@ -619,4 +621,7 @@ void Game5_main() {
     kBallCoolTimer = createTimer(3.0f);
 
     bgm_g5 = createSound("image/game5/쿠파성브금.mp3");
+
+    jumpSound_g5 = createSound("sounds/점프.wav");
+
 }
