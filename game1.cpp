@@ -8,12 +8,12 @@
 
 #define g1_character_size_x 30 
 #define g1_character_size_y 40 
-#define g1_obj1_size_width 10 
-#define g1_obj1_size_hight 10 
+#define g1_obj1_size_width 20 
+#define g1_obj1_size_hight 20 
 
-
+extern SceneID  titleScene;
 SceneID scene_g1;
-ObjectID g1c1, g1obj1[6][10],g1startbutton, g1restartbutton;//[ºº∑Œ][∞°∑Œ][j][i]
+ObjectID g1c1, g1obj1[6][10],g1startbutton, g1restartbutton, g1goMapButton;//[ºº∑Œ][∞°∑Œ][j][i]
 TimerID g1timer1, g1c1move,g1levelupgrade,g1score, g1difficult;
 SoundID theme;
 
@@ -329,14 +329,24 @@ void g1obj1move() {
 			else {
 				obj1x[j][i] += g1obj1moveblockx[j][i];
 				obj1y[j][i] += g1obj1moveblocky[j][i];
-				
+				if (g1obj1moveblockx[j][i] > 0) {
+					setObjectImage(g1obj1[j][i], "image/game1/∫Œ≤Ù∫Œ≤Ù/130-1.png");
+				}
+				else {
+					setObjectImage(g1obj1[j][i], "image/game1/∫Œ≤Ù∫Œ≤Ù/130+1.png");
+				}
 			}
 		}
 	}
 	for (int i = 0; i < 30; i++) {
 		obj1_1x[i] += g1obj1_1moveblockx[i];
 		obj1_1y[i] += g1obj1_1moveblocky[i];
-		
+		if (g1obj1_1moveblockx[i] > 0) {
+			setObjectImage(g1obj1_1[i], "image/game1/∫Œ≤Ù∫Œ≤Ù/130-2.png");
+		}
+		else {
+			setObjectImage(g1obj1_1[i], "image/game1/∫Œ≤Ù∫Œ≤Ù/130+2.png");
+		}
 	}
 	
 }
@@ -364,7 +374,7 @@ void score(){
 	double g1result;
 	g1result = getTimer(g1score);
 	char buf[256];
-	sprintf_s(buf, "πˆ∆æΩ√∞£ : %0.2f√ ", (9999-g1result), scene_g1);
+	sprintf_s(buf, "πˆ∆æΩ√∞£ : %0.f√ ", (9999-g1result), scene_g1);
 	showMessage(buf);
 }
 
@@ -377,12 +387,14 @@ void g1death() {
 				stopTimer(g1difficult);
 				showMessage("end");
 				score();
+				showObject(g1restartbutton);
 			}
 			else if (g1c1x < 0- g1_character_size_x+1 || g1c1x > 1280 || g1c1y < 0- g1_character_size_y +1|| g1c1y > 720) {
 				stopTimer(g1timer1);
 				stopTimer(g1c1move);
 				stopTimer(g1difficult);
 				showMessage("out of bounds");
+				showObject(g1restartbutton);
 			}
 		}
 	}
@@ -394,6 +406,7 @@ void g1death() {
 			stopTimer(g1difficult);
 			showMessage("end1");
 			score();
+			showObject(g1restartbutton);
 		}
 	}
 }
@@ -432,11 +445,13 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			startTimer(g1timer1);
 			setTimer(g1difficult, 1.0f);
 			startTimer(g1difficult);
+			hideObject(g1startbutton);
+			hideObject(g1restartbutton);
 
 
 
 			setTimer(g1score, 9999);
-			showTimer(g1score);
+			//showTimer(g1score);
 			startTimer(g1score);
 			
 
@@ -445,11 +460,19 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			
 
 			g1restart();
-
+			hideObject(g1restartbutton);
 			setTimer(g1score, 9999);
-			showTimer(g1score);
+			//showTimer(g1score);
 			startTimer(g1score);
 			startTimer(g1difficult);
+		}
+		else if (object == g1goMapButton) {
+			stopTimer(g1timer1);
+			stopTimer(g1c1move);
+			stopTimer(g1levelupgrade);
+			stopTimer(g1score);
+			stopTimer(g1difficult);
+			enterScene(titleScene);
 		}
 	}
 		
@@ -480,9 +503,11 @@ void Game1_timerCallback(TimerID timer) {// ≈©∏Æø°¿Ã∆Æ ≈∏¿Ã∏”!!!!!!!!!!!
 		
 	}
 	if (timer == g1difficult) {
-		g1obj1_1[g1difficulty] = g1createObject("image/game1/∫Œ≤Ù∫Œ≤Ù/20-1.png", scene_g1, obj1_1x[g1difficulty], obj1_1y[g1difficulty], true);
+		g1obj1_1[g1difficulty] = g1createObject("image/game1/∫Œ≤Ù∫Œ≤Ù/130+1.png", scene_g1, obj1_1x[g1difficulty], obj1_1y[g1difficulty], true);
+		scaleObject(g1obj1_1[g1difficulty], 0.2f);
+
 		g1difficulty++;
-		setTimer(g1difficult, g1difficulty*2);
+		setTimer(g1difficult, 2.f);
 		startTimer(g1difficult);
 	}
 }
@@ -498,11 +523,11 @@ void Game1_keyboardCallback(KeyCode code, KeyState state)
 
 		if (code == 84) {			// UP
 			g1dy += (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
-			g1c1heading = 1;
+			//g1c1heading = 1;
 		}
 		else if (code == 85) {		// DOWN
 			g1dy -= (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
-			g1c1heading = 0;
+			//g1c1heading = 0;
 		}
 		else if (code == 83) {		// RIGHT
 			g1dx += (state == KeyState::KEYBOARD_PRESSED ? speed : -speed);
@@ -530,16 +555,19 @@ void Game1_main() {
 	g1obj1firstposition();
 	g1obj1_1firstposition();
 
-	g1startbutton = g1createObject("image/game1/»Æ¿Œ.png", scene_g1, 500, 110, true);
-	g1restartbutton = g1createObject("image/game1/¥ŸΩ√Ω√¿€.png", scene_g1, 600, 500, true);
+	g1startbutton = g1createObject("image/game1/start.png", scene_g1, 500, 110, true);
+	g1restartbutton = g1createObject("image/game1/restart.png", scene_g1, 1000, 650, false);
+	scaleObject(g1startbutton, 0.5f);
+	scaleObject(g1restartbutton, 0.5f);
 
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 6; j++) {
-			g1obj1[j][i] = g1createObject("image/game1/∫Œ≤Ù∫Œ≤Ù/20.png", scene_g1, obj1x[j][i], obj1y[j][i], true);
+			g1obj1[j][i] = g1createObject("image/game1/∫Œ≤Ù∫Œ≤Ù/130-1.png", scene_g1, obj1x[j][i], obj1y[j][i], true);
+			scaleObject(g1obj1[j][i], 0.2f);
 		}
 	}
 	
-	
+	g1goMapButton = g1createObject("image/game6/goMap.png", scene_g1, 20, 20, true);
 	
 	g1timer1 = createTimer(0.01f);
 	g1c1move = createTimer(0.01f);

@@ -26,8 +26,9 @@ using namespace std;
 //»Æ¿Œ«œΩ√∏È ¡÷ºÆ ªË¡¶«ÿ¡÷ººøÎ§æ§æ!
 extern int nowGameSceneNum;     
 
+extern SceneID  titleScene;
 SceneID scene_g4;
-ObjectID g4c1, g4jumpbutton,g4startbutton, g4restartbutton,g4obj1[4], g4obj2[4], g4obj3[4], g4obj4[4], g4obj5[4],g4floor1,g4floor2;
+ObjectID g4c1, g4goMapButton,g4startbutton, g4restartbutton,g4obj1[4], g4obj2[4], g4obj3[4], g4obj4[4], g4obj5[4],g4floor1,g4floor2;
 TimerID g4timer1, g4timer2, g4obmove,g4difficult;
 SoundID g4theme;
 
@@ -95,9 +96,9 @@ const char* g4obj1animationfile[4] =
 //---------«ÿ∞Ò ∞≈∫œ¿Ã-----------
 double g4obj2animationcache, g4obj2animationcache1;
 const char* g4obj2animationfile[10] =
-{ "image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/«ÿ∞Ò∞≈∫œ¿Ãæ÷¥œ∏ﬁ¿Ãº«1.png","image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/«ÿ∞Ò∞≈∫œ¿Ãæ÷¥œ∏ﬁ¿Ãº«2.png","image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/«ÿ∞Ò∞≈∫œ¿Ãæ÷¥œ∏ﬁ¿Ãº«3.png","image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/«ÿ∞Ò∞≈∫œ¿Ãæ÷¥œ∏ﬁ¿Ãº«4.png" 
-,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/«ÿ∞Ò∞≈∫œ¿Ãæ÷¥œ∏ﬁ¿Ãº«5.png" ,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/«ÿ∞Ò∞≈∫œ¿Ãæ÷¥œ∏ﬁ¿Ãº«6.png" ,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/«ÿ∞Ò∞≈∫œ¿Ãæ÷¥œ∏ﬁ¿Ãº«7.png" ,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/«ÿ∞Ò∞≈∫œ¿Ãæ÷¥œ∏ﬁ¿Ãº«8.png" 
-,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/«ÿ∞Ò∞≈∫œ¿Ãæ÷¥œ∏ﬁ¿Ãº«9.png" ,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/«ÿ∞Ò∞≈∫œ¿Ãæ÷¥œ∏ﬁ¿Ãº«10.png" };
+{ "image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/1.png","image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/2.png","image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/3.png","image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/4.png" 
+,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/5.png" ,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/6.png" ,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/7.png" ,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/8.png" 
+,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/9.png" ,"image/game4/«ÿ∞Ò ∞≈∫œ¿Ã/10.png" };
 
 
 //---------«œ¥√ ∞≈∫œ¿Ã---------
@@ -158,7 +159,7 @@ void g4c1animation() {
         
         
     }
-    g4c1animationcache1 = g4c1animationcache1 + 0.7;
+    g4c1animationcache1 = g4c1animationcache1 + 0.9;
 
 }
 
@@ -439,10 +440,10 @@ void g4obstaclemove(ObjectID obstacle,SceneID scene,int movetype,int objID) {
            int num = rand();
            int rndvalue = num % 5;
            if (objID == 1 || objID == 2 || objID == 3) {
-               g4obj1x[objID] = g4obj1x[objID - 1] + 320+(500-g4difficulty *10)+rndvalue * 50;
+               g4obj1x[objID] = g4obj1x[objID - 1] + 220+(500-g4difficulty *50)+rndvalue * 50;
            }
            else if (objID == 0) {
-               g4obj1x[objID] = g4obj1x[3] + 320+ (500 - g4difficulty * 10)+rndvalue * 50;
+               g4obj1x[objID] = g4obj1x[3] + 220+ (500 - g4difficulty * 50)+rndvalue * 50;
            }
        }
        else {
@@ -638,6 +639,13 @@ void Game4_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
     else if (object == g4restartbutton) {
         g4gamerestart();
     }
+    else if (object == g4goMapButton) {
+        stopTimer(g4timer1);
+        stopTimer(g4timer2);
+        stopTimer(g4obmove);
+        stopTimer(g4difficult);
+        enterScene(titleScene);
+    }
 
 }
 void Game4_timerCallback(TimerID timer) {
@@ -701,6 +709,9 @@ void Game4_keyboardCallback(KeyCode code, KeyState state)
                         startTimer(g4timer2);
                         g4jumping2_1 = true;
                     }
+                    else if (g4jumping2_1 == true) {
+
+                    }
                 }
             }
         }
@@ -722,6 +733,7 @@ void Game4_main() {
     }
     for (int i = 0; i < 4; i++) {
         g4obj2[i] = g4createObject(g4objfile[1], scene_g4, 130, 110, true);
+        scaleObject(g4obj2[i], 0.5f);
     }
     for (int i = 0; i < 4; i++) {
         g4obj3[i] = g4createObject(g4objfile[2], scene_g4, 500, 410, true);
@@ -729,7 +741,8 @@ void Game4_main() {
     for (int i = 0; i < 4; i++) {
         g4obj4[i] = g4createObject(g4objfile[3], scene_g4, 1300, 110, true);
     }
-    g4jumpbutton = g4createObject("image/game4/»Æ¿Œ.png", scene_g4, 800, 110, true);
+    
+    g4goMapButton = g4createObject("image/game6/goMap.png", scene_g4, 20, 20, true);
 	g4timer1 = createTimer(0.01f);
     g4timer2 = createTimer(0.01f);
     g4obmove = createTimer(0.01f);
