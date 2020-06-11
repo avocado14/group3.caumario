@@ -5,7 +5,7 @@
 #define PLAYER_ANIMATION_TIME		0.05f
 #define MONSTER_ANIMATION_TIME		0.15f
 #define PLAYER_SPEED				20
-#define MONSTER_SPEED				8
+#define MONSTER_SPEED				1
 #define MONSTER_NUMBER				8
 #define ENDMONSTER_STATE			2	//마지막 몬스터 레벨(게임 끝나는 레벨)
 #define PLAYER_IMAGE_SIZE			100
@@ -165,9 +165,11 @@ void Game6_keyboardCallback(KeyCode code, KeyState state)
 			dy_g6 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
 		}
 		else if (code == 83) {		// RIGHT
+			setObjectImage(player_g6, "image/game6/날개마리오우.png");
 			dx_g6 += (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
 		}
 		else if (code == 82) {		// LEFT
+			setObjectImage(player_g6, "image/game6/날개마리오좌.png");
 			dx_g6 -= (state == KeyState::KEYBOARD_PRESSED ? PLAYER_SPEED : -PLAYER_SPEED);
 		}
 	}
@@ -268,13 +270,13 @@ void Game6_timerCallback(TimerID timer)
 				else if (num == 3)	//위 이동
 					dmy += MONSTER_SPEED;
 
-				for (int i = 0; i < 4; i++) {
+				for (int i = 0; i < 32; i++) {
 					if (monsterX[j] + dmx > 1185 || monsterX[j] + dmx < 15 || monsterY[j] + dmy > 635 || monsterY[j] + dmy < 15)	//테두리 나가면 이동 안시키기
 						break;
 
 					else {
 						monsterX[j] += dmx, monsterY[j] += dmy;
-						locateObject(monster[j], scene_g6, monsterX[j], monsterY[j]);			//4번 쪼개서 이동
+						locateObject(monster[j], scene_g6, monsterX[j], monsterY[j]);			//32번 쪼개서 이동
 					}
 				}
 				dmx = 0, dmy = 0;	//이동 끝나면 dmx, dmy 초기화
@@ -315,7 +317,7 @@ void Game6_soundCallback(SoundID sound) {
 void Game6_main()
 {
 	scene_g6 = createScene("1 스테이지", "image/game6/하늘배경.png");
-	player_g6 = createObject("image/game6/날개마리오.png", scene_g6, playerX_g6, playerY_g6, true, (float)playerSize_g6 / PLAYER_IMAGE_SIZE);
+	player_g6 = createObject("image/game6/날개마리오좌.png", scene_g6, playerX_g6, playerY_g6, true, (float)playerSize_g6 / PLAYER_IMAGE_SIZE);
 
 	//레벨1 몬스터 스폰
 	for (int i = 0; i < monsterNumber[0]; i++) {

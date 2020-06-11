@@ -19,9 +19,10 @@ ObjectID fire1[4], fire2[4];
 ObjectID koopaFire1, koopaFire2, koopaFire1Ball;
 ObjectID HPbar, HPbarLine, HPbarBlank, HPright;
 ObjectID playerHP[3], playerFrame, koopaFrame;
-TimerID playTimer_g5, jumpTimer_g5, koopaJumpTimer, fire1MoveTimer, fire2MoveTimer, koopaDamageTimer, playerDamageTimer;
+TimerID playTimer_g5, jumpTimer_g5, koopaJumpTimer, fire1MoveTimer, fire2MoveTimer, koopaDamageTimer;
 TimerID kFireMoveTimer1, kFireMoveTimer2, kBallMoveTimer;
 TimerID kFireCoolTimer1, kFireCoolTimer2, kBallCoolTimer, koopaJumpCoolTimer;
+TimerID playerAnimationTimer_g5, koopaAnimationTimer;
 SoundID bgm_g5, jumpSound_g5, playerFireSound1, playerFireSound2, koopaFireSound1, koopaFireSound2, koopaFireSound3; 
 SoundID koopaDamageSound1, koopaDamageSound2, playerDamageSound;
 extern SoundID buttonClickSound, gameClearSound, gameOverSound;
@@ -30,17 +31,16 @@ extern int nowGameSceneNum;
 int dx_g5 = 0, dy_g5 = 0;
 bool isJumping = false;
 
-float playerSize_g5 = 100;
-float koopaSizeX = 230, koopaSizeY = 300;
+float playerSizeX_g5 = 110, playerSizeY_g5 = 130;
+float koopaSizeX = 280, koopaSizeY = 220;
 float fireSize = 45;
 
 int playerX_g5 = 100, playerY_g5 = 150, playerBottom = playerY_g5, playerTop = 450, gravity_g5 = 25, koopaTop = 500;
 int playerLife = 3;
-int playerCount = 0;
 bool playerDead = false;
 bool isRising_g5, isLanded = true;
 
-int koopaX = 950, koopaY = playerY_g5;
+int koopaX = 900, koopaY = playerY_g5;
 int koopaCount = 0;
 int koopaHP = 500;
 
@@ -59,6 +59,26 @@ bool kBallisRising;
 bool koopaisRising, koopaisLanded;
 
 
+//캐릭터 애니
+const char* playerAnimationImage[10] =
+{ "image/game5/마리오/마리오 애니메이션1.png","image/game5/마리오/마리오 애니메이션2.png","image/game5/마리오/마리오 애니메이션3.png","image/game5/마리오/마리오 애니메이션4.png",
+"image/game5/마리오/마리오 애니메이션5.png","image/game5/마리오/마리오 애니메이션6.png" ,"image/game5/마리오/마리오 애니메이션7.png" ,"image/game5/마리오/마리오 애니메이션8.png"
+,"image/game5/마리오/마리오 애니메이션9.png" ,"image/game5/마리오/마리오 애니메이션10.png" };
+
+const char* setKoopaAnimationImage[7] =
+{ "image/game5/쿠파/쿠파 애니메이션1.png","image/game5/쿠파/쿠파 애니메이션2.png","image/game5/쿠파/쿠파 애니메이션3.png","image/game5/쿠파/쿠파 애니메이션4.png",
+"image/game5/쿠파/쿠파 애니메이션5.png","image/game5/쿠파/쿠파 애니메이션6.png" ,"image/game5/쿠파/쿠파 애니메이션7.png" };
+
+const char* setKoopaDamageAnimationImage[7] =
+{ "image/game5/맞은쿠파/맞은쿠파 애니메이션1.png","image/game5/맞은쿠파/맞은쿠파 애니메이션2.png","image/game5/맞은쿠파/맞은쿠파 애니메이션3.png","image/game5/맞은쿠파/맞은쿠파 애니메이션4.png",
+"image/game5/맞은쿠파/맞은쿠파 애니메이션5.png","image/game5/맞은쿠파/맞은쿠파 애니메이션6.png" ,"image/game5/맞은쿠파/맞은쿠파 애니메이션7.png" };
+
+const char* koopaAnimationImage[7];
+
+int playerAnimationCount = 0;
+int koopaAnimationCount = 0;
+
+
 extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size);
 
 void restart_g5() {
@@ -70,13 +90,15 @@ void restart_g5() {
 
     playerX_g5 = 100, playerY_g5 = 150;
     playerLife = 3;
-    playerCount = 0;
     playerDead = false;
     isRising_g5, isLanded = true;
 
-    koopaX = 950, koopaY = playerY_g5;
+    koopaX = 900, koopaY = playerY_g5;
     koopaCount = 0;
     koopaHP = 500;
+
+    playerAnimationCount = 0;
+    koopaAnimationCount = 0;
 
     attacking1 = false, attacking2 = false;
 
@@ -86,11 +108,11 @@ void restart_g5() {
         showObject(playerHP[i]);
     }
     
-    setObjectImage(player_g5, "image/game5/마리오.png");
+    setObjectImage(player_g5, "image/game5/마리오/마리오 애니메이션1.png");
     locateObject(player_g5,scene_g5, playerX_g5, playerBottom);
     showObject(player_g5);
     
-    setObjectImage(koopa, "image/game5/쿠파.png");
+    setObjectImage(koopa, "image/game5/쿠파/쿠파 애니메이션1.png");
     locateObject(koopa, scene_g5, koopaX, koopaY);
     showObject(koopa);
 
@@ -125,6 +147,8 @@ void gameClear_g5() {
     showObject(goMapButton_g5);
 
     stopTimer(playTimer_g5);
+    stopTimer(playerAnimationTimer_g5);
+    stopTimer(koopaAnimationTimer);
     stopTimer(kFireCoolTimer1);
     stopTimer(kFireCoolTimer2);
     stopTimer(kBallCoolTimer);
@@ -160,6 +184,8 @@ void gameOver_g5() {
     showObject(goMapButton_g5);
 
     stopTimer(playTimer_g5);
+    stopTimer(playerAnimationTimer_g5);
+    stopTimer(koopaAnimationTimer);
     stopTimer(kFireCoolTimer1);
     stopTimer(kFireCoolTimer2);
     stopTimer(kBallCoolTimer);
@@ -303,11 +329,6 @@ void playerDamage() {
 
     playSound(playerDamageSound);
 
-    //데미지 입는 애니메이션
-    playerCount = 0;
-    setTimer(playerDamageTimer, 0.05f);
-    startTimer(playerDamageTimer);
-
     playerLife--;
 
     if (playerLife >= 0) {
@@ -326,7 +347,6 @@ void playerDamage() {
     }
 
 }
-
 
 //플레이어 향해서 불 발사
 void koopaFire1Attack() {
@@ -384,6 +404,8 @@ void Game5_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
        hideObject(goMapButton_g5);
        
        startTimer(playTimer_g5);
+       startTimer(playerAnimationTimer_g5);
+       startTimer(koopaAnimationTimer);
        startTimer(kFireCoolTimer1);
        startTimer(kFireCoolTimer2);
        startTimer(kBallCoolTimer);
@@ -400,6 +422,8 @@ void Game5_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
        restart_g5();
 
        startTimer(playTimer_g5);
+       startTimer(playerAnimationTimer_g5);
+       startTimer(koopaAnimationTimer);
        startTimer(kFireCoolTimer1);
        startTimer(kFireCoolTimer2);
        startTimer(kBallCoolTimer);
@@ -422,7 +446,7 @@ void Game5_timerCallback(TimerID timer) {
     }
 
     if (timer == playTimer_g5) {
-        if (playerX_g5 + dx_g5 > 1280 - playerSize_g5 || playerX_g5 + dx_g5 < 0 || playerY_g5 + dy_g5 > 720 - playerSize_g5 || playerY_g5 + dy_g5 < 0) {}	//테두리 나가면 이동 안시키기
+        if (playerX_g5 + dx_g5 > 1280 - playerSizeX_g5 || playerX_g5 + dx_g5 < 0 || playerY_g5 + dy_g5 > 720 - playerSizeY_g5 || playerY_g5 + dy_g5 < 0) {}	//테두리 나가면 이동 안시키기
 
         else {
             playerX_g5 += dx_g5; playerY_g5 += dy_g5;
@@ -430,8 +454,8 @@ void Game5_timerCallback(TimerID timer) {
 
         }
 
-        if (playerX_g5 >= koopaX - playerSize_g5 && playerX_g5 <= koopaX + koopaSizeX &&
-            playerY_g5 >= koopaY - playerSize_g5 && playerY_g5 <= koopaY + koopaSizeY) {     //마리오 쿠파랑 부딪히면
+        if (playerX_g5 >= koopaX - playerSizeX_g5 && playerX_g5 <= koopaX + koopaSizeX &&
+            playerY_g5 >= koopaY - playerSizeY_g5 && playerY_g5 <= koopaY + koopaSizeY) {     //마리오 쿠파랑 부딪히면
         
             playerLife = 0;
             playerDamage();
@@ -454,6 +478,27 @@ void Game5_timerCallback(TimerID timer) {
          startTimer(timer);
         
     }
+
+    if (timer == playerAnimationTimer_g5) {
+
+        setObjectImage(player_g5, playerAnimationImage[playerAnimationCount % 10]);
+        playerAnimationCount++;
+
+        setTimer(playerAnimationTimer_g5, 0.05f);
+        startTimer(playerAnimationTimer_g5);
+
+    }
+
+    if (timer == koopaAnimationTimer) {
+
+        setObjectImage(koopa, koopaAnimationImage[koopaAnimationCount % 7]);
+        koopaAnimationCount++;
+
+        setTimer(koopaAnimationTimer, 0.2f);
+        startTimer(koopaAnimationTimer);
+
+    }
+
 
     if (timer == fire1MoveTimer) {
 
@@ -549,31 +594,25 @@ void Game5_timerCallback(TimerID timer) {
 
     if (timer == koopaDamageTimer) {
         
-        if (koopaCount % 2 == 0)
-            setObjectImage(koopa, "image/game5/맞은쿠파.png");
-        else
-            setObjectImage(koopa, "image/game5/쿠파.png");
+        if (koopaCount == 0) {
+            for (int i = 0; i < 7; i++) {
+                koopaAnimationImage[i] = setKoopaDamageAnimationImage[i];
+            }
+        }
+        else if (koopaCount == 5) {
+            for (int i = 0; i < 7; i++) {
+                koopaAnimationImage[i] = setKoopaAnimationImage[i];
+            }
+        }
+            
         
-        if (koopaCount < 3) {
+        if (koopaCount < 5) {
             koopaCount++;
             setTimer(koopaDamageTimer, 0.05f);
             startTimer(koopaDamageTimer);
         }
     }
 
-    if (timer == playerDamageTimer) {
-
-        if (playerCount % 2 == 0)
-            setObjectImage(player_g5, "image/game5/맞은마리오.png");
-        else
-            setObjectImage(player_g5, "image/game5/마리오.png");
-
-        if (playerCount < 3) {
-            playerCount++;
-            setTimer(playerDamageTimer, 0.05f);
-            startTimer(playerDamageTimer);
-        }
-    }
 
     if (timer == kFireMoveTimer1) {
 
@@ -583,8 +622,8 @@ void Game5_timerCallback(TimerID timer) {
         if (kFire1X < 10)        //화면 밖으로 나가면 사라짐
             hideObject(koopaFire1);
 
-        else if (kFire1X >= playerX_g5 - kFireSizeX + GAP && kFire1X <= playerX_g5 + playerSize_g5 - GAP &&
-                 kFire1Y >= playerY_g5 - kFireSizeY + GAP && kFire1Y <= playerY_g5 + playerSize_g5 - GAP) {     //마리오랑 부딪히면
+        else if (kFire1X >= playerX_g5 - kFireSizeX + GAP && kFire1X <= playerX_g5 + playerSizeX_g5 - GAP &&
+                 kFire1Y >= playerY_g5 - kFireSizeY + GAP && kFire1Y <= playerY_g5 + playerSizeY_g5 - GAP) {     //마리오랑 부딪히면
 
             playerDamage();
 
@@ -606,8 +645,8 @@ void Game5_timerCallback(TimerID timer) {
         if (kFire2X < 10)        //화면 밖으로 나가면 사라짐
             hideObject(koopaFire2);
 
-        else if (kFire2X >= playerX_g5 - kFireSizeX + GAP && kFire2X <= playerX_g5 + playerSize_g5 - GAP &&
-                 kFire2Y >= playerY_g5 - kFireSizeY + GAP && kFire2Y <= playerY_g5 + playerSize_g5 - GAP) {     //마리오랑 부딪히면
+        else if (kFire2X >= playerX_g5 - kFireSizeX + GAP && kFire2X <= playerX_g5 + playerSizeX_g5 - GAP &&
+                 kFire2Y >= playerY_g5 - kFireSizeY + GAP && kFire2Y <= playerY_g5 + playerSizeY_g5 - GAP) {     //마리오랑 부딪히면
 
             playerDamage();
 
@@ -640,8 +679,8 @@ void Game5_timerCallback(TimerID timer) {
         if (kBallX < 10 || kBallY > 600)        //화면 밖으로 나가면 사라짐
             hideObject(koopaFire1Ball);
 
-        else if (kBallX >= playerX_g5 - kBallSize + GAP && kBallX <= playerX_g5 + playerSize_g5 - GAP &&
-                 kBallY >= playerY_g5 - kBallSize + GAP && kBallY <= playerY_g5 + playerSize_g5 - GAP) {     //마리오랑 부딪히면
+        else if (kBallX >= playerX_g5 - kBallSize + GAP && kBallX <= playerX_g5 + playerSizeX_g5 - GAP &&
+                 kBallY >= playerY_g5 - kBallSize + GAP && kBallY <= playerY_g5 + playerSizeY_g5 - GAP) {     //마리오랑 부딪히면
 
             playerDamage();
 
@@ -735,8 +774,8 @@ void Game5_main() {
 
 	scene_g5 = createScene("쿠파 성", "image/game5/쿠파성배경.png");
 
-    startButton_g5 = createObject("image/game6/start.png", scene_g5, 550, 350, true, 1.0f);
-    restartButton_g5 = createObject("image/game6/restart.png", scene_g5, 500, 350, false, 1.0f);
+    startButton_g5 = createObject("image/game6/start.png", scene_g5, 530, 350, true, 1.0f);
+    restartButton_g5 = createObject("image/game6/restart.png", scene_g5, 470, 350, false, 1.0f);
     goMapButton_g5 = createObject("image/game6/goMap.png", scene_g5, 20, 20, true, 1.0f);
 
     //체력바 : 500 x 40
@@ -752,8 +791,8 @@ void Game5_main() {
         playerHP[i] = createObject("image/game5/하트.png", scene_g5, 320 + 55 * i, 640, true, 1.0f);
     }
 
-	player_g5 = createObject("image/game5/마리오.png", scene_g5, playerX_g5, playerBottom, true, 1.0f);
-	koopa = createObject("image/game5/쿠파.png", scene_g5, koopaX, koopaY, true, 1.0f);
+	player_g5 = createObject("image/game5/마리오/마리오 애니메이션1.png", scene_g5, playerX_g5, playerBottom, true, 1.0f);
+	koopa = createObject("image/game5/쿠파/쿠파 애니메이션1.png", scene_g5, koopaX, koopaY, true, 1.0f);
 
     koopaFire1 = createObject("image/game5/쿠파불.png", scene_g5, 1, 1, false, 1.0f);
     koopaFire2 = createObject("image/game5/쿠파불.png", scene_g5, 1, 1, false, 1.0f);
@@ -767,12 +806,16 @@ void Game5_main() {
         fire2[i] = createObject(path_g5, scene_g5, 1, 1, false, 0.8f);
     }
 
+    for (int i = 0; i < 7; i++) {
+        koopaAnimationImage[i] = setKoopaAnimationImage[i];
+    }
+
+
     playTimer_g5 = createTimer(PLAYER_ANIMATION_TIME);
     jumpTimer_g5 = createTimer(0.01f);
     fire1MoveTimer = createTimer(0.05f);
     fire2MoveTimer = createTimer(0.05f);
     koopaDamageTimer = createTimer(0.05f);
-    playerDamageTimer = createTimer(0.05f);
 
     koopaJumpTimer = createTimer(0.01f);
     kFireMoveTimer1 = createTimer(0.05f);
@@ -783,6 +826,9 @@ void Game5_main() {
     kFireCoolTimer1 = createTimer(2.0f);
     kFireCoolTimer2 = createTimer(2.0f + KFIRE_COOLTIME / 2);
     kBallCoolTimer = createTimer(3.0f);
+
+    playerAnimationTimer_g5 = createTimer(0.05f);
+    koopaAnimationTimer = createTimer(0.2f);
 
     bgm_g5 = createSound("image/game5/쿠파성브금.mp3");
 
