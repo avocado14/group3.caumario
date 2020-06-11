@@ -7,9 +7,9 @@ SceneID scene1_g3, scene2_g3;
 ObjectID startbutton_g3, restartbutton_g3, endbutton_g3, normal, blue, red, yellow, heart1_g3, heart2_g3, heart3_g3, damaged_g3;
 ObjectID enemy[150] = { 0, };
 TimerID enemyMove, damageTime_g3;
-SoundID bgm_g3, finalHit, finalHit1, normalHit, normalHit1, normalHit2, normalHit3, normalHit4;
+SoundID bgm_g3, finalHit_g3, finalHit1_g3, normalHit_g3, normalHit1_g3, normalHit2_g3, normalHit3_g3, normalHit4_g3;
 int pattern[150] = { 0, }, Elife[150] = { 0, }, locate[150] = { 0, };
-int count_g3 = 0, clear_g3 = 0, life_g3 = 3, location = 60, NhitCount = 0, FhitCount = 0, score = 0;
+int count_g3 = 0, clear_g3 = 0, life_g3 = 3, location = 60, NhitCount_g3 = 0, FhitCount_g3 = 0, score = 0;
 char name[30] = { 0, }, info_g3[30] = { 0, };
 float duration_g3 = 1.0f;
 
@@ -122,45 +122,45 @@ void zeroCheck_g3() {			// 다음 오브젝트가 없을 때 변수 clear 증가 함수
 		zeroCheck_g3();
 	}
 }
-/*
-void normalHitPlay() {		// 평타 효과음 재생
-	switch (NhitCount) {
+
+void normalHitPlay_g3() {		// 평타 효과음 재생
+	switch (NhitCount_g3) {
 	case 0:
-		playSound(normalHit, false);
-		NhitCount++;
+		playSound(normalHit_g3, false);
+		NhitCount_g3++;
 		break;
 	case 1:
-		playSound(normalHit1, false);
-		NhitCount++;
+		playSound(normalHit1_g3, false);
+		NhitCount_g3++;
 		break;
 	case 2:
-		playSound(normalHit2, false);
-		NhitCount++;
+		playSound(normalHit2_g3, false);
+		NhitCount_g3++;
 		break;
 	case 3:
-		playSound(normalHit3, false);
-		NhitCount++;
+		playSound(normalHit3_g3, false);
+		NhitCount_g3++;
 		break;
 	case 4:
-		playSound(normalHit4, false);
-		NhitCount = 0;
+		playSound(normalHit4_g3, false);
+		NhitCount_g3 = 0;
 		break;
 	}
 }
 
-void finalHitPlay() {		// 막타 효과음 재생
-	switch (FhitCount) {
+void finalHitPlay_g3() {		// 막타 효과음 재생
+	switch (FhitCount_g3) {
 	case 0:
-		playSound(finalHit, false);
-		FhitCount++;
+		playSound(finalHit_g3, false);
+		FhitCount_g3++;
 		break;
 	case 1:
-		playSound(finalHit1, false);
-		FhitCount = 0;
+		playSound(finalHit1_g3, false);
+		FhitCount_g3 = 0;
 		break;
 	}
 }
-*/
+
 
 void judge_g3(int num1, int num2) {	// 클릭 시 정,오답 확인
 
@@ -170,19 +170,19 @@ void judge_g3(int num1, int num2) {	// 클릭 시 정,오답 확인
 		hideObject(enemy[clear_g3]);
 		clear_g3++;
 		zeroCheck_g3();
-		//normalHitPlay();
+		normalHitPlay_g3();
 		score++;
 	}
 	else if (pattern[clear_g3] == num2) {
 		Elife[clear_g3]--;
 		if (Elife[clear_g3] != 0) {
-			//normalHitPlay();
+			normalHitPlay_g3();
 		}
 		if (Elife[clear_g3] == 0) {
 			hideObject(enemy[clear_g3]);
 			clear_g3++;
 			zeroCheck_g3();
-			//finalHitPlay();
+			finalHitPlay_g3();
 			score++;
 		}
 	}
@@ -335,13 +335,13 @@ void Game3_main() {
 	damaged_g3 = createObject_g3("image/game3/damage.png", scene2_g3, 0, 0, false);
 
 	bgm_g3 = createSound("image/game3/bgm.wav");
-	normalHit = createSound("image/game3/normalHit.wav");
-	normalHit1 = createSound("image/game3/normalHit1.wav");
-	normalHit2 = createSound("image/game3/normalHit2.wav");
-	normalHit3 = createSound("image/game3/normalHit3.wav");
-	normalHit4 = createSound("image/game3/normalHit4.wav");
-	finalHit = createSound("image/game3/finalHit.wav");
-	finalHit1 = createSound("image/game3/finalHit1.wav");
+	normalHit_g3 = createSound("image/game3/normalHit.mp3");
+	normalHit1_g3 = createSound("image/game3/normalHit1.mp3");
+	normalHit2_g3 = createSound("image/game3/normalHit2.mp3");
+	normalHit3_g3 = createSound("image/game3/normalHit3.mp3");
+	normalHit4_g3 = createSound("image/game3/normalHit4.mp3");
+	finalHit_g3 = createSound("image/game3/finalHit.wav");
+	finalHit1_g3 = createSound("image/game3/finalHit1.wav");
 
 	enemyMove = createTimer(duration_g3);
 	damageTime_g3 = createTimer(0.2f);

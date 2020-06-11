@@ -7,9 +7,9 @@ SceneID scene1_g2, scene2_g2;
 ObjectID startbutton_g2, restartbutton_g2, endbutton_g2, heart1_g2, heart2_g2, heart3_g2, hiteffect_g2, damaged_g2;
 ObjectID target[20] = { 0, };
 TimerID appear, hitting, damageTime_g2;
-SoundID bgm_g2;
+SoundID bgm_g2, normalHit_g2, normalHit1_g2, normalHit2_g2, normalHit3_g2, normalHit4_g2;
 int arrX[20] = { 0, }, arrY[20] = { 0, };
-int count_g2 = 0, clear_g2 = 0, life_g2 = 3, targetNum = 4, round = 0;
+int count_g2 = 0, clear_g2 = 0, life_g2 = 3, targetNum = 4, NhitCount_g2 = 0, round = 0;
 char info_g2[50] = { 0, };
 float duration_g2 = 1.0f;
 bool lock = false;
@@ -25,6 +25,31 @@ ObjectID createObject_g2(const char* image, SceneID scene, int x, int y, bool sh
 	}
 
 	return object;
+}
+
+void normalHitPlay_g2() {		// 평타 효과음 재생
+	switch (NhitCount_g2) {
+	case 0:
+		playSound(normalHit_g2, false);
+		NhitCount_g2++;
+		break;
+	case 1:
+		playSound(normalHit1_g2, false);
+		NhitCount_g2++;
+		break;
+	case 2:
+		playSound(normalHit2_g2, false);
+		NhitCount_g2++;
+		break;
+	case 3:
+		playSound(normalHit3_g2, false);
+		NhitCount_g2++;
+		break;
+	case 4:
+		playSound(normalHit4_g2, false);
+		NhitCount_g2 = 0;
+		break;
+	}
 }
 
 void locationMaker_g2(int num) {		// 표적 위치 저장할 정수 배열 만들기 (표적 개수 입력)
@@ -96,6 +121,8 @@ void judge_g2(ObjectID object, int i) {
 	if (object == target[i]) {
 
 		if (clear_g2 == i) {
+
+			normalHitPlay_g2();
 
 			hideObject(target[i]);
 
@@ -221,6 +248,11 @@ void Game2_main() {
 	scaleObject(heart3_g2, 0.05f);
 
 	bgm_g2 = createSound("image/game2/bgm.wav");
+	normalHit_g2 = createSound("image/game2/normalHit.mp3");
+	normalHit1_g2 = createSound("image/game2/normalHit1.mp3");
+	normalHit2_g2 = createSound("image/game2/normalHit2.mp3");
+	normalHit3_g2 = createSound("image/game2/normalHit3.mp3");
+	normalHit4_g2 = createSound("image/game2/normalHit4.mp3");
 
 	appear = createTimer(duration_g2);
 	hitting = createTimer(0.5f);
