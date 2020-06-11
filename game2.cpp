@@ -140,7 +140,7 @@ void judge_g2(ObjectID object, int i) {
 					hideObject(target[j]);
 				}
 
-				if (targetNum < 7) {	// 타겟 수 증가 (최대 7개)
+				if (targetNum < 8) {	// 타겟 수 증가 (최대 8개)
 					targetNum++;
 				}
 
@@ -184,6 +184,15 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	}
 
 	else if (object == restartbutton_g2) {
+
+		targetNum = 4;
+		round = 0;
+		life_g2 = 3;
+		duration_g2 = 1.0f;
+
+		showObject(heart1_g2);
+		showObject(heart2_g2);
+		showObject(heart3_g2);
 
 		hideObject(restartbutton_g2);
 		hideObject(endbutton_g2);
