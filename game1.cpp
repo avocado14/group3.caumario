@@ -15,7 +15,7 @@ extern SceneID  titleScene;
 SceneID scene_g1;
 ObjectID g1c1, g1obj1[6][10],g1startbutton, g1restartbutton, g1goMapButton;//[세로][가로][j][i]
 TimerID g1timer1, g1c1move,g1levelupgrade,g1score, g1difficult;
-SoundID theme;
+SoundID bgm_g1;
 
 extern int nowGameSceneNum;
 
@@ -467,12 +467,25 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			startTimer(g1difficult);
 		}
 		else if (object == g1goMapButton) {
+			g1c1x = 540, g1c1y = 360;
+			locateObject(g1c1, scene_g1, g1c1x, g1c1y);
+
+			g1obj1firstposition();
+			g1obj1_1firstposition();
+
+			g1obj1locate();
+
+			hideObject(g1restartbutton);
+			showObject(g1startbutton);
+
 			stopTimer(g1timer1);
 			stopTimer(g1c1move);
 			stopTimer(g1levelupgrade);
 			stopTimer(g1score);
 			stopTimer(g1difficult);
+			stopSound(bgm_g1);
 			enterScene(titleScene);
+
 		}
 	}
 		
@@ -512,7 +525,9 @@ void Game1_timerCallback(TimerID timer) {// 크리에이트 타이머!!!!!!!!!!!
 	}
 }
 void Game1_soundCallback(SoundID sound) {
-	if (sound == theme) {
+	if (sound == bgm_g1) {
+		
+			playSound(bgm_g1);
 		
 	}
 
@@ -573,5 +588,5 @@ void Game1_main() {
 	g1c1move = createTimer(0.01f);
 	g1score = createTimer(100);
 	g1difficult = createTimer(4.f);
-	
+	bgm_g1 = createSound("sounds/game/ghost theme.wav");
 }
