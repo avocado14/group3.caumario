@@ -52,6 +52,14 @@ void normalHitPlay_g2() {		// 평타 효과음 재생
 	}
 }
 
+int overlapCheck_g2(int x, int num) {
+
+	for (int i = 0; i < num; i++) {
+		if (x + 100 - arrX[i] > -50 && x + 100 - arrX[i] < 50) return 1;
+	}
+	return 0;
+}
+
 void locationMaker_g2(int num) {		// 표적 위치 저장할 정수 배열 만들기 (표적 개수 입력)
 
 	int i, x, y, temp;
@@ -65,10 +73,9 @@ void locationMaker_g2(int num) {		// 표적 위치 저장할 정수 배열 만들기 (표적 개�
 		if (i != 0) {
 			do {
 				x = rand() % 1000;
-			} while (x - arrX[i - 1] > -200 && x - arrX[i - 1] < 200);
-			do {
-				y = rand() % 500;
-			} while (y - arrX[i - 1] > -200 && y - arrX[i - 1] < 200);
+			} while (overlapCheck_g2(x, i));
+			y = rand() % 500;
+			
 		}
 
 		arrX[i] = 100 + x;
@@ -184,6 +191,15 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	}
 
 	else if (object == restartbutton_g2) {
+
+		targetNum = 4;
+		round = 0;
+		life_g2 = 3;
+		duration_g2 = 1.0f;
+
+		showObject(heart1_g2);
+		showObject(heart2_g2);
+		showObject(heart3_g2);
 
 		hideObject(restartbutton_g2);
 		hideObject(endbutton_g2);
