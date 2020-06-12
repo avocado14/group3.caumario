@@ -5,9 +5,8 @@
 #define PLAYER_SPEED				20
 #define FIRE_SPEED				    25
 #define KOOPA_FIRE_SPEED            15
-#define KFIRE_COOLTIME              5.0f
-#define KBALL_COOLTIME              5.0f
-#define KRAIN_COOLTIME              30.0f
+#define KFIRE_COOLTIME              4.0f
+#define KBALL_COOLTIME              4.0f
 #define PLAYER_ANIMATION_TIME		0.05f
 #define GAP                         20
 
@@ -27,6 +26,7 @@ SoundID bgm_g5, jumpSound_g5, playerFireSound1, playerFireSound2, koopaFireSound
 SoundID koopaDamageSound1, koopaDamageSound2, playerDamageSound;
 extern SoundID buttonClickSound, gameClearSound, gameOverSound;
 
+extern void enterTitle(int clearScene);
 extern int nowGameSceneNum;
 int dx_g5 = 0, dy_g5 = 0;
 bool isJumping = false;
@@ -35,7 +35,7 @@ float playerSizeX_g5 = 110, playerSizeY_g5 = 130;
 float koopaSizeX = 280, koopaSizeY = 220;
 float fireSize = 45;
 
-int playerX_g5 = 100, playerY_g5 = 150, playerBottom = playerY_g5, playerTop = 450, gravity_g5 = 25, koopaTop = 500;
+int playerX_g5 = 100, playerY_g5 = 150, playerBottom = playerY_g5, playerTop = 400, gravity_g5 = 25, koopaTop = 500;
 int playerLife = 3;
 bool playerDead = false;
 bool isRising_g5, isLanded = true;
@@ -212,7 +212,7 @@ void jump_g5() {
 
         locateObject(player_g5, scene_g5, playerX_g5, playerY_g5);
 
-        setTimer(jumpTimer_g5, 0.01f);
+        setTimer(jumpTimer_g5, 0.05f);
         startTimer(jumpTimer_g5);
     }
 
@@ -229,7 +229,7 @@ void jump_g5() {
         locateObject(player_g5, scene_g5, playerX_g5, playerY_g5);
 
         if (isLanded == false) {        //착지 전까지는 타이머 계속
-            setTimer(jumpTimer_g5, 0.01f);
+            setTimer(jumpTimer_g5, 0.05f);
             startTimer(jumpTimer_g5);
         }
     }
@@ -248,7 +248,7 @@ void koopaJump() {
 
         locateObject(koopa, scene_g5, koopaX, koopaY);
 
-        setTimer(koopaJumpTimer, 0.01f);
+        setTimer(koopaJumpTimer, 0.05f);
         startTimer(koopaJumpTimer);
     }
 
@@ -265,7 +265,7 @@ void koopaJump() {
         locateObject(koopa, scene_g5, koopaX, koopaY);
 
         if (koopaisLanded == false) {        //착지 전까지는 타이머 계속
-            setTimer(koopaJumpTimer, 0.01f);
+            setTimer(koopaJumpTimer, 0.05f);
             startTimer(koopaJumpTimer);
         }
     }
@@ -434,7 +434,7 @@ void Game5_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
        
        playSound(buttonClickSound);
        stopSound(bgm_g5);
-       enterScene(titleScene);
+       enterTitle(0);
    }
 }
 
@@ -484,7 +484,7 @@ void Game5_timerCallback(TimerID timer) {
         setObjectImage(player_g5, playerAnimationImage[playerAnimationCount % 10]);
         playerAnimationCount++;
 
-        setTimer(playerAnimationTimer_g5, 0.05f);
+        setTimer(playerAnimationTimer_g5, 0.07f);
         startTimer(playerAnimationTimer_g5);
 
     }
@@ -700,7 +700,7 @@ void Game5_timerCallback(TimerID timer) {
     if (timer == koopaJumpCoolTimer) {
         koopaisRising = true;
         koopaisLanded = false;
-        setTimer(koopaJumpTimer, 0.01f);
+        setTimer(koopaJumpTimer, 0.05f);
         startTimer(koopaJumpTimer);
         setTimer(koopaJumpCoolTimer, 4.0f);
         startTimer(koopaJumpCoolTimer);
@@ -812,12 +812,12 @@ void Game5_main() {
 
 
     playTimer_g5 = createTimer(PLAYER_ANIMATION_TIME);
-    jumpTimer_g5 = createTimer(0.01f);
+    jumpTimer_g5 = createTimer(0.05f);
     fire1MoveTimer = createTimer(0.05f);
     fire2MoveTimer = createTimer(0.05f);
     koopaDamageTimer = createTimer(0.05f);
 
-    koopaJumpTimer = createTimer(0.01f);
+    koopaJumpTimer = createTimer(0.05f);
     kFireMoveTimer1 = createTimer(0.05f);
     kFireMoveTimer2 = createTimer(0.05f);
     kBallMoveTimer = createTimer(0.05f);

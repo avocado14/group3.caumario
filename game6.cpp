@@ -4,7 +4,7 @@
 
 #define PLAYER_ANIMATION_TIME		0.05f
 #define MONSTER_ANIMATION_TIME		0.15f
-#define PLAYER_SPEED				20
+#define PLAYER_SPEED				13
 #define MONSTER_SPEED				1
 #define MONSTER_NUMBER				8
 #define ENDMONSTER_STATE			2	//마지막 몬스터 레벨(게임 끝나는 레벨)
@@ -15,13 +15,14 @@
 extern SceneID scene_g62, titleScene;
 extern SoundID buttonClickSound, gameOverSound;
 SceneID scene_g6;
-ObjectID startButton_g6, restartButton_g6, goMapButton_g6;
+ObjectID startButton_g6, restartButton_g6, restartButton2_g6, goMapButton_g6;
 ObjectID player_g6;
 ObjectID monster[MONSTER_NUMBER];
 ObjectID countDown;
 TimerID countDownTimer, playTimer_g6, monsterTimer_g6, growUpTimer_g6;
 SoundID bgm_g6, countDownSound_g6, catchSound1_g6, catchSound2_g6, growUpSound_g6, gameClearSound_g6;
 
+extern void enterTitle(int clearScene);
 extern int nowGameSceneNum;
 int nowGame6Stage = 1;
 int playerX_g6 = 600, playerY_g6 = 350;
@@ -116,6 +117,7 @@ void gameOver_g6() {
 		hideObject(monster[i]);
 	}
 
+	hideObject(restartButton2_g6);
 	showObject(restartButton_g6);
 	showObject(goMapButton_g6);
 
@@ -132,15 +134,18 @@ void Game6_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	if (object == startButton_g6) {		//타이머 켜지면서(오브젝트 이동 시작) 게임시작
 		playSound(countDownSound_g6);
+		showObject(restartButton2_g6);
 		showObject(countDown);
 		startTimer(countDownTimer);
 		hideObject(startButton_g6);
 		hideObject(goMapButton_g6);
 	}
 
-	else if (object == restartButton_g6) {
+	else if (object == restartButton_g6 || object == restartButton2_g6) {
+		stopTimer(monsterTimer_g6);
 		restart_g6();
 		playSound(countDownSound_g6);
+		showObject(restartButton2_g6);
 		showObject(countDown);
 		startTimer(countDownTimer);
 		hideObject(restartButton_g6);
@@ -150,7 +155,7 @@ void Game6_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	else if (object == goMapButton_g6) {
 		playSound(buttonClickSound);
 		stopSound(bgm_g6);
-		enterScene(titleScene);
+		enterTitle(0);
 	}
 }
 
@@ -334,6 +339,7 @@ void Game6_main()
 
 	startButton_g6 = createObject("image/game6/start.png", scene_g6, 520, 280, true, 1.0f);
 	restartButton_g6 = createObject("image/game6/restart.png", scene_g6, 480, 350, false, 1.0f);
+	restartButton2_g6 = createObject("image/game6/restart.png", scene_g6, 10, 10, false, 0.5f);
 	goMapButton_g6 = createObject("image/game6/goMap.png", scene_g6, 20, 20, true, 1.0f);
 	countDown = createObject("image/game6/3.png", scene_g6, 570, 300, false, 0.5f);
 
