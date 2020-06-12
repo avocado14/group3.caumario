@@ -1,8 +1,9 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<bangtal.h>
 #include <stdio.h>
 
 SceneID titleScene;
-ObjectID GameButton[6], Titleimage, Titlestart;
+ObjectID GameButton[6], Titleimage, Titlestart, Titlesave;
 TimerID Titletimer1;
 int Titleimagex=0;
 
@@ -17,6 +18,10 @@ extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool
 
 int nowGameSceneNum = 0;	//0은 타이틀
 extern int nowGame6Stage;
+
+
+int coin;
+
 
 void Titleimageanimation() {
 	
@@ -57,6 +62,7 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 		playSound(buttonClickSound);
 		enterScene(scene_g1);
+		
 		playSound(bgm_g1);
 	}
 
@@ -91,7 +97,10 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		startTimer(Titletimer1);
 		hideObject(Titlestart);
 	}
-
+	else if (object == Titlesave) {
+		
+	}
+	
 }
 
 void Title_timerCallback(TimerID timer) {
@@ -115,7 +124,7 @@ void Title_main() {
 	GameButton[4] = createObject("image/Title/game5.png", titleScene, 1130, 250, true, 1.3f);
 	GameButton[5] = createObject("image/Title/game6.png", titleScene, 1070, 450, true, 1.3f);
 
-
+	Titlesave = createObject("image/Title/save.png", titleScene, 420, 200, true, 1.f);
 	Titleimage = createObject("image/Title/title.png", titleScene, 0, 0, true, 1.f);
 	Titlestart = createObject("image/Title/start.png", titleScene, 420, 200, true, 1.f);
 	Titletimer1 = createTimer(0.01f);

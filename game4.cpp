@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<bangtal.h>
 #include <iostream>
 #include<math.h>
@@ -746,6 +747,9 @@ void Game4_keyboardCallback(KeyCode code, KeyState state)
 
 void Game4_main() {
 
+    setGameOption(GameOption::GAME_OPTION_ROOM_TITLE, false);
+    setGameOption(GameOption::GAME_OPTION_INVENTORY_BUTTON, false);
+    setGameOption(GameOption::GAME_OPTION_MESSAGE_BOX_BUTTON, false);
 
 	scene_g4 = createScene("game4", "image/game4/배경.png");
     g4background1 = g4createObject("image/game4/배경.png", scene_g4, 0, 0, true);

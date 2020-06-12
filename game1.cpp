@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<bangtal.h>
 #include <iostream>
 #include<math.h>
@@ -12,6 +13,7 @@
 #define g1_obj1_size_hight 20 
 
 extern SceneID  titleScene;
+extern int coin;
 SceneID scene_g1;
 ObjectID g1c1, g1obj1[6][10],g1startbutton, g1restartbutton, g1goMapButton;//[세로][가로][j][i]
 TimerID g1timer1, g1c1move,g1levelupgrade,g1score, g1difficult;
@@ -19,13 +21,17 @@ SoundID bgm_g1;
 
 extern int nowGameSceneNum;
 
+int highscore_g1=0;
+
+
+
 int obj1x[6][10] = { 0 }, obj1y[6][10] = { 0 };
-int obj1speed=12;
+double obj1speed=5;
 double g1obj1moveblockx[6][10], g1obj1moveblocky[6][10];
 
 
 
-int speed = 25;
+int speed = 6;
 double changex, changey;
 
 int g1c1x=500, g1c1y=200;
@@ -33,7 +39,7 @@ int g1dx = 0, g1dy = 0;
 
 ObjectID g1obj1_1[30];
 int g1difficulty=0, obj1_1x[30], obj1_1y[30];//g1difficulty는 추가된 오브젝트 개수
-int obj1_1speed = 19;
+int obj1_1speed = 7;
 double g1obj1_1moveblockx[30], g1obj1_1moveblocky[30];
 
 //---애니메이션----
@@ -57,6 +63,53 @@ const char* g1c1animationfileright[10] =
 "image/game1/마리오오른쪽/6.png", "image/game1/마리오오른쪽/7.png", "image/game1/마리오오른쪽/8.png", "image/game1/마리오오른쪽/9.png", "image/game1/마리오오른쪽/10.png"};
 
 
+
+
+typedef struct {
+
+	int highscore_g1;         //HP
+
+	int coin;         //MP
+
+
+}SaveData_t;
+
+void savedata_g1() {
+	SaveData_t Data;
+
+	FILE* fp = fopen("savedata.dat", "wb");
+
+	fread(&Data, sizeof(Data), 1, fp);
+
+	if (highscore_g1 > Data.highscore_g1) {
+		SaveData_t Data = { highscore_g1, coin};
+	}
+	if (fp == NULL) {
+
+	}
+
+	fwrite(&Data, sizeof(Data), 1, fp); // SaveData_t구조체 내용을 출력
+
+	fclose(fp);
+
+}
+
+void readdata_g1() {
+	SaveData_t Data;
+
+	FILE* fp = fopen("savedata.dat", "rb");
+
+	if (fp == NULL) {
+	}
+
+	fread(&Data, sizeof(Data), 1, fp);
+
+	fclose(fp);
+
+	//char buf[256];
+	//sprintf_s(buf, "최고 기록 %d", Data.highscore_g1, scene_g1);
+	//showMessage(buf);
+}
 
 
 ObjectID g1createObject(const char* image, SceneID scene, int x, int y, bool shown) {
@@ -262,16 +315,10 @@ void g1obj1_1firstposition() {
 }
 
 void g1clearobj() {
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 6; j++) {
-			obj1x[j][i]=1280;
-			obj1y[j][i] = 720;
-
-		}
-	}
-	for (int i = 0; i < 30; i++) {		
-		obj1_1x[i] = 1280;
-		obj1_1y[i] = 720;
+	
+	for (int i = g1difficulty; i < 30; i++) {
+		hideObject(g1obj1_1[i]);
+		
 
 	}
 	
@@ -342,10 +389,10 @@ void g1obj1move() {
 		obj1_1x[i] += g1obj1_1moveblockx[i];
 		obj1_1y[i] += g1obj1_1moveblocky[i];
 		if (g1obj1_1moveblockx[i] > 0) {
-			setObjectImage(g1obj1_1[i], "image/game1/부끄부끄/130-2.png");
+			setObjectImage(g1obj1_1[i], "image/game1/부끄부끄/131-1.png");
 		}
 		else {
-			setObjectImage(g1obj1_1[i], "image/game1/부끄부끄/130+2.png");
+			setObjectImage(g1obj1_1[i], "image/game1/부끄부끄/131+1.png");
 		}
 	}
 	
@@ -373,6 +420,7 @@ void score(){
 	stopTimer(g1score);
 	double g1result;
 	g1result = getTimer(g1score);
+	highscore_g1 = 9999 - g1result;
 	char buf[256];
 	sprintf_s(buf, "버틴시간 : %0.f초", (9999-g1result), scene_g1);
 	showMessage(buf);
@@ -387,6 +435,7 @@ void g1death() {
 				stopTimer(g1difficult);
 				showMessage("end");
 				score();
+				savedata_g1();
 				showObject(g1restartbutton);
 			}
 			else if (g1c1x < 0- g1_character_size_x+1 || g1c1x > 1280 || g1c1y < 0- g1_character_size_y +1|| g1c1y > 720) {
@@ -406,6 +455,7 @@ void g1death() {
 			stopTimer(g1difficult);
 			showMessage("end1");
 			score();
+			savedata_g1();
 			showObject(g1restartbutton);
 		}
 	}
@@ -419,8 +469,10 @@ void g1update() {
 }
 
 void g1restart() {
+	g1difficulty = 0;
 	g1c1x = 540, g1c1y = 360;
 	locateObject(g1c1, scene_g1, g1c1x, g1c1y);
+	g1clearobj();
 
 	g1obj1firstposition();
 	g1obj1_1firstposition();
@@ -440,6 +492,7 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 
 		if (object == g1startbutton) {
+			
 			startTimer(g1c1move);
 			//g1objmovepinpoint();
 			startTimer(g1timer1);
@@ -447,7 +500,7 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			startTimer(g1difficult);
 			hideObject(g1startbutton);
 			hideObject(g1restartbutton);
-
+			///savedata_g1();
 
 
 			setTimer(g1score, 9999);
@@ -483,7 +536,8 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			stopTimer(g1levelupgrade);
 			stopTimer(g1score);
 			stopTimer(g1difficult);
-			stopSound(bgm_g1);
+			stopSound(bgm_g1); 
+			readdata_g1();
 			enterScene(titleScene);
 
 		}
@@ -516,7 +570,7 @@ void Game1_timerCallback(TimerID timer) {// 크리에이트 타이머!!!!!!!!!!!
 		
 	}
 	if (timer == g1difficult) {
-		g1obj1_1[g1difficulty] = g1createObject("image/game1/부끄부끄/130+1.png", scene_g1, obj1_1x[g1difficulty], obj1_1y[g1difficulty], true);
+		g1obj1_1[g1difficulty] = g1createObject("image/game1/부끄부끄/131-1.png", scene_g1, obj1_1x[g1difficulty], obj1_1y[g1difficulty], true);
 		scaleObject(g1obj1_1[g1difficulty], 0.2f);
 
 		g1difficulty++;
@@ -559,6 +613,10 @@ void Game1_keyboardCallback(KeyCode code, KeyState state)
 
 
 void Game1_main() {
+
+	setGameOption(GameOption::GAME_OPTION_ROOM_TITLE, false);
+	setGameOption(GameOption::GAME_OPTION_INVENTORY_BUTTON, false);
+	setGameOption(GameOption::GAME_OPTION_MESSAGE_BOX_BUTTON, false);
 	
 	
 	scene_g1 = createScene("game1", "image/game1/배경.png");
