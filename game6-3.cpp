@@ -4,7 +4,7 @@
 
 #define PLAYER_ANIMATION_TIME		0.05f
 #define monster3_ANIMATION_TIME		0.15f
-#define PLAYER_SPEED				20
+#define PLAYER_SPEED				13
 #define monster3_SPEED				1
 #define monster3_NUMBER				12
 #define ENDmonster3_STATE			3	//마지막 몬스터 레벨(게임 끝나는 레벨)
@@ -14,12 +14,14 @@
 
 extern SceneID titleScene;
 SceneID scene_g63;
-ObjectID startButton_g63, restartButton_g63, goMapButton_g63;
+ObjectID startButton_g63, restartButton_g63, restartButton2_g63, goMapButton_g63;
 ObjectID player_g63;
 ObjectID monster3[monster3_NUMBER];
 ObjectID countDown3;
 TimerID countDown3Timer, playTimer_g63, monster3Timer_g63, growUpTimer_g63;
 extern SoundID bgm_g6, countDownSound_g6, catchSound1_g6, catchSound2_g6, gameOverSound, gameClearSound, growUpSound_g6, buttonClickSound;
+
+extern void enterTitle(int clearScene);	//클리어시 실행할 함수
 
 extern int nowGameSceneNum;
 int playerX_g63 = 600, playerY_g63 = 350;
@@ -41,6 +43,7 @@ int monster3Count = 0;
 int countDown3Num = 1;
 int nowState_g63 = 1;
 int growUpCount_g63 = 0;
+bool stage5Clear = false;
 
 extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size);
 
@@ -90,7 +93,9 @@ void gameClear_g63() {
 	hideObject(player_g63);
 
 	showMessage("게임 클리어");
+	stage5Clear = true;
 
+	hideObject(restartButton2_g63);
 	showObject(goMapButton_g63);
 
 }
@@ -111,6 +116,7 @@ void gameOver_g63() {
 		hideObject(monster3[i]);
 	}
 
+	hideObject(restartButton2_g63);
 	showObject(restartButton_g63);
 	showObject(goMapButton_g63);
 }
@@ -126,15 +132,18 @@ void Game63_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	if (object == startButton_g63) {		//타이머 켜지면서(오브젝트 이동 시작) 게임시작
 		playSound(countDownSound_g6);
+		showObject(restartButton2_g63);
 		showObject(countDown3);
 		startTimer(countDown3Timer);
 		hideObject(startButton_g63);
 		hideObject(goMapButton_g63);
 	}
 
-	else if (object == restartButton_g63) {
+	else if (object == restartButton_g63 || object == restartButton2_g63) {
+		stopTimer(monster3Timer_g63);
 		restart_g63();
 		playSound(countDownSound_g6);
+		showObject(restartButton2_g63);
 		showObject(countDown3);
 		startTimer(countDown3Timer);
 		hideObject(restartButton_g63);
@@ -144,7 +153,11 @@ void Game63_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	else if (object == goMapButton_g63) {
 		playSound(buttonClickSound);
 		stopSound(bgm_g6);
-		enterScene(titleScene);
+
+		if (stage5Clear == true)
+			enterTitle(5);
+		else
+			enterTitle(0);
 	}
 }
 
@@ -341,6 +354,7 @@ void Game63_main()
 
 	startButton_g63 = createObject("image/game6/start.png", scene_g63, 520, 280, true, 1.0f);
 	restartButton_g63 = createObject("image/game6/restart.png", scene_g63, 480, 350, false, 1.0f);
+	restartButton2_g63 = createObject("image/game6/restart.png", scene_g63, 10, 10, false, 0.5f);
 	goMapButton_g63 = createObject("image/game6/goMap.png", scene_g63, 20, 20, true, 1.0f);
 	countDown3 = createObject("image/game6/3.png", scene_g63, 570, 300, false, 0.5f);
 

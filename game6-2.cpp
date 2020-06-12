@@ -4,7 +4,7 @@
 
 #define PLAYER_ANIMATION_TIME		0.05f
 #define monster2_ANIMATION_TIME		0.15f
-#define PLAYER_SPEED				20
+#define PLAYER_SPEED				13
 #define monster2_SPEED				1
 #define monster2_NUMBER				13
 #define ENDmonster2_STATE			3	//마지막 몬스터 레벨(게임 끝나는 레벨)
@@ -14,13 +14,14 @@
 
 extern SceneID scene_g63, titleScene;
 SceneID scene_g62;
-ObjectID startButton_g62, restartButton_g62, goMapButton_g62;
+ObjectID startButton_g62, restartButton_g62, restartButton2_g62, goMapButton_g62;
 ObjectID player_g62;
 ObjectID monster2[monster2_NUMBER];
 ObjectID countDown2;
 TimerID countDown2Timer, playTimer_g62, monster2Timer_g62, growUpTimer_g62;
 extern SoundID bgm_g6, countDownSound_g6, catchSound1_g6, catchSound2_g6, gameOverSound, gameClearSound_g6, growUpSound_g6, buttonClickSound;
 
+extern void enterTitle(int clearScene);
 extern int nowGame6Stage, nowGameSceneNum;
 int playerX_g62 = 100, playerY_g62 = 350;
 int setMonster2X[monster2_NUMBER] = { 600,600,600,600,1100,1100,  350,350,350,850,850,850,  1070 };
@@ -107,6 +108,7 @@ void gameOver_g62() {
 		hideObject(monster2[i]);
 	}
 
+	hideObject(restartButton2_g62);
 	showObject(restartButton_g62);
 	showObject(goMapButton_g62);
 }
@@ -122,15 +124,18 @@ void Game62_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	if (object == startButton_g62) {		//타이머 켜지면서(오브젝트 이동 시작) 게임시작
 		playSound(countDownSound_g6);
+		showObject(restartButton2_g62);
 		showObject(countDown2);
 		startTimer(countDown2Timer);
 		hideObject(startButton_g62);
 		hideObject(goMapButton_g62);
 	}
 
-	else if (object == restartButton_g62) {
+	else if (object == restartButton_g62 || object == restartButton2_g62) {
+		stopTimer(monster2Timer_g62);
 		restart_g62();
 		playSound(countDownSound_g6);
+		showObject(restartButton2_g62);
 		showObject(countDown2);
 		startTimer(countDown2Timer);
 		hideObject(restartButton_g62);
@@ -140,7 +145,7 @@ void Game62_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	else if (object == goMapButton_g62) {
 		playSound(buttonClickSound);
 		stopSound(bgm_g6);
-		enterScene(titleScene);
+		enterTitle(0);
 	}
 }
 
@@ -338,6 +343,7 @@ void Game62_main()
 
 	startButton_g62 = createObject("image/game6/start.png", scene_g62, 520, 350, true, 1.0f);
 	restartButton_g62 = createObject("image/game6/restart.png", scene_g62, 480, 350, false, 1.0f);
+	restartButton2_g62 = createObject("image/game6/restart.png", scene_g62, 10, 10, false, 0.5f);
 	goMapButton_g62 = createObject("image/game6/goMap.png", scene_g62, 20, 20, true, 1.0f);
 	countDown2 = createObject("image/game6/3.png", scene_g62, 570, 300, false, 0.5f);
 

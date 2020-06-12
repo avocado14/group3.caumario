@@ -4,6 +4,8 @@ extern SceneID titleScene;
 
 extern void Title_main();
 extern void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action);
+extern void Title_timerCallback(TimerID timer);
+extern void Title_soundCallback(SoundID sound);
 
 extern void Game1_main();
 extern void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action);
@@ -78,6 +80,7 @@ void mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 void timerCallback(TimerID timer) {
 	
+	Title_timerCallback(timer);
 	Game1_timerCallback(timer);
 	Game2_timerCallback(timer);
 	Game3_timerCallback(timer);
@@ -91,6 +94,7 @@ void timerCallback(TimerID timer) {
 
 void soundCallback(SoundID sound) {
 
+	Title_soundCallback(sound);
 	Game1_soundCallback(sound);
 	Game4_soundCallback(sound);
 	Game5_soundCallback(sound);
@@ -111,6 +115,9 @@ void keyboardCallback(KeyCode code, KeyState state) {
 
 
 int main() {
+
+	setGameOption(GameOption::GAME_OPTION_INVENTORY_BUTTON, false);
+	setGameOption(GameOption::GAME_OPTION_MESSAGE_BOX_BUTTON, false);
 
 	setMouseCallback(mouseCallback);
 	setTimerCallback(timerCallback);
