@@ -3,13 +3,14 @@
 #include <stdlib.h>
 #include <time.h>
 
+extern SceneID titleScene;
 SceneID scene1_g3, scene2_g3;
 ObjectID startbutton_g3, restartbutton_g3, endbutton_g3, normal, blue, red, yellow, heart1_g3, heart2_g3, heart3_g3, damaged_g3;
 ObjectID enemy[150] = { 0, };
 TimerID enemyMove, damageTime_g3;
 SoundID bgm_g3, finalHit_g3, finalHit1_g3, normalHit_g3, normalHit1_g3, normalHit2_g3, normalHit3_g3, normalHit4_g3;
 int pattern[150] = { 0, }, Elife[150] = { 0, }, locate[150] = { 0, };
-int count_g3 = 0, clear_g3 = 0, life_g3 = 3, location = 60, NhitCount_g3 = 0, FhitCount_g3 = 0, score = 0;
+int count_g3 = 0, clear_g3 = 0, life_g3 = 3, location = 60, NhitCount_g3 = 0, FhitCount_g3 = 0, score_g3 = 0;
 char name[30] = { 0, }, info_g3[30] = { 0, };
 float duration_g3 = 1.0f;
 
@@ -91,7 +92,7 @@ void ending_g3() {		//게임 클리어 후 처리
 		if (pattern[i] != 0) hideObject(enemy[i]);
 	}
 
-	sprintf_s(info_g3, "점수 : %d", score);
+	sprintf_s(info_g3, "점수 : %d", score_g3);
 	showMessage(info_g3);
 
 	showObject(restartbutton_g3);
@@ -171,7 +172,7 @@ void judge_g3(int num1, int num2) {	// 클릭 시 정,오답 확인
 		clear_g3++;
 		zeroCheck_g3();
 		normalHitPlay_g3();
-		score++;
+		score_g3++;
 	}
 	else if (pattern[clear_g3] == num2) {
 		Elife[clear_g3]--;
@@ -183,7 +184,7 @@ void judge_g3(int num1, int num2) {	// 클릭 시 정,오답 확인
 			clear_g3++;
 			zeroCheck_g3();
 			finalHitPlay_g3();
-			score++;
+			score_g3++;
 		}
 	}
 	else {
@@ -202,6 +203,10 @@ void Game3_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 		zeroCheck_g3();
 
+		showObject(heart1_g3);
+		showObject(heart2_g3);
+		showObject(heart3_g3);
+
 		playSound(bgm_g3, true);
 
 		setTimer(enemyMove, duration_g3);
@@ -217,18 +222,18 @@ void Game3_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		count_g3 = 0;
 		clear_g3 = 0;
 		life_g3 = 3;
-		score = 0;
+		score_g3 = 0;
 
 		patternMaker_g3();
 		enemyLife_g3();
 		createEnemy_g3();
 
-		hideObject(restartbutton_g3);
-		hideObject(endbutton_g3);
-
 		showObject(heart1_g3);
 		showObject(heart2_g3);
 		showObject(heart3_g3);
+
+		hideObject(restartbutton_g3);
+		hideObject(endbutton_g3);
 
 		zeroCheck_g3();
 
@@ -238,7 +243,22 @@ void Game3_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	else if (object == endbutton_g3) {
 
-		endGame();
+		for (int i = 0; i < 150; i++) enemy[i] = 0;
+		for (int i = 0; i < 150; i++) pattern[i] = 0;
+		for (int i = 0; i < 150; i++) Elife[i] = 0;
+		for (int i = 0; i < 150; i++) locate[i] = 0;
+		for (int i = 0; i < 30; i++) name[i] = 0;
+		count_g3 = 0;
+		clear_g3 = 0;
+		life_g3 = 3;
+		score_g3 = 0;
+
+		hideObject(restartbutton_g3);
+		hideObject(endbutton_g3);
+
+		stopSound(bgm_g3);
+
+		enterScene(titleScene);
 	}
 
 	else if (object == normal) {
@@ -316,9 +336,9 @@ void Game3_main() {
 	scene1_g3 = createScene("game3 info", "image/game3/cover.png");
 	scene2_g3 = createScene("game3", "image/game3/cover2.png");
 
-	startbutton_g3 = createObject_g3("image/game3/시작.png", scene1_g3, 610, 70, true);
-	restartbutton_g3 = createObject_g3("image/game3/다시시작.png", scene2_g3, 610, 400, false);
-	endbutton_g3 = createObject_g3("image/game3/취소.png", scene2_g3, 610, 350, false);
+	startbutton_g3 = createObject_g3("image/game3/시작.png", scene1_g3, 550, 400, true);
+	restartbutton_g3 = createObject_g3("image/game3/다시시작.png", scene2_g3, 550, 400, false);
+	endbutton_g3 = createObject_g3("image/game3/goMap.png", scene2_g3, 610, 350, false);
 
 	heart1_g3 = createObject_g3("image/game3/heart.png", scene2_g3, 830, 650, true);
 	scaleObject(heart1_g3, 0.05f);

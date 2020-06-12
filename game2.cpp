@@ -3,13 +3,14 @@
 #include <stdlib.h>
 #include <time.h>
 
+extern SceneID titleScene;
 SceneID scene1_g2, scene2_g2;
 ObjectID startbutton_g2, restartbutton_g2, endbutton_g2, heart1_g2, heart2_g2, heart3_g2, hiteffect_g2, damaged_g2;
 ObjectID target[20] = { 0, };
 TimerID appear, hitting, damageTime_g2;
 SoundID bgm_g2, normalHit_g2, normalHit1_g2, normalHit2_g2, normalHit3_g2, normalHit4_g2;
 int arrX[20] = { 0, }, arrY[20] = { 0, };
-int count_g2 = 0, clear_g2 = 0, life_g2 = 3, targetNum = 4, NhitCount_g2 = 0, round = 0;
+int count_g2 = 0, clear_g2 = 0, life_g2 = 3, targetNum = 4, NhitCount_g2 = 0, score_g2 = 0;
 char info_g2[50] = { 0, };
 float duration_g2 = 1.0f;
 bool lock = false;
@@ -105,7 +106,7 @@ void ending_g2() {		// 게임 종료
 		hideObject(target[j]);
 	}
 
-	sprintf_s(info_g2, "라운드 수 : %d", round);
+	sprintf_s(info_g2, "점수 : %d", score_g2);
 	showMessage(info_g2);
 
 	showObject(restartbutton_g2);
@@ -135,6 +136,8 @@ void judge_g2(ObjectID object, int i) {
 
 			clear_g2++;
 
+			score_g2++;
+
 			locateObject(hiteffect_g2, scene2_g2, arrX[i], arrY[i]);
 			showObject(hiteffect_g2);
 
@@ -154,8 +157,6 @@ void judge_g2(ObjectID object, int i) {
 				if (duration_g2 > 0.5f) {	// 타겟 등장 주기 감소 (최소 0.5초)
 					duration_g2 -= 0.05f;
 				}
-
-				round++;
 
 				clearing_g2();
 			}
@@ -187,13 +188,17 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		setTimer(appear, duration_g2);
 		startTimer(appear);
 
+		showObject(heart1_g2);
+		showObject(heart2_g2);
+		showObject(heart3_g2);
+
 		playSound(bgm_g2, true);
 	}
 
 	else if (object == restartbutton_g2) {
 
 		targetNum = 4;
-		round = 0;
+		score_g2 = 0;
 		life_g2 = 3;
 		duration_g2 = 1.0f;
 
@@ -209,7 +214,24 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	else if (object == endbutton_g2) {
 
-		endGame();
+		targetNum = 4;
+		score_g2 = 0;
+		life_g2 = 3;
+		duration_g2 = 1.0f;
+
+		hideObject(restartbutton_g2);
+		hideObject(endbutton_g2);
+
+		for (int i = 0; i < 20; i++) target[i] = 0;
+		for (int i = 0; i < 20; i++) arrX[i] = 0;
+		for (int i = 0; i < 20; i++) arrY[i] = 0;
+
+		clear_g2 = 0;
+		count_g2 = 0;
+
+		stopSound(bgm_g2);
+
+		enterScene(titleScene);
 	}
 	else {											// 무슨 타켓을 클릭했는지 검사
 		for (int i = 0; i < targetNum; i++) {
@@ -249,9 +271,9 @@ void Game2_main() {
 	scene1_g2 = createScene("game2 info", "image/game2/배경.png");
 	scene2_g2 = createScene("game2", "image/game2/배경1.png");
 
-	startbutton_g2 = createObject_g2("image/game2/시작.png", scene1_g2, 610, 70, true);
-	restartbutton_g2 = createObject_g2("image/game2/다시시작.png", scene2_g2, 610, 400, false);
-	endbutton_g2 = createObject_g2("image/game2/확인.png", scene2_g2, 610, 350, false);
+	startbutton_g2 = createObject_g2("image/game2/시작.png", scene1_g2, 550, 400, true);
+	restartbutton_g2 = createObject_g2("image/game2/다시시작.png", scene2_g2, 550, 400, false);
+	endbutton_g2 = createObject_g2("image/game2/goMap.png", scene2_g2, 610, 350, false);
 
 	hiteffect_g2 = createObject_g2("image/game2/hit.png", scene2_g2, 610, 400, false);
 	damaged_g2 = createObject_g2("image/game2/damage.png", scene2_g2, 0, 0, false);
