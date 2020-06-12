@@ -98,6 +98,10 @@ void stageUnlock(int stage) {
 			sprintf_s(path, "image/Title/ÆË¾÷/%d-2.png", stage + 1);
 			setObjectImage(GamePopup[stage], path);
 			setObjectImage(GameEnterButton[stage], "image/Title/enter.png");
+			locateObject(GameEnterButton[stage], titleScene, 950, 100);
+
+			if(stage == 4)
+				locateObject(GameEnterButton[stage], titleScene, 70, 100);
 
 		}
 
@@ -113,6 +117,7 @@ void stageUnlock(int stage) {
 
 			setObjectImage(GamePopup[5], "image/Title/ÆË¾÷/6-2.png");
 			setObjectImage(GameEnterButton[5], "image/Title/enter.png");
+			locateObject(GameEnterButton[stage], titleScene, 70, 100);
 		}
 		
 		else
@@ -327,15 +332,14 @@ void Title_main() {
 	GamePopup[5] = createObject("image/Title/ÆË¾÷/6.png", titleScene, 0, 0, false, 1.0f);
 
 
-	for (int i = 0; i < 6; i++) {
-		if (i < 4)
-			GameEnterButton[i] = createObject("image/Title/unlock.png", titleScene, 950, 70, false, 1.0f);
-		else
-			GameEnterButton[i] = createObject("image/Title/unlock.png", titleScene, 70, 70, false, 1.0f);
-	}
 
-	setObjectImage(GameEnterButton[0], "image/Title/enter.png");
-	setObjectImage(GameEnterButton[2], "image/Title/enter.png");
+	GameEnterButton[0] = createObject("image/Title/enter.png", titleScene, 950, 100, false, 1.0f);
+	GameEnterButton[1] = createObject("image/Title/unlock.png", titleScene, 950, 70, false, 1.0f);
+	GameEnterButton[2] = createObject("image/Title/enter.png", titleScene, 950, 100, false, 1.0f);
+	GameEnterButton[3] = createObject("image/Title/unlock.png", titleScene, 950, 70, false, 1.0f);
+	GameEnterButton[4] = createObject("image/Title/unlock.png", titleScene, 70, 70, false, 1.0f);
+	GameEnterButton[5] = createObject("image/Title/unlock.png", titleScene, 70, 70, false, 1.0f);
+
 
 
 	marioAnimationTimer = createTimer(MARIO_ANIMATION_TIME);
