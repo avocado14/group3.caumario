@@ -302,7 +302,7 @@ void g4death() {
                 g4scoremessage();
                 showObject(g4restartbutton);
             }
-            if (g4score > 20) {
+            if (g4score > 25) {
                 if ((210 < (g4obj2x[i] + g4_obj2_size_width)) && (210 + g4_character_size_width > g4obj2x[i]) &&
                     (g4c1y < (g4obj2y[i] + g4_obj2_size_length)) && (g4c1y + g4_character_size_length > g4obj2y[i])) {
                     stopTimer(g4timer1);
@@ -522,7 +522,7 @@ void g4objselectshow() {
             hideObject(g4obj1[i]);
         }
 
-        if (g4score > 20) {
+        if (g4score > 25) {
             if ((0 < (g4obj2x[i] + g4_obj1_size_width)) && 1280 > g4obj2x[i]) {
                 showObject(g4obj2[i]);
             }
@@ -571,7 +571,7 @@ void g4update() {
     g4obj2animation();
     g4obj3animation();
     g4flooranimation();
-   g4death();
+   //g4death();
    g4stageclear();
    g4objselectshow();
     //-------좌표이동
@@ -705,7 +705,7 @@ void Game4_timerCallback(TimerID timer) {
             g4jump1_1();
            
         }
-        setTimer(g4timer1, 0.01f);
+        setTimer(g4timer1, 0.04f);
         startTimer(g4timer1);
 	}
     else if (timer == g4timer2) {//점프 2
@@ -716,11 +716,11 @@ void Game4_timerCallback(TimerID timer) {
             g4jump2_1(g4jump2_1firstpositioncache);
 
         }
-        setTimer(g4timer2, 0.01f);
+        setTimer(g4timer2, 0.04f);
         startTimer(g4timer2);
     }
     if (timer == g4obmove) {//장애물 움직임
-        setTimer(g4obmove, 0.01f);
+        setTimer(g4obmove, 0.04f);
         startTimer(g4obmove);
         g4update();
     }
@@ -736,10 +736,10 @@ void Game4_soundCallback(SoundID sound) {
 
 void Game4_keyboardCallback(KeyCode code, KeyState state)
 {
-    if (code == 75) {			// UP
+    if (code == 75) {			// 
         if (nowGameSceneNum == 4) {
             //g4jumping1_1 = (state == KeyState::KEYBOARD_PRESSED ? true : false);
-            if (state == KeyState::KEYBOARD_PRESSED) {
+            if (state == KeyState::KEYBOARD_PRESSED) {//
                 if (g4jumping1_1 == false) {
                     g4jumping1_1 = true;
                 }
@@ -794,9 +794,9 @@ void Game4_main() {
     g4clear = g4createObject("image/game4/클리어.png", scene_g4, 280, 250, false);
     scaleObject(g4clear, 0.5f);
 
-	g4timer1 = createTimer(0.01f);
-    g4timer2 = createTimer(0.01f);
-    g4obmove = createTimer(0.01f);
+	g4timer1 = createTimer(0.05f);
+    g4timer2 = createTimer(0.05f);
+    g4obmove = createTimer(0.05f);
     g4difficult = createTimer(5.f);
     
 
