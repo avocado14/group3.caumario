@@ -5,16 +5,17 @@
 #define MARIO_ANIMATION_TIME	0.1f
 
 
+
 extern SceneID scene_g1, scene1_g2, scene1_g3, scene_g4, scene_g5, scene_g6, scene_g62, scene_g63;
 
 extern SoundID buttonClickSound, gameClearSound, gameOverSound, GameEnterSound;
 extern SoundID bgm_g3, g4theme, bgm_g2, bgm_g1, bgm_g5, bgm_g6;
 
 SceneID titleScene;
-ObjectID GameIcon[6], GamePopup[6], GameEnterButton[6];
+ObjectID GameIcon[6], GamePopup[6], GameEnterButton[6], maintitle, titlestartbutton;
 ObjectID Mario, key1, key2, coinImage, xText;
 ObjectID coinText[3];
-TimerID marioAnimationTimer;
+TimerID marioAnimationTimer, titleanimationtimer;
 SoundID bgm_title;
 
 int IconX[6] = { 30,22,570,560,1050,1170 };
@@ -40,10 +41,19 @@ const char* marioAnimationImage[9] =
 { "image/Title/마리오애니/1.png","image/Title/마리오애니/2.png","image/Title/마리오애니/3.png","image/Title/마리오애니/4.png",
 "image/Title/마리오애니/5.png","image/Title/마리오애니/6.png","image/Title/마리오애니/7.png","image/Title/마리오애니/8.png","image/Title/마리오애니/9.png" };
 
-
+int titleanimationx = 0;
 
 extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size);
 
+void titleanimation() {
+	if (titleanimationx < 1300) {
+		titleanimationx = titleanimationx + 25;
+		locateObject(maintitle, titleScene, titleanimationx, 0);
+	}
+	else {
+		stopTimer(titleanimationtimer);
+	}
+}
 
 void showCoinCount() {
 
@@ -363,7 +373,12 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			enterScene(scene_g5);
 		}
 	}	
-
+	
+	else if (object == titlestartbutton) {
+	startTimer(titleanimationtimer);
+	hideObject(titlestartbutton);
+	}
+	
 }
 
 void Title_timerCallback(TimerID timer) {
@@ -376,7 +391,11 @@ void Title_timerCallback(TimerID timer) {
 		setTimer(marioAnimationTimer, MARIO_ANIMATION_TIME);
 		startTimer(marioAnimationTimer);
 	}
-
+	if (timer == titleanimationtimer) {
+		titleanimation();
+		setTimer(titleanimationtimer, 0.01f);
+		startTimer(titleanimationtimer);
+	}
 
 }
 
@@ -392,11 +411,14 @@ void Title_main() {
 
 	titleScene = createScene("전체 맵", "image/Title/worldmap.png");
 	
+
 	for (int i = 0; i < 6; i++)
 		GameIcon[i] = createObject("image/Title/검은아이콘.png", titleScene, IconX[i] +10 , IconY[i] - 15, true, 1.0f);
 	setObjectImage(GameIcon[0], "image/Title/파란아이콘.png");
 	setObjectImage(GameIcon[1], "image/Title/빨간아이콘.png");
 	setObjectImage(GameIcon[5], "image/Title/빨간아이콘.png");
+
+	
 
 	Mario = createObject("image/Title/마리오애니/1.png", titleScene, IconX[0], IconY[0], true, 1.4f);
 
@@ -424,8 +446,10 @@ void Title_main() {
 	GameEnterButton[4] = createObject("image/Title/unlock.png", titleScene, 70, 70, false, 1.0f);
 	GameEnterButton[5] = createObject("image/Title/unlock.png", titleScene, 70, 70, false, 1.0f);
 
-
+	maintitle = createObject("image/Title/title.png", titleScene, 0, 0, true, 1.0f);
+	titlestartbutton = createObject("image/Title/start.png", titleScene, 900, 110, true, 1.0f);
 	marioAnimationTimer = createTimer(MARIO_ANIMATION_TIME);
+	titleanimationtimer = createTimer(0.01f);
 	startTimer(marioAnimationTimer);
 
 	bgm_title = createSound("sounds/배경음/메인맵.mp3");

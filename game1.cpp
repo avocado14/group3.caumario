@@ -20,7 +20,7 @@ ObjectID g1c1, g1obj1[6][10],g1startbutton, g1restartbutton, g1goMapButton;//[¼¼
 TimerID g1timer1, g1c1move,g1levelupgrade,g1score, g1difficult;
 SoundID bgm_g1;
 
-extern int nowGameSceneNum;
+extern int nowGameSceneNum,coin;
 
 int highscore_g1=0;
 
