@@ -66,51 +66,11 @@ const char* g1c1animationfileright[10] =
 
 
 
-typedef struct {
-
-	int highscore_g1;         //HP
-
-	int coin;         //MP
 
 
-}SaveData_t;
 
-void savedata_g1() {
-	SaveData_t Data;
 
-	FILE* fp = fopen("savedata.dat", "wb");
 
-	fread(&Data, sizeof(Data), 1, fp);
-
-	if (highscore_g1 > Data.highscore_g1) {
-		SaveData_t Data = { highscore_g1, coin};
-	}
-	if (fp == NULL) {
-
-	}
-
-	fwrite(&Data, sizeof(Data), 1, fp); // SaveData_t구조체 내용을 출력
-
-	fclose(fp);
-
-}
-
-void readdata_g1() {
-	SaveData_t Data;
-
-	FILE* fp = fopen("savedata.dat", "rb");
-
-	if (fp == NULL) {
-	}
-
-	fread(&Data, sizeof(Data), 1, fp);
-
-	fclose(fp);
-
-	//char buf[256];
-	//sprintf_s(buf, "최고 기록 %d", Data.highscore_g1, scene_g1);
-	//showMessage(buf);
-}
 
 
 ObjectID g1createObject(const char* image, SceneID scene, int x, int y, bool shown) {
@@ -442,7 +402,7 @@ void g1death() {
 				stopTimer(g1difficult);
 				showMessage("end");
 				score();
-				savedata_g1();
+				//savedata_g1();
 				showObject(g1restartbutton);
 			}
 			else if (g1c1x < 0- g1_character_size_x+1 || g1c1x > 1280 || g1c1y < 0- g1_character_size_y +1|| g1c1y > 720) {
@@ -450,6 +410,7 @@ void g1death() {
 				stopTimer(g1c1move);
 				stopTimer(g1difficult);
 				showMessage("out of bounds");
+				score();
 				showObject(g1restartbutton);
 			}
 		}
@@ -462,7 +423,7 @@ void g1death() {
 			stopTimer(g1difficult);
 			showMessage("end1");
 			score();
-			savedata_g1();
+			//savedata_g1();
 			showObject(g1restartbutton);
 		}
 	}
@@ -500,7 +461,11 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 		if (object == g1startbutton) {
 			
-			playSound(buttonClickSound);
+			playSound(buttonClickSound); 
+			g1difficulty = 0;
+			g1c1x = 540, g1c1y = 360;
+			locateObject(g1c1, scene_g1, g1c1x, g1c1y);
+			g1clearobj();
 			startTimer(g1c1move);
 			//g1objmovepinpoint();
 			startTimer(g1timer1);
@@ -547,7 +512,7 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			stopTimer(g1score);
 			stopTimer(g1difficult);
 			stopSound(bgm_g1); 
-			readdata_g1();
+			//readdata_g1();
 			enterTitle(0);
 
 		}

@@ -7,6 +7,7 @@ extern void Title_main();
 extern void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action);
 extern void Title_timerCallback(TimerID timer);
 extern void Title_soundCallback(SoundID sound);
+extern int readdata();
 
 extern void Game1_main();
 extern void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action);
@@ -153,6 +154,7 @@ int main() {
 
 	
 	startGame(titleScene);
+	
 	//startGame(endingScene);
 
 }

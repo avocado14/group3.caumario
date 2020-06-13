@@ -15,7 +15,7 @@ using namespace std;
 #define g4_obj2_size_width 70
 #define g4_obj2_size_length 90 
 #define g4_obj3_size_width 80 
-#define g4_obj3_size_length 100 
+#define g4_obj3_size_length 80 
 #define g4_obj4_size_width  80   
 #define g4_obj4_size_length  80
 
@@ -38,7 +38,7 @@ const char* g4objfile[5] =
 { "image/game4/선인/선인 애니메이션 1.png" ,"image/game4/해골 거북이/1.png" ,"image/game4/하늘 거북이/하늘거북이 애니메이션 1.png" ,"image/game4/c5.png" ,"image/game4/c6.png"  };
 int g4objnumber[20] ={ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 };
 //0123 지네   4567 c3   891011 c4  12131415 c5  16171819 c6
-int movetype;
+int movetype, g4howfar;
 int g4difficulty;
 double g4score=0;
 bool stage2Clear = false;
@@ -66,7 +66,7 @@ double g4obj4x[4], g4obj4y[4];
 
 
 //------------마리오 점프----------
-double g4c1y=210,g4gravity=20, g4c1yjump2start;
+double g4c1y=110,g4gravity=20, g4c1yjump2start;
 bool g4isjumping1, g4isjumping2,g4isBottom,g4jumping1process=false, g4jumping2process = false;
 double g4c1jump1cache, g4c1jump2cache;
 
@@ -264,9 +264,10 @@ void g4flooranimation() {
         
     }
     else {
-        g4floor1x = g4floor1x - 12;
-        g4floor2x = g4floor2x - 12;
-        g4score = g4score + 0.05;
+        g4floor1x = g4floor1x -11 - 2 * g4difficulty;
+        g4floor2x = g4floor2x - 11 - 2 * g4difficulty;
+        g4howfar = g4howfar + 11 + 2 * g4difficulty;
+        g4score = g4howfar* 0.006;
     }
     if (g4background1x < -2100) {
         g4background1x = g4background2x + 2000;
@@ -293,7 +294,7 @@ void g4scoremessage() {
 void g4death() {
     
         for (int i = 0; i < 4; i++) {
-            if ((210 < (g4obj1x[i] + g4_obj1_size_width)) && ((210 + g4_character_size_width) > g4obj1x[i]) &&
+            if ((220 < (g4obj1x[i] + g4_obj1_size_width)) && ((210 + g4_character_size_width) > g4obj1x[i]) &&
                 (g4c1y < (g4obj1y[i] + g4_obj1_size_length)) && ((g4c1y + g4_character_size_length) > g4obj1y[i])){
                 stopTimer(g4timer1);
                 stopTimer(g4timer2);
@@ -303,7 +304,7 @@ void g4death() {
                 showObject(g4restartbutton);
             }
             if (g4score > 25) {
-                if ((210 < (g4obj2x[i] + g4_obj2_size_width)) && (210 + g4_character_size_width > g4obj2x[i]) &&
+                if ((220 < (g4obj2x[i] + g4_obj2_size_width)) && (210 + g4_character_size_width > g4obj2x[i]) &&
                     (g4c1y < (g4obj2y[i] + g4_obj2_size_length)) && (g4c1y + g4_character_size_length > g4obj2y[i])) {
                     stopTimer(g4timer1);
                     stopTimer(g4timer2);
@@ -314,7 +315,7 @@ void g4death() {
                 }
             }
             if (g4score > 60) {
-                if ((210 < (g4obj3x[i] + g4_obj3_size_width)) && (210 + g4_character_size_width > g4obj3x[i]) &&
+                if ((220 < (g4obj3x[i] + g4_obj3_size_width)) && (210 + g4_character_size_width > g4obj3x[i]) &&
                     (g4c1y < (g4obj3y[i] + g4_obj3_size_length)) && (g4c1y + g4_character_size_length > g4obj3y[i])) {
                     stopTimer(g4timer1);
                     stopTimer(g4timer2);
@@ -341,7 +342,7 @@ void g4death() {
 
 void g4jump1_1() {
     double g4c1ycache;
-    if (jump1_1xcache >= 100 || jump1_1xcache < -100) {//계산 밖일때
+    if (jump1_1xcache >= 90 || jump1_1xcache < -100) {//계산 밖일때
         jump1_1xcache = -100;
         //g4jumping1_1 = false;
         g4c1y = floor_y;
@@ -356,7 +357,7 @@ void g4jump1_1() {
 }
 void g4jump2_1(double g4c1positiony) {
     double g4c1ycache;
-    if (jump2_1xcache >= 100 || jump2_1xcache < -100) {//계산 밖일때
+    if (jump2_1xcache >= 90 || jump2_1xcache < -100) {//계산 밖일때
         jump2_1xcache = -100;
         //g4jumping1_1 = false;
         g4c1y = g4c1positiony;
@@ -469,46 +470,50 @@ void g4obstaclemove(ObjectID obstacle,SceneID scene,int movetype,int objID) {
            }
        }
        else {
-           g4obj1x[objID] = g4obj1x[objID] - 10- 2*g4difficulty;
+           g4obj1x[objID] = g4obj1x[objID] - 11- 2*g4difficulty;
        }
     }
     if (movetype == 2) {
-        g4obj2y[objID] = 110;
-        if (g4obj2x[objID] < 0) {
-            srand((unsigned int)time(NULL));
-            int num = rand();
-            int rndvalue = num % 5;
-            if (objID == 1 || objID == 2 || objID == 3) {
-                g4obj2x[objID] = g4obj2x[objID - 1] + 320 + (500 - g4difficulty * 10) + rndvalue * 50;
+        if (g4difficulty >= 2) {
+            g4obj2y[objID] = 110;
+            if (g4obj2x[objID] < 0) {
+                srand((unsigned int)time(NULL));
+                int num = rand();
+                int rndvalue = num % 5;
+                if (objID == 1 || objID == 2 || objID == 3) {
+                    g4obj2x[objID] = g4obj2x[objID - 1] + 320 + (500 - g4difficulty * 10) + rndvalue * 50;
+                }
+                else if (objID == 0) {
+                    g4obj2x[objID] = g4obj2x[3] + 320 + (500 - g4difficulty * 10) + rndvalue * 50;
+                }
             }
-            else if (objID == 0) {
-                g4obj2x[objID] = g4obj2x[3] + 320 + (500 - g4difficulty * 10)+rndvalue * 50;
+            else {
+                g4obj2x[objID] = g4obj2x[objID] - 16 - 2 * g4difficulty;
             }
-        }
-        else {
-            g4obj2x[objID] = g4obj2x[objID] - 15 - 2* g4difficulty;
         }
     }
     if (movetype == 3) {       
-        if (g4obj3x[objID] < 0) {
-            //srand((unsigned int)time(NULL));
-            int num = rand();
-            int rndvalue = num % 5;
-            
-            //g4obj3startx[objID] = 1300 + rndvalue * 20;
-           // g4obj3starty[objID] = 400 + rndvalue * 30;
-            if (objID == 1 || objID == 2 || objID == 3) {
-                g4obj3x[objID] = g4obj3x[objID - 1] + 700  + rndvalue * 150;
+        if (g4difficulty >= 4) {
+            if (g4obj3x[objID] < 0) {
+                //srand((unsigned int)time(NULL));
+                int num = rand();
+                int rndvalue = num % 5;
+
+                //g4obj3startx[objID] = 1300 + rndvalue * 20;
+               // g4obj3starty[objID] = 400 + rndvalue * 30;
+                if (objID == 1 || objID == 2 || objID == 3) {
+                    g4obj3x[objID] = g4obj3x[objID - 1] + 700 + rndvalue * 150;
+                }
+                else if (objID == 0) {
+                    g4obj3x[objID] = g4obj3x[3] + 700 + rndvalue * 150;
+                }
+                g4obj3starty[objID] = 500 + rndvalue * 30;
+                g4obj3y[objID] = g4obj3starty[objID];
             }
-            else if (objID == 0) {
-                g4obj3x[objID] = g4obj3x[3] +700  + rndvalue * 150;
+            else {
+                g4obj3x[objID] = g4obj3x[objID] - 10;
+                g4obj3y[objID] = 70 * sin((0.01) * g4obj3x[objID]) + g4obj3starty[objID];
             }
-            g4obj3starty[objID] = 500 + rndvalue * 30;
-            g4obj3y[objID] = g4obj3starty[objID];
-        }
-        else {
-            g4obj3x[objID] = g4obj3x[objID] - 10;
-            g4obj3y[objID] = 70*sin((0.01)*g4obj3x[objID])+ g4obj3starty[objID];
         }
     }
 }
@@ -523,6 +528,12 @@ void g4objselectshow() {
         }
 
         if (g4score > 25) {
+            if (g4score > 25 && g4score < 35) {
+                if ((500 < (g4obj2x[i] + g4_obj1_size_width)) && 1280 > g4obj2x[i])
+                {
+                    hideObject(g4obj2[i]);
+                }
+            }
             if ((0 < (g4obj2x[i] + g4_obj1_size_width)) && 1280 > g4obj2x[i]) {
                 showObject(g4obj2[i]);
             }
@@ -571,7 +582,7 @@ void g4update() {
     g4obj2animation();
     g4obj3animation();
     g4flooranimation();
-   //g4death();
+    g4death();
    g4stageclear();
    g4objselectshow();
     //-------좌표이동
@@ -611,7 +622,7 @@ void g4update() {
     if (g4score > 0 && g4score < 20) {
         g4difficulty = 1;
     }
-    else if (g4score > 20 && g4score < 30) {
+    else if (g4score > 25 && g4score < 30) {
         g4difficulty = 2;
     }
     else if (g4score > 30 && g4score < 60) {
@@ -627,6 +638,7 @@ void g4update() {
 }
 
 void g4gamestart() {
+    g4howfar = 0;
     for (int i = 0; i < 4; i++) {
         srand((unsigned int)time(NULL));          
         int num = rand();

@@ -12,7 +12,7 @@ extern SoundID buttonClickSound, gameClearSound, gameOverSound, GameEnterSound;
 extern SoundID bgm_g3, g4theme, bgm_g2, bgm_g1, bgm_g5, bgm_g6;
 
 SceneID titleScene;
-ObjectID GameIcon[6], GamePopup[6], GameEnterButton[6], maintitle, titlestartbutton;
+ObjectID GameIcon[6], GamePopup[6], GameEnterButton[6], maintitle, titlestartbutton, savebutton;
 ObjectID Mario, key1, key2, coinImage, xText;
 ObjectID coinText[3];
 TimerID marioAnimationTimer, titleanimationtimer;
@@ -24,7 +24,7 @@ int IconY[6] = { 115,385,215,565,275,465 };
 bool stageLocked[6] = { 0,1,0,1,1,1 };
 bool stageBlack[6] = { 0,0,1,1,1,0 };		//0,0,1,1,1,0
 int stageUnlockCost[6] = { 0, 30, 0,30,150,0 };	//6번째 : 열쇠 2개 필요
-int coin = 0; //점수  코인개수
+int coin ; //점수  코인개수
 int key = 0;
 
 int coinNum100, coinNum10, coinNum1;
@@ -44,6 +44,72 @@ const char* marioAnimationImage[9] =
 int titleanimationx = 0;
 
 extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size);
+
+typedef struct {
+
+	int coin;         //HP
+
+	bool stageBlack[6];
+
+	bool stageLocked[6];
+
+}SaveData_t;
+
+int savedata() {
+	SaveData_t Data = { coin,
+		stageBlack[0],stageBlack[1],stageBlack[2],stageBlack[3],stageBlack[4],stageBlack[5], 
+		stageLocked[0],stageLocked[1],stageLocked[2],stageLocked[3],stageLocked[4],stageLocked[5] };
+	FILE* fp = fopen("savedata.dat", "wb");
+
+	if (fp == NULL) {
+
+		return 0;
+
+	}
+
+	fwrite(&Data, sizeof(Data), 1, fp); // SaveData_t구조체 내용을 출력
+
+	fclose(fp);
+
+	return 0;
+
+
+
+}
+
+int readdata() {
+	SaveData_t Data;
+
+	FILE* fp = fopen("savedata.dat", "rb");
+
+	if (fp == NULL) {
+
+		return 0;
+
+	}
+
+	fread(&Data, sizeof(Data), 1, fp);
+
+	fclose(fp);
+	coin = Data.coin;
+	for (int i = 0; i < 6; i++) {
+		stageBlack[i] = Data.stageBlack[i];
+	}
+	for (int i = 0; i < 6; i++) {
+		stageLocked[i] = Data.stageLocked[i];
+	}
+
+	//printf("HP=%d\nMP=%d\n소지금=%d\n경험치=%d\n",Data.HP, Data.MP, Data.Money, Data.Exp);
+
+
+
+	return 0;
+
+
+	//char buf[256];
+	//sprintf_s(buf, "최고 기록 %d", Data.highscore_g1, scene_g1);
+	//showMessage(buf);
+}
 
 void titleanimation() {
 	if (titleanimationx < 1300) {
@@ -116,7 +182,7 @@ void hideUI() {
 
 //0은 클리어x 2스테이지(사막), 5스테이지(하늘) 받음 
 void enterTitle(int clearScene) {
-
+	
 	setGameOption(GameOption::GAME_OPTION_ROOM_TITLE, false);
 	showCoinCount();
 
@@ -377,6 +443,11 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	else if (object == titlestartbutton) {
 	startTimer(titleanimationtimer);
 	hideObject(titlestartbutton);
+	
+	}
+	else if (object == savebutton) {
+		savedata();
+		showMessage("저장 완료!");
 	}
 	
 }
@@ -408,7 +479,7 @@ void Title_soundCallback(SoundID sound) {
 
 
 void Title_main() {
-
+	readdata();
 	titleScene = createScene("전체 맵", "image/Title/worldmap.png");
 	
 
@@ -431,7 +502,7 @@ void Title_main() {
 		coinText[i] = createObject("image/Title/숫자/2.png", titleScene, 90 + 30 * i , 630, false, 1.0f);
 	}
 
-
+	savebutton = createObject("image/Title/save.png", titleScene, 1000, 650, true, 1.0f);
 	GamePopup[0] = createObject("image/Title/팝업/1.png", titleScene, 884, 0, false, 1.0f);
 	GamePopup[1] = createObject("image/Title/팝업/2.png", titleScene, 884, 0, false, 1.0f);
 	GamePopup[2] = createObject("image/Title/팝업/3.png", titleScene, 884, 0, false, 1.0f);
@@ -445,6 +516,7 @@ void Title_main() {
 	GameEnterButton[3] = createObject("image/Title/unlock.png", titleScene, 950, 70, false, 1.0f);
 	GameEnterButton[4] = createObject("image/Title/unlock.png", titleScene, 70, 70, false, 1.0f);
 	GameEnterButton[5] = createObject("image/Title/unlock.png", titleScene, 70, 70, false, 1.0f);
+	
 
 	maintitle = createObject("image/Title/title.png", titleScene, 0, 0, true, 1.0f);
 	titlestartbutton = createObject("image/Title/start.png", titleScene, 900, 110, true, 1.0f);
