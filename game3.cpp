@@ -223,6 +223,7 @@ void Game3_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		clear_g3 = 0;
 		life_g3 = 3;
 		score_g3 = 0;
+		duration_g3 = 1.0f;
 
 		patternMaker_g3();
 		enemyLife_g3();
@@ -320,6 +321,7 @@ void Game3_timerCallback(TimerID timer) {
 			patternMaker_g3();
 			enemyLife_g3();
 			createEnemy_g3();
+			zeroCheck_g3();
 		}
 
 		setTimer(enemyMove, duration_g3);
