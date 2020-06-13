@@ -153,6 +153,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Ending.cpp" />
     <ClCompile Include="game1.cpp" />
     <ClCompile Include="game2.cpp" />
     <ClCompile Include="game3.cpp" />

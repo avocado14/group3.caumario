@@ -10,7 +10,7 @@
 #define PLAYER_ANIMATION_TIME		0.05f
 #define GAP                         20
 
-extern SceneID titleScene;
+extern SceneID endingScene;
 SceneID scene_g5;
 ObjectID player_g5, koopa;
 ObjectID startButton_g5, restartButton_g5, goMapButton_g5;
@@ -27,15 +27,19 @@ SoundID koopaDamageSound1, koopaDamageSound2, playerDamageSound;
 extern SoundID buttonClickSound, gameClearSound, gameOverSound;
 
 extern void enterTitle(int clearScene);
+extern void startEnding();
 extern int nowGameSceneNum;
+bool stage6Clear = false;
+
 int dx_g5 = 0, dy_g5 = 0;
 bool isJumping = false;
+bool gameStart = false;
 
 float playerSizeX_g5 = 110, playerSizeY_g5 = 130;
 float koopaSizeX = 280, koopaSizeY = 220;
 float fireSize = 45;
 
-int playerX_g5 = 100, playerY_g5 = 150, playerBottom = playerY_g5, playerTop = 400, gravity_g5 = 25, koopaTop = 500;
+int playerX_g5 = 100, playerY_g5 = 140, playerBottom = playerY_g5, playerTop = 400, gravity_g5 = 25, koopaTop = 500;
 int playerLife = 3;
 bool playerDead = false;
 bool isRising_g5, isLanded = true;
@@ -127,10 +131,16 @@ void restart_g5() {
 
 void gameClear_g5() {
 
+    gameStart = false;
     stopSound(bgm_g5);
     playSound(gameClearSound);
 
-    showMessage("게임 클리어");
+    showMessage("쿠파를 물리쳤습니다!");
+    stage6Clear = true;
+    setObjectImage(goMapButton_g5, "image/game5/goEnding.png");
+    locateObject(goMapButton_g5, scene_g5, 450, 340);
+
+
     
     //오브젝트 다 지우기
     hideObject(player_g5);
@@ -164,6 +174,7 @@ void gameClear_g5() {
 
 void gameOver_g5() {
 
+    gameStart = false;
     playSound(gameOverSound);
 
     showMessage("게임 오버");
@@ -317,7 +328,9 @@ void koopaDamage() {
     
     //체력바 줄어들기 (횐색바 왼쪽으로 옮기기)
     //x : hp + 640 
-    locateObject(HPbarBlank, scene_g5, koopaHP + 640, 640);
+    if (koopaHP >= 0) {
+        locateObject(HPbarBlank, scene_g5, koopaHP + 640, 640);
+    }
 
     if (koopaHP == 0) {
         gameClear_g5();
@@ -398,6 +411,7 @@ void Game5_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
    if (object == startButton_g5) {
        
+       gameStart = true;
        playSound(buttonClickSound);
 
        hideObject(startButton_g5);
@@ -414,6 +428,7 @@ void Game5_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
    else if (object == restartButton_g5) {
 
+       gameStart = true;
        playSound(buttonClickSound);
 
        hideObject(restartButton_g5);
@@ -434,7 +449,16 @@ void Game5_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
        
        playSound(buttonClickSound);
        stopSound(bgm_g5);
-       enterTitle(0);
+       
+       if(stage6Clear == false)
+           enterTitle(0);
+
+       //클리어 했으면
+       else {
+           setGameOption(GameOption::GAME_OPTION_ROOM_TITLE, false);
+           startEnding();
+           enterScene(endingScene);
+       }
    }
 }
 
@@ -745,7 +769,7 @@ void Game5_keyboardCallback(KeyCode code, KeyState state) {
         }
 
         if (code == 75) {           // 불 발사 : 스페이스바
-            if (state == KeyState::KEYBOARD_PRESSED) {
+            if (state == KeyState::KEYBOARD_PRESSED && gameStart == true) {
 
                 if (attacking1 == false) {
                     attack1();
