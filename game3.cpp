@@ -14,6 +14,8 @@ int count_g3 = 0, clear_g3 = 0, life_g3 = 3, location = 60, NhitCount_g3 = 0, Fh
 char name[30] = { 0, }, info_g3[30] = { 0, };
 float duration_g3 = 1.0f;
 
+extern void enterTitle(int clearScene);
+
 ObjectID createObject_g3(const char* image, SceneID scene, int x, int y, bool shown) {
 
 	ObjectID object = createObject(image);
@@ -207,7 +209,6 @@ void Game3_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		showObject(heart2_g3);
 		showObject(heart3_g3);
 
-		playSound(bgm_g3, true);
 
 		setTimer(enemyMove, duration_g3);
 		startTimer(enemyMove);
@@ -259,7 +260,7 @@ void Game3_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 		stopSound(bgm_g3);
 
-		enterScene(titleScene);
+		enterTitle(0);
 	}
 
 	else if (object == normal) {
@@ -338,9 +339,10 @@ void Game3_main() {
 	scene1_g3 = createScene("game3 info", "image/game3/cover.png");
 	scene2_g3 = createScene("game3", "image/game3/cover2.png");
 
-	startbutton_g3 = createObject_g3("image/game3/시작.png", scene1_g3, 550, 400, true);
-	restartbutton_g3 = createObject_g3("image/game3/다시시작.png", scene2_g3, 550, 400, false);
-	endbutton_g3 = createObject_g3("image/game3/goMap.png", scene2_g3, 610, 350, false);
+	startbutton_g3 = createObject_g3("image/game3/시작.png", scene1_g3, 520, 350, true);
+	restartbutton_g3 = createObject_g3("image/game3/다시시작.png", scene2_g3, 480, 380, false);
+	endbutton_g3 = createObject_g3("image/game3/goMap.png", scene2_g3, 10, 10, false);
+	scaleObject(endbutton_g3, 1.3f);
 
 	heart1_g3 = createObject_g3("image/game3/heart.png", scene2_g3, 830, 650, true);
 	scaleObject(heart1_g3, 0.05f);

@@ -110,7 +110,6 @@ void gameOver_g63() {
 	stopTimer(playTimer_g63);
 	stopTimer(growUpTimer_g63);
 	
-	showMessage("게임 오버");
 
 	for (int i = 0; i < monster3_NUMBER; i++) {
 		hideObject(monster3[i]);

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern SceneID titleScene;
+extern void enterTitle(int clearScene);
 SceneID scene1_g2, scene2_g2;
 ObjectID startbutton_g2, restartbutton_g2, endbutton_g2, heart1_g2, heart2_g2, heart3_g2, hiteffect_g2, damaged_g2;
 ObjectID target[20] = { 0, };
@@ -192,7 +192,6 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		showObject(heart2_g2);
 		showObject(heart3_g2);
 
-		playSound(bgm_g2, true);
 	}
 
 	else if (object == restartbutton_g2) {
@@ -231,7 +230,7 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 		stopSound(bgm_g2);
 
-		enterScene(titleScene);
+		enterTitle(0);
 	}
 	else {											// 무슨 타켓을 클릭했는지 검사
 		for (int i = 0; i < targetNum; i++) {
@@ -271,9 +270,10 @@ void Game2_main() {
 	scene1_g2 = createScene("game2 info", "image/game2/배경.png");
 	scene2_g2 = createScene("game2", "image/game2/배경1.png");
 
-	startbutton_g2 = createObject_g2("image/game2/시작.png", scene1_g2, 550, 400, true);
-	restartbutton_g2 = createObject_g2("image/game2/다시시작.png", scene2_g2, 550, 400, false);
-	endbutton_g2 = createObject_g2("image/game2/goMap.png", scene2_g2, 610, 350, false);
+	startbutton_g2 = createObject_g2("image/game2/시작.png", scene1_g2, 530, 350, true);
+	restartbutton_g2 = createObject_g2("image/game2/다시시작.png", scene2_g2, 500, 350, false);
+	endbutton_g2 = createObject_g2("image/game2/goMap.png", scene2_g2, 10, 10, false);
+	scaleObject(endbutton_g2, 1.3f);
 
 	hiteffect_g2 = createObject_g2("image/game2/hit.png", scene2_g2, 610, 400, false);
 	damaged_g2 = createObject_g2("image/game2/damage.png", scene2_g2, 0, 0, false);

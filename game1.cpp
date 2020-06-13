@@ -12,7 +12,7 @@
 #define g1_obj1_size_width 20 
 #define g1_obj1_size_hight 20 
 
-extern SceneID  titleScene;
+extern void enterTitle(int clearScene);
 extern int coin;
 SceneID scene_g1;
 ObjectID g1c1, g1obj1[6][10],g1startbutton, g1restartbutton, g1goMapButton;//[세로][가로][j][i]
@@ -538,7 +538,7 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			stopTimer(g1difficult);
 			stopSound(bgm_g1); 
 			readdata_g1();
-			enterScene(titleScene);
+			enterTitle(0);
 
 		}
 	}

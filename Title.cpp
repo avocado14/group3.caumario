@@ -8,8 +8,7 @@
 extern SceneID scene_g1, scene1_g2, scene1_g3, scene_g4, scene_g5, scene_g6, scene_g62, scene_g63;
 
 extern SoundID buttonClickSound, gameClearSound, gameOverSound, GameEnterSound;
-extern SoundID bgm_g5, bgm_g6;
-SoundID bgmList[6] = { bgm_g5, bgm_g5, bgm_g5, bgm_g5, bgm_g5, bgm_g6 };
+extern SoundID bgm_g3, g4theme, bgm_g2, bgm_g1, bgm_g5, bgm_g6;
 
 SceneID titleScene;
 ObjectID GameIcon[6], GamePopup[6], GameEnterButton[6];
@@ -176,6 +175,7 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		hideObject(GamePopup[0]);
 		hideObject(GameEnterButton[0]);
 
+		playSound(bgm_g3, true);
 		playSound(buttonClickSound);
 		exitTitle();
 		enterScene(scene1_g3);
@@ -196,6 +196,7 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			hideObject(GamePopup[1]);
 			hideObject(GameEnterButton[1]);
 
+			playSound(g4theme, true);
 			playSound(buttonClickSound);
 			exitTitle();
 			enterScene(scene_g4);
@@ -210,6 +211,7 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		hideObject(GamePopup[2]);
 		hideObject(GameEnterButton[2]);
 
+		playSound(bgm_g2);
 		playSound(buttonClickSound);
 		exitTitle();
 		enterScene(scene1_g2);
@@ -222,7 +224,7 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		if (stageLocked[3]) {
 			stageUnlock(3);
 
-			if (stageLocked[3] == true) {	//ø≠∑»¿∏∏È
+			if (stageLocked[3] == false) {	//ø≠∑»¿∏∏È
 				stageBlack[4] = false;
 				setObjectImage(GameIcon[4], "image/Title/ª°∞£æ∆¿Ãƒ‹.png");
 			}
@@ -234,6 +236,7 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			hideObject(GamePopup[3]);
 			hideObject(GameEnterButton[3]);
 
+			playSound(bgm_g1);
 			playSound(buttonClickSound);
 			exitTitle();
 			enterScene(scene_g1);
@@ -309,7 +312,9 @@ void Title_timerCallback(TimerID timer) {
 
 
 void Title_soundCallback(SoundID sound) {
-
+	if (sound == bgm_title) {
+		playSound(bgm_title);
+	}
 }
 
 

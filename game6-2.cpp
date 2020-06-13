@@ -87,7 +87,7 @@ void gameClear_g62() {
 	stopTimer(growUpTimer_g62);
 
 	nowGame6Stage = 3;
-	showMessage("2스테이지 클리어");
+	showMessage("2 스테이지 클리어");
 
 	enterScene(scene_g63);
 }
@@ -102,7 +102,6 @@ void gameOver_g62() {
 	stopTimer(playTimer_g62);
 	stopTimer(growUpTimer_g62);
 
-	showMessage("게임 오버");
 
 	for (int i = 0; i < monster2_NUMBER; i++) {
 		hideObject(monster2[i]);

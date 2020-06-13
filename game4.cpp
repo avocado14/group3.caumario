@@ -27,7 +27,7 @@ using namespace std;
 //확인하시면 주석 삭제해주세용ㅎㅎ!
 extern int nowGameSceneNum;     
 
-extern SceneID  titleScene;
+extern void enterTitle(int clearScene);
 SceneID scene_g4;
 ObjectID g4c1, g4goMapButton,g4startbutton, g4restartbutton,g4obj1[4], g4obj2[4], g4obj3[4], g4obj4[4], g4obj5[4],g4floor1,g4floor2, g4background1, g4background2, g4clear;
 TimerID g4timer1, g4timer2, g4obmove,g4difficult;
@@ -40,6 +40,7 @@ int g4objnumber[20] ={ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 };
 int movetype;
 int g4difficulty;
 double g4score=0;
+bool g4Clear = false;
 
 //-----------선인---------
 
@@ -551,11 +552,13 @@ void g4objselectshow() {
 void g4stageclear() {
     if (g4score >= 100) {
         showObject(g4clear);
+        stopSound(g4theme);
         playSound(g4clearsound);
         stopTimer(g4timer1);
         stopTimer(g4timer2);
         stopTimer(g4obmove);
         //showMessage("dead");
+        g4Clear = true;
         g4scoremessage();
         showObject(g4restartbutton);
     }
@@ -676,8 +679,14 @@ void Game4_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
         stopTimer(g4timer2);
         stopTimer(g4obmove);
         stopTimer(g4difficult);
-        enterScene(titleScene);
         stopSound(g4theme);
+
+        if (g4Clear) 
+            enterTitle(2);
+        
+        else 
+            enterTitle(0);
+        
     }
 
 }
