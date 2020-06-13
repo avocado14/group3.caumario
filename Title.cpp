@@ -510,7 +510,7 @@ void Title_main() {
 
 	savebutton = createObject("image/Title/save.png", titleScene, 1050, 650, true, 1.0f);
 	explainbutton = createObject("image/Title/howto.png", titleScene, 1000, 20, true, 0.9f);
-	explainwindow = createObject("image/Title/ÆË¾÷/1.png", titleScene, 50, 50, false, 1.0f);
+	explainwindow = createObject("image/Title/¼³¸í¼­.png", titleScene, 50, 50, false, 0.6f);
 
 	GamePopup[0] = createObject("image/Title/ÆË¾÷/1.png", titleScene, 884, 0, false, 1.0f);
 	GamePopup[1] = createObject("image/Title/ÆË¾÷/2.png", titleScene, 884, 0, false, 1.0f);
