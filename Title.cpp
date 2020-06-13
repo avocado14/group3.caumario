@@ -12,7 +12,7 @@ extern SoundID buttonClickSound, gameClearSound, gameOverSound, GameEnterSound;
 extern SoundID bgm_g3, g4theme, bgm_g2, bgm_g1, bgm_g5, bgm_g6;
 
 SceneID titleScene;
-ObjectID GameIcon[6], GamePopup[6], GameEnterButton[6], maintitle, titlestartbutton, savebutton;
+ObjectID GameIcon[6], GamePopup[6], GameEnterButton[6], maintitle, titlestartbutton, savebutton, explainbutton, explainwindow;
 ObjectID Mario, key1, key2, coinImage, xText;
 ObjectID coinText[3];
 TimerID marioAnimationTimer, titleanimationtimer;
@@ -449,6 +449,12 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		savedata();
 		showMessage("ÀúÀå ¿Ï·á!");
 	}
+	else if (object == explainbutton) {
+	showObject(explainwindow);
+	}
+	else if (object == explainwindow) {
+	hideObject(explainwindow);
+	}
 	
 }
 
@@ -502,7 +508,10 @@ void Title_main() {
 		coinText[i] = createObject("image/Title/¼ýÀÚ/2.png", titleScene, 90 + 30 * i , 630, false, 1.0f);
 	}
 
-	savebutton = createObject("image/Title/save.png", titleScene, 1000, 650, true, 1.0f);
+	savebutton = createObject("image/Title/save.png", titleScene, 1050, 650, true, 1.0f);
+	explainbutton = createObject("image/Title/howto.png", titleScene, 1000, 20, true, 0.9f);
+	explainwindow = createObject("image/Title/ÆË¾÷/1.png", titleScene, 50, 50, false, 1.0f);
+
 	GamePopup[0] = createObject("image/Title/ÆË¾÷/1.png", titleScene, 884, 0, false, 1.0f);
 	GamePopup[1] = createObject("image/Title/ÆË¾÷/2.png", titleScene, 884, 0, false, 1.0f);
 	GamePopup[2] = createObject("image/Title/ÆË¾÷/3.png", titleScene, 884, 0, false, 1.0f);
