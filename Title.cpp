@@ -148,9 +148,8 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	////팝업창 클릭시 사라짐//////
 	for (int i = 0; i < 6; i++) {
-		playSound(buttonClickSound);
-
 		if (object == GamePopup[i]) {
+			playSound(buttonClickSound);
 			hideObject(GamePopup[i]);
 			hideObject(GameEnterButton[i]);
 		}
