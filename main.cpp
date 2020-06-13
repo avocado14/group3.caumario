@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include<bangtal.h>
 
-extern SceneID titleScene;
+extern SceneID titleScene, endingScene;
 
 extern void Title_main();
 extern void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action);
@@ -50,6 +50,11 @@ extern void Game63_mouseCallback(ObjectID object, int x, int y, MouseAction acti
 extern void Game63_timerCallback(TimerID timer);
 extern void Game63_keyboardCallback(KeyCode code, KeyState state);
 
+extern void Ending_main();
+extern void Ending_mouseCallback(ObjectID object, int x, int y, MouseAction action);
+extern void Ending_timerCallback(TimerID timer);
+
+
 SoundID buttonClickSound, gameClearSound, gameOverSound, gameEnterSound;
 
 
@@ -76,6 +81,7 @@ void mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	Game6_mouseCallback(object, x, y, action);
 	Game62_mouseCallback(object, x, y, action);
 	Game63_mouseCallback(object, x, y, action);
+	Ending_mouseCallback(object, x, y, action);
 
 }
 
@@ -90,6 +96,7 @@ void timerCallback(TimerID timer) {
 	Game6_timerCallback(timer);
 	Game62_timerCallback(timer);
 	Game63_timerCallback(timer);
+	Ending_timerCallback(timer);
 
 }
 
@@ -136,6 +143,7 @@ int main() {
 	Game6_main();
 	Game62_main();
 	Game63_main();
+	Ending_main();
 
 
 	buttonClickSound = createSound("sounds/공통/기본버튼클릭.wav");
@@ -143,7 +151,8 @@ int main() {
 	gameOverSound = createSound("sounds/공통/게임오버.wav");
 	gameEnterSound = createSound("sounds/공통/게임입장.wav");
 
-
+	
 	startGame(titleScene);
+	//startGame(endingScene);
 
 }
