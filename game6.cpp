@@ -68,7 +68,7 @@ void restart_g6() {
 	nowState_g6 = 1;
 	growUpCount_g6 = 0;
 	
-	setTimer(countDownTimer, 1.0f);
+	setTimer(countDownTimer, 0.7f);
 	setObjectImage(countDown, "image/game6/3.png");
 
 	locateObject(player_g6, scene_g6, playerX_g6, playerY_g6);
@@ -188,12 +188,12 @@ void Game6_timerCallback(TimerID timer)
 
 		if (countDownNum == 2) {
 			setObjectImage(countDown, "image/game6/2.png");
-			setTimer(timer, 1.0f);
+			setTimer(timer, 0.7f);
 			startTimer(timer);
 		}
 		else if (countDownNum == 3) {
 			setObjectImage(countDown, "image/game6/1.png");
-			setTimer(timer, 1.0f);
+			setTimer(timer, 0.7f);
 			startTimer(timer);
 		}
 		else {
@@ -320,7 +320,7 @@ void Game6_soundCallback(SoundID sound) {
 
 void Game6_main()
 {
-	scene_g6 = createScene("1 스테이지", "image/game6/하늘배경.png");
+	scene_g6 = createScene("STGAGE5-1 하늘 섬", "image/game6/하늘배경.png");
 	player_g6 = createObject("image/game6/날개마리오좌.png", scene_g6, playerX_g6, playerY_g6, true, (float)playerSize_g6 / PLAYER_IMAGE_SIZE);
 
 	//레벨1 몬스터 스폰
@@ -344,10 +344,11 @@ void Game6_main()
 
 	playTimer_g6 = createTimer(PLAYER_ANIMATION_TIME);
 	monsterTimer_g6 = createTimer(MONSTER_ANIMATION_TIME);
-	countDownTimer = createTimer(1.0f);
+	countDownTimer = createTimer(0.7f);
 	growUpTimer_g6 = createTimer(0.07f);
 
-	bgm_g6 = createSound("image/game6/하늘브금.mp3");
+	//bgm_g6 = createSound("image/game6/하늘브금.mp3");
+	bgm_g6 = createSound("sounds/배경음/하늘섬.mp3");
 	countDownSound_g6 = createSound("sounds/game6/카운트다운.mp3");
 	catchSound1_g6 = createSound("sounds/game6/정답1.mp3");
 	catchSound2_g6 = createSound("sounds/game6/정답2.mp3");

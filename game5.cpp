@@ -772,7 +772,7 @@ void Game5_soundCallback(SoundID sound) {
 
 void Game5_main() {
 
-	scene_g5 = createScene("쿠파 성", "image/game5/쿠파성배경.png");
+	scene_g5 = createScene("BOSS STAGE 쿠파 성", "image/game5/쿠파성배경.png");
 
     startButton_g5 = createObject("image/game6/start.png", scene_g5, 530, 350, true, 1.0f);
     restartButton_g5 = createObject("image/game6/restart.png", scene_g5, 470, 350, false, 1.0f);
@@ -830,7 +830,8 @@ void Game5_main() {
     playerAnimationTimer_g5 = createTimer(0.05f);
     koopaAnimationTimer = createTimer(0.2f);
 
-    bgm_g5 = createSound("image/game5/쿠파성브금.mp3");
+    //bgm_g5 = createSound("image/game5/쿠파성브금.mp3");
+    bgm_g5 = createSound("sounds/배경음/쿠파성.mp3");
 
     jumpSound_g5 = createSound("sounds/공통/점프.mp3");
 

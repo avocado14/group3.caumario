@@ -4,15 +4,18 @@
 #include <time.h>
 
 extern SceneID titleScene;
+extern SoundID buttonClickSound;
 SceneID scene1_g3, scene2_g3;
 ObjectID startbutton_g3, restartbutton_g3, endbutton_g3, normal, blue, red, yellow, heart1_g3, heart2_g3, heart3_g3, damaged_g3;
 ObjectID enemy[150] = { 0, };
 TimerID enemyMove, damageTime_g3;
-SoundID bgm_g3, finalHit_g3, finalHit1_g3, normalHit_g3, normalHit1_g3, normalHit2_g3, normalHit3_g3, normalHit4_g3;
+SoundID bgm_g3, finalHit_g3, finalHit1_g3, normalHit_g3, normalHit1_g3, normalHit2_g3, normalHit3_g3, normalHit4_g3, fail_g3;
 int pattern[150] = { 0, }, Elife[150] = { 0, }, locate[150] = { 0, };
 int count_g3 = 0, clear_g3 = 0, life_g3 = 3, location = 60, NhitCount_g3 = 0, FhitCount_g3 = 0, score_g3 = 0;
 char name[30] = { 0, }, info_g3[30] = { 0, };
 float duration_g3 = 1.0f;
+
+extern int coin;
 
 extern void enterTitle(int clearScene);
 
@@ -94,8 +97,10 @@ void ending_g3() {		//게임 클리어 후 처리
 		if (pattern[i] != 0) hideObject(enemy[i]);
 	}
 
-	sprintf_s(info_g3, "점수 : %d", score_g3);
+	sprintf_s(info_g3, "%d 코인 획득!", score_g3);
 	showMessage(info_g3);
+
+	coin += score_g3;
 
 	showObject(restartbutton_g3);
 	showObject(endbutton_g3);
@@ -106,6 +111,7 @@ void minusHeart_g3() {			// 오답 시 목숨 감소
 
 	life_g3--;
 	showObject(damaged_g3);
+	playSound(fail_g3);
 
 	setTimer(damageTime_g3, 0.2f);
 	startTimer(damageTime_g3);
@@ -197,6 +203,7 @@ void judge_g3(int num1, int num2) {	// 클릭 시 정,오답 확인
 void Game3_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	if (object == startbutton_g3) {
+		playSound(buttonClickSound);
 		enterScene(scene2_g3);
 
 		patternMaker_g3();
@@ -215,6 +222,7 @@ void Game3_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	}
 
 	else if (object == restartbutton_g3) {
+		playSound(buttonClickSound);
 		for (int i = 0; i < 150; i++) enemy[i] = 0;
 		for (int i = 0; i < 150; i++) pattern[i] = 0;
 		for (int i = 0; i < 150; i++) Elife[i] = 0;
@@ -244,6 +252,7 @@ void Game3_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	}
 
 	else if (object == endbutton_g3) {
+		playSound(buttonClickSound);
 
 		for (int i = 0; i < 150; i++) enemy[i] = 0;
 		for (int i = 0; i < 150; i++) pattern[i] = 0;
@@ -336,8 +345,8 @@ void Game3_timerCallback(TimerID timer) {
 
 void Game3_main() {
 
-	scene1_g3 = createScene("game3 info", "image/game3/cover.png");
-	scene2_g3 = createScene("game3", "image/game3/cover2.png");
+	scene1_g3 = createScene("STAGE1 평원", "image/game3/cover.png");
+	scene2_g3 = createScene("STAGE1 평원", "image/game3/cover2.png");
 
 	startbutton_g3 = createObject_g3("image/game3/시작.png", scene1_g3, 520, 350, true);
 	restartbutton_g3 = createObject_g3("image/game3/다시시작.png", scene2_g3, 480, 380, false);
@@ -357,15 +366,17 @@ void Game3_main() {
 	yellow = createObject_g3("image/game3/Y.png", scene2_g3, 830, 40, true);
 
 	damaged_g3 = createObject_g3("image/game3/damage.png", scene2_g3, 0, 0, false);
-
-	bgm_g3 = createSound("image/game3/bgm.wav");
+	
+	//bgm_g3 = createSound("image/game3/bgm.wav");
+	bgm_g3 = createSound("sounds/배경음/평원.mp3");
 	normalHit_g3 = createSound("image/game3/normalHit.mp3");
 	normalHit1_g3 = createSound("image/game3/normalHit1.mp3");
 	normalHit2_g3 = createSound("image/game3/normalHit2.mp3");
 	normalHit3_g3 = createSound("image/game3/normalHit3.mp3");
 	normalHit4_g3 = createSound("image/game3/normalHit4.mp3");
-	finalHit_g3 = createSound("image/game3/finalHit.wav");
-	finalHit1_g3 = createSound("image/game3/finalHit1.wav");
+	finalHit_g3 = createSound("image/game3/finalHit.mp3");
+	finalHit1_g3 = createSound("image/game3/finalHit1.mp3");
+	fail_g3 = createSound("sounds/공통/오답.mp3");
 
 	enemyMove = createTimer(duration_g3);
 	damageTime_g3 = createTimer(0.2f);

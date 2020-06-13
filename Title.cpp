@@ -12,7 +12,8 @@ extern SoundID bgm_g3, g4theme, bgm_g2, bgm_g1, bgm_g5, bgm_g6;
 
 SceneID titleScene;
 ObjectID GameIcon[6], GamePopup[6], GameEnterButton[6];
-ObjectID Mario;
+ObjectID Mario, key1, key2, coinImage, xText;
+ObjectID coinText[3];
 TimerID marioAnimationTimer;
 SoundID bgm_title;
 
@@ -21,13 +22,16 @@ int IconY[6] = { 115,385,215,565,275,465 };
 
 bool stageLocked[6] = { 0,1,0,1,1,1 };
 bool stageBlack[6] = { 0,0,0,0,0,0 };		//0,0,1,1,1,0
-int stageUnlockCost[6] = { 0, 300, 0,300,1500,0 };	//6번째 : 열쇠 2개 필요
-int coin = 5000;
+int stageUnlockCost[6] = { 0, 30, 0,30,150,0 };	//6번째 : 열쇠 2개 필요
+int coin = 500; //점수  코인개수
 int key = 2;
+
+int coinNum100, coinNum10, coinNum1;
 
 int nowMarioOn = 0;
 int nowGameSceneNum = 0;	//0은 타이틀
 extern int nowGame6Stage;
+extern bool stage2Clear, stage5Clear;
 
 char path[256];
 
@@ -41,8 +45,52 @@ const char* marioAnimationImage[9] =
 extern ObjectID createObject(const char* name, SceneID scene, int x, int y, bool shown, float size);
 
 
+void showCoinCount() {
+
+	coinNum100 = coin / 100;
+	coinNum10 = coin / 10 - coinNum100 * 10;
+	coinNum1 = coin - coinNum10 * 10 - coinNum100 * 100;
+
+
+	if (coin >= 100) {	//3자리 숫자면
+		sprintf(path, "image/Title/숫자/%d.png", coinNum100);	//백의 자리
+		setObjectImage(coinText[0], path);
+		showObject(coinText[0]);
+
+		sprintf(path, "image/Title/숫자/%d.png", coinNum10);	//십의 자리
+		setObjectImage(coinText[1], path);
+		showObject(coinText[1]);
+
+		sprintf(path, "image/Title/숫자/%d.png", coinNum1);	//일의 자리
+		setObjectImage(coinText[2], path);
+		showObject(coinText[2]);
+	}
+
+	else if (coin >= 10) {	//2자리 숫자면
+		sprintf(path, "image/Title/숫자/%d.png", coinNum10);	//십의 자리
+		setObjectImage(coinText[0], path);
+		showObject(coinText[0]);
+
+		sprintf(path, "image/Title/숫자/%d.png", coinNum1);	//일의 자리
+		setObjectImage(coinText[1], path);
+		showObject(coinText[1]);
+
+		hideObject(coinText[2]);
+	}
+
+	else {
+		sprintf(path, "image/Title/숫자/%d.png", coinNum1);	//일의 자리
+		setObjectImage(coinText[0], path);
+		showObject(coinText[0]);
+
+		hideObject(coinText[1]);
+		hideObject(coinText[2]);
+	}
+}
+
 void exitTitle() {
 
+	setGameOption(GameOption::GAME_OPTION_ROOM_TITLE, true);
 	stopTimer(marioAnimationTimer);
 	stopSound(bgm_title);
 
@@ -59,6 +107,9 @@ void hideUI() {
 //0은 클리어x 2스테이지(사막), 5스테이지(하늘) 받음 
 void enterTitle(int clearScene) {
 
+	setGameOption(GameOption::GAME_OPTION_ROOM_TITLE, false);
+	showCoinCount();
+
 	hideUI();
 	setTimer(marioAnimationTimer, MARIO_ANIMATION_TIME);
 	startTimer(marioAnimationTimer);
@@ -74,6 +125,7 @@ void enterTitle(int clearScene) {
 		stageBlack[3] = false;
 		
 		key = 1;
+		setObjectImage(key1, "image/Title/key.png");
 	}
 
 	//하늘지대 클리어했으면
@@ -81,6 +133,7 @@ void enterTitle(int clearScene) {
 		setObjectImage(GameIcon[4], "image/Title/초록아이콘.png");
 		
 		key = 2;
+		setObjectImage(key2, "image/Title/key.png");
 	}
 
 	enterScene(titleScene);
@@ -93,9 +146,10 @@ void stageUnlock(int stage) {
 		if (coin >= stageUnlockCost[stage]) {
 
 			coin -= stageUnlockCost[stage];		//돈 내고
+			showCoinCount();
 			stageLocked[stage] = false;			//열림으로 바꿔주고
 			
-			sprintf_s(path, "image/Title/팝업/%d-2.png", stage + 1);
+			sprintf(path, "image/Title/팝업/%d-2.png", stage + 1);
 			setObjectImage(GamePopup[stage], path);
 			setObjectImage(GameEnterButton[stage], "image/Title/enter.png");
 			locateObject(GameEnterButton[stage], titleScene, 950, 100);
@@ -142,6 +196,7 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		}
 
 		else if (object == GameIcon[i] && stageBlack[i] == true) {
+			playSound(buttonClickSound);
 			showMessage("이전 스테이지를 클리어 해주세요");
 		}
 	}
@@ -183,6 +238,8 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	//사막
 	else if (object == GameEnterButton[1]) {
 
+		playSound(buttonClickSound);
+
 		//잠겨있으면 해금
 		if (stageLocked[1]) {
 			stageUnlock(1);
@@ -190,20 +247,25 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 		//열려있으면 이동
 		else {
-			nowGameSceneNum = 4;
+			if (stage2Clear == false) {
+				nowGameSceneNum = 4;
 
-			hideObject(GamePopup[1]);
-			hideObject(GameEnterButton[1]);
+				hideObject(GamePopup[1]);
+				hideObject(GameEnterButton[1]);
 
-			playSound(g4theme, true);
-			playSound(buttonClickSound);
-			exitTitle();
-			enterScene(scene_g4);
+				playSound(g4theme, true);
+				exitTitle();
+				enterScene(scene_g4);
+			}
+
+			else
+				showMessage("이미 클리어 한 스테이지입니다");
 		}
 	}
 
 	//바다 (바로 입장가능)
 	else if (object == GameEnterButton[2]) {
+
 
 		nowGameSceneNum = 2;
 
@@ -219,6 +281,8 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 	//귀신의집
 	else if (object == GameEnterButton[3]) {
+
+		playSound(buttonClickSound);
 
 		if (stageLocked[3]) {
 			stageUnlock(3);
@@ -236,7 +300,6 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			hideObject(GameEnterButton[3]);
 
 			playSound(bgm_g1);
-			playSound(buttonClickSound);
 			exitTitle();
 			enterScene(scene_g1);
 		}
@@ -245,36 +308,45 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	//하늘섬
 	else if (object == GameEnterButton[4]) {
 
+		playSound(buttonClickSound);
+
 		if (stageLocked[4]) {
 			stageUnlock(4);
 		}
 
 		else {
-			nowGameSceneNum = 6;
+			if (stage5Clear == false) {
 
-			hideObject(GamePopup[4]);
-			hideObject(GameEnterButton[4]);
+				nowGameSceneNum = 6;
 
-			exitTitle();
-			playSound(buttonClickSound);
-			playSound(bgm_g6);
+				hideObject(GamePopup[4]);
+				hideObject(GameEnterButton[4]);
 
-			switch (nowGame6Stage) {
-			case 1:
-				enterScene(scene_g6);
-				break;
-			case 2:
-				enterScene(scene_g62);
-				break;
-			case 3:
-				enterScene(scene_g63);
-				break;
+				exitTitle();
+				playSound(bgm_g6);
+
+				switch (nowGame6Stage) {
+				case 1:
+					enterScene(scene_g6);
+					break;
+				case 2:
+					enterScene(scene_g62);
+					break;
+				case 3:
+					enterScene(scene_g63);
+					break;
+				}
 			}
+			else
+				showMessage("이미 클리어 한 스테이지입니다");
 		}
+	
 	}
 
 	//쿠파성
 	else if (object == GameEnterButton[5]) {
+
+		playSound(buttonClickSound);
 
 		if (stageLocked[5]) {
 			stageUnlock(5);
@@ -287,7 +359,6 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			hideObject(GameEnterButton[5]);
 
 			exitTitle();
-			playSound(buttonClickSound);
 			playSound(bgm_g5);
 			enterScene(scene_g5);
 		}
@@ -329,14 +400,22 @@ void Title_main() {
 
 	Mario = createObject("image/Title/마리오애니/1.png", titleScene, IconX[0], IconY[0], true, 1.4f);
 
+	key1 = createObject("image/Title/noKey.png", titleScene, 250, 650, true, 1.0f);
+	key2 = createObject("image/Title/noKey.png", titleScene, 300, 650, true, 1.0f);
+	coinImage = createObject("image/Title/coin.png", titleScene, 5, 637, true, 1.0f);
+	xText = createObject("image/Title/숫자/x.png", titleScene, 50, 630, true, 1.0f);
+	
+	for (int i = 0; i < 3; i++) {
+		coinText[i] = createObject("image/Title/숫자/2.png", titleScene, 90 + 30 * i , 630, false, 1.0f);
+	}
+
+
 	GamePopup[0] = createObject("image/Title/팝업/1.png", titleScene, 884, 0, false, 1.0f);
 	GamePopup[1] = createObject("image/Title/팝업/2.png", titleScene, 884, 0, false, 1.0f);
 	GamePopup[2] = createObject("image/Title/팝업/3.png", titleScene, 884, 0, false, 1.0f);
 	GamePopup[3] = createObject("image/Title/팝업/4.png", titleScene, 884, 0, false, 1.0f);
 	GamePopup[4] = createObject("image/Title/팝업/5.png", titleScene, 0, 0, false, 1.0f);
 	GamePopup[5] = createObject("image/Title/팝업/6.png", titleScene, 0, 0, false, 1.0f);
-
-
 
 	GameEnterButton[0] = createObject("image/Title/enter.png", titleScene, 950, 100, false, 1.0f);
 	GameEnterButton[1] = createObject("image/Title/unlock.png", titleScene, 950, 70, false, 1.0f);
@@ -346,11 +425,12 @@ void Title_main() {
 	GameEnterButton[5] = createObject("image/Title/unlock.png", titleScene, 70, 70, false, 1.0f);
 
 
-
 	marioAnimationTimer = createTimer(MARIO_ANIMATION_TIME);
 	startTimer(marioAnimationTimer);
 
-	bgm_title = createSound("image/Title/메인맵브금.mp3");
+	bgm_title = createSound("sounds/배경음/메인맵.mp3");
 	playSound(bgm_title, true);
+
+	showCoinCount();
 
 }

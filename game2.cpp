@@ -4,16 +4,19 @@
 #include <time.h>
 
 extern void enterTitle(int clearScene);
+extern SoundID buttonClickSound;
 SceneID scene1_g2, scene2_g2;
 ObjectID startbutton_g2, restartbutton_g2, endbutton_g2, heart1_g2, heart2_g2, heart3_g2, hiteffect_g2, damaged_g2;
 ObjectID target[20] = { 0, };
 TimerID appear, hitting, damageTime_g2;
-SoundID bgm_g2, normalHit_g2, normalHit1_g2, normalHit2_g2, normalHit3_g2, normalHit4_g2;
+SoundID bgm_g2, normalHit_g2, normalHit1_g2, normalHit2_g2, normalHit3_g2, normalHit4_g2, fail_g2;
 int arrX[20] = { 0, }, arrY[20] = { 0, };
 int count_g2 = 0, clear_g2 = 0, life_g2 = 3, targetNum = 4, NhitCount_g2 = 0, score_g2 = 0;
 char info_g2[50] = { 0, };
 float duration_g2 = 1.0f;
 bool lock = false;
+
+extern int coin;
 
 ObjectID createObject_g2(const char* image, SceneID scene, int x, int y, bool shown) {
 
@@ -106,8 +109,10 @@ void ending_g2() {		// 게임 종료
 		hideObject(target[j]);
 	}
 
-	sprintf_s(info_g2, "점수 : %d", score_g2);
+	sprintf_s(info_g2, "%d 코인 획득!", score_g2);
 	showMessage(info_g2);
+
+	coin += score_g2;
 
 	showObject(restartbutton_g2);
 	showObject(endbutton_g2);
@@ -116,6 +121,7 @@ void ending_g2() {		// 게임 종료
 
 void minusHeart_g2() {			// 오답 시 목숨 감소
 	life_g2--;
+	playSound(fail_g2);
 	if (life_g2 == 2) hideObject(heart3_g2);
 	else if (life_g2 == 1) hideObject(heart2_g2);
 	else if (life_g2 == 0) {
@@ -182,6 +188,7 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	
 	if (object == startbutton_g2) {
 
+		playSound(buttonClickSound);
 		enterScene(scene2_g2);
 
 		locationMaker_g2(targetNum);
@@ -195,6 +202,7 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	}
 
 	else if (object == restartbutton_g2) {
+		playSound(buttonClickSound);
 
 		targetNum = 4;
 		score_g2 = 0;
@@ -212,6 +220,7 @@ void Game2_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	}
 
 	else if (object == endbutton_g2) {
+		playSound(buttonClickSound);
 
 		targetNum = 4;
 		score_g2 = 0;
@@ -267,8 +276,8 @@ void Game2_timerCallback(TimerID timer) {
 }
 void Game2_main() {
 
-	scene1_g2 = createScene("game2 info", "image/game2/배경.png");
-	scene2_g2 = createScene("game2", "image/game2/배경1.png");
+	scene1_g2 = createScene("STAGE3 바다", "image/game2/배경.png");
+	scene2_g2 = createScene("STAGE3 바다", "image/game2/배경1.png");
 
 	startbutton_g2 = createObject_g2("image/game2/시작.png", scene1_g2, 530, 350, true);
 	restartbutton_g2 = createObject_g2("image/game2/다시시작.png", scene2_g2, 500, 350, false);
@@ -285,12 +294,14 @@ void Game2_main() {
 	heart3_g2 = createObject_g2("image/game2/heart.png", scene2_g2, 970, 650, true);
 	scaleObject(heart3_g2, 0.05f);
 
-	bgm_g2 = createSound("image/game2/bgm.wav");
+	//bgm_g2 = createSound("image/game2/bgm.wav");
+	bgm_g2 = createSound("sounds/배경음/바다.mp3");
 	normalHit_g2 = createSound("image/game2/normalHit.mp3");
 	normalHit1_g2 = createSound("image/game2/normalHit1.mp3");
 	normalHit2_g2 = createSound("image/game2/normalHit2.mp3");
 	normalHit3_g2 = createSound("image/game2/normalHit3.mp3");
 	normalHit4_g2 = createSound("image/game2/normalHit4.mp3");
+	fail_g2 = createSound("sounds/공통/오답.mp3");
 
 	appear = createTimer(duration_g2);
 	hitting = createTimer(0.5f);

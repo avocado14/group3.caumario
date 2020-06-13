@@ -27,6 +27,7 @@ using namespace std;
 //확인하시면 주석 삭제해주세용ㅎㅎ!
 extern int nowGameSceneNum;     
 
+extern SoundID buttonClickSound;
 extern void enterTitle(int clearScene);
 SceneID scene_g4;
 ObjectID g4c1, g4goMapButton,g4startbutton, g4restartbutton,g4obj1[4], g4obj2[4], g4obj3[4], g4obj4[4], g4obj5[4],g4floor1,g4floor2, g4background1, g4background2, g4clear;
@@ -40,7 +41,7 @@ int g4objnumber[20] ={ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 };
 int movetype;
 int g4difficulty;
 double g4score=0;
-bool g4Clear = false;
+bool stage2Clear = false;
 
 //-----------선인---------
 
@@ -558,7 +559,7 @@ void g4stageclear() {
         stopTimer(g4timer2);
         stopTimer(g4obmove);
         //showMessage("dead");
-        g4Clear = true;
+        stage2Clear = true;
         g4scoremessage();
         showObject(g4restartbutton);
     }
@@ -667,21 +668,24 @@ void g4gamerestart() {
 void Game4_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
     if (object == g4startbutton) {
+        playSound(buttonClickSound);
         g4gamestart();
         hideObject(g4startbutton);
     }
     else if (object == g4restartbutton) {
+        playSound(buttonClickSound);
         g4gamerestart();
         hideObject(g4restartbutton);
     }
     else if (object == g4goMapButton) {
+        playSound(buttonClickSound);
         stopTimer(g4timer1);
         stopTimer(g4timer2);
         stopTimer(g4obmove);
         stopTimer(g4difficult);
         stopSound(g4theme);
 
-        if (g4Clear) 
+        if (stage2Clear) 
             enterTitle(2);
         
         else 
@@ -756,11 +760,10 @@ void Game4_keyboardCallback(KeyCode code, KeyState state)
 
 void Game4_main() {
 
-    setGameOption(GameOption::GAME_OPTION_ROOM_TITLE, false);
     setGameOption(GameOption::GAME_OPTION_INVENTORY_BUTTON, false);
     setGameOption(GameOption::GAME_OPTION_MESSAGE_BOX_BUTTON, false);
 
-	scene_g4 = createScene("game4", "image/game4/배경.png");
+	scene_g4 = createScene("STAGE2 사막", "image/game4/배경.png");
     g4background1 = g4createObject("image/game4/배경.png", scene_g4, 0, 0, true);
     g4background2 = g4createObject("image/game4/배경.png", scene_g4, 2000, 0, true);
     g4floor1 = g4createObject("image/game4/바닥.png", scene_g4, 0, 0, true);
@@ -770,7 +773,6 @@ void Game4_main() {
     g4restartbutton = g4createObject("image/game4/restart.png", scene_g4, 1000, 650, false);
     scaleObject(g4startbutton, 0.5f);
     scaleObject(g4restartbutton, 0.5f);
-
 
 
 	g4c1 = g4createObject("image/game4/마리오 애니메이션1.png", scene_g4, 210, 110, true);
@@ -798,6 +800,7 @@ void Game4_main() {
     g4difficult = createTimer(5.f);
     
 
-    g4theme = createSound("sounds/game/desert theme.wav");
+    //g4theme = createSound("sounds/game/desert theme.wav");
+    g4theme = createSound("sounds/배경음/사막.mp3");
     g4clearsound = createSound("sounds/공통/게임클리어.wav");
 }

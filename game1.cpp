@@ -14,6 +14,7 @@
 
 extern void enterTitle(int clearScene);
 extern int coin;
+extern SoundID buttonClickSound;
 SceneID scene_g1;
 ObjectID g1c1, g1obj1[6][10],g1startbutton, g1restartbutton, g1goMapButton;//[세로][가로][j][i]
 TimerID g1timer1, g1c1move,g1levelupgrade,g1score, g1difficult;
@@ -422,8 +423,14 @@ void score(){
 	g1result = getTimer(g1score);
 	highscore_g1 = 9999 - g1result;
 	char buf[256];
-	sprintf_s(buf, "버틴시간 : %0.f초", (9999-g1result), scene_g1);
+	//sprintf_s(buf, "버틴시간 : %0.f초\n", (9999-g1result), scene_g1);
+	//showMessage(buf);
+
+	sprintf_s(buf, "%d 코인 획득!\n", (int)(9999 - g1result) * 2, scene_g1);
 	showMessage(buf);
+
+	coin += (int)(9999 - g1result);
+
 }
 
 void g1death() {
@@ -493,6 +500,7 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
 		if (object == g1startbutton) {
 			
+			playSound(buttonClickSound);
 			startTimer(g1c1move);
 			//g1objmovepinpoint();
 			startTimer(g1timer1);
@@ -502,6 +510,7 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			hideObject(g1restartbutton);
 			///savedata_g1();
 
+			playSound(buttonClickSound);
 
 			setTimer(g1score, 9999);
 			//showTimer(g1score);
@@ -511,7 +520,7 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		}
 		else if (object == g1restartbutton) {
 			
-
+			playSound(buttonClickSound);
 			g1restart();
 			hideObject(g1restartbutton);
 			setTimer(g1score, 9999);
@@ -520,6 +529,7 @@ void Game1_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			startTimer(g1difficult);
 		}
 		else if (object == g1goMapButton) {
+			playSound(buttonClickSound);
 			g1c1x = 540, g1c1y = 360;
 			locateObject(g1c1, scene_g1, g1c1x, g1c1y);
 
@@ -614,12 +624,12 @@ void Game1_keyboardCallback(KeyCode code, KeyState state)
 
 void Game1_main() {
 
-	setGameOption(GameOption::GAME_OPTION_ROOM_TITLE, false);
+	//setGameOption(GameOption::GAME_OPTION_ROOM_TITLE, false);
 	setGameOption(GameOption::GAME_OPTION_INVENTORY_BUTTON, false);
 	setGameOption(GameOption::GAME_OPTION_MESSAGE_BOX_BUTTON, false);
 	
 	
-	scene_g1 = createScene("game1", "image/game1/배경.png");
+	scene_g1 = createScene("STGAE4 유령의 집", "image/game1/배경.png");
 
 	g1c1 = g1createObject("image/game1/마리오오른쪽/마리오 애니메이션1.png", scene_g1, g1c1x, g1c1y, true);	
 	scaleObject(g1c1, 0.5f);
@@ -646,5 +656,6 @@ void Game1_main() {
 	g1c1move = createTimer(0.01f);
 	g1score = createTimer(100);
 	g1difficult = createTimer(4.f);
-	bgm_g1 = createSound("sounds/game/ghost theme.wav");
+	//bgm_g1 = createSound("sounds/game/ghost theme.wav");
+	bgm_g1 = createSound("sounds/배경음/유령의집.mp3");
 }

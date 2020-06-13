@@ -62,7 +62,7 @@ void restart_g63() {
 	nowState_g63 = 1;
 	growUpCount_g63 = 0;
 
-	setTimer(countDown3Timer, 1.0f);
+	setTimer(countDown3Timer, 0.7f);
 	setObjectImage(countDown3, "image/game6/3.png");
 
 	locateObject(player_g63, scene_g63, playerX_g63, playerY_g63);
@@ -190,12 +190,12 @@ void Game63_timerCallback(TimerID timer)
 
 		if (countDown3Num == 2) {
 			setObjectImage(countDown3, "image/game6/2.png");
-			setTimer(timer, 1.0f);
+			setTimer(timer, 0.7f);
 			startTimer(timer);
 		}
 		else if (countDown3Num == 3) {
 			setObjectImage(countDown3, "image/game6/1.png");
-			setTimer(timer, 1.0f);
+			setTimer(timer, 0.7f);
 			startTimer(timer);
 		}
 		else {
@@ -329,7 +329,7 @@ void Game63_timerCallback(TimerID timer)
 
 void Game63_main()
 {
-	scene_g63 = createScene("3 스테이지", "image/game6/하늘배경.png");
+	scene_g63 = createScene("STAGE6-3 하늘 섬", "image/game6/하늘배경.png");
 	player_g63 = createObject("image/game6/날개마리오좌.png", scene_g63, playerX_g63, playerY_g63, true, (float)playerSize_g63 / PLAYER_IMAGE_SIZE);
 
 	//레벨1 몬스터 스폰
@@ -359,7 +359,7 @@ void Game63_main()
 
 	playTimer_g63 = createTimer(PLAYER_ANIMATION_TIME);
 	monster3Timer_g63 = createTimer(monster3_ANIMATION_TIME);
-	countDown3Timer = createTimer(1.0f);
+	countDown3Timer = createTimer(0.7f);
 	growUpTimer_g63 = createTimer(0.07f);
 
 }
