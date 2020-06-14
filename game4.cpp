@@ -70,6 +70,8 @@ double g4obj4x[4], g4obj4y[4];
 double g4c1y=110,g4gravity=20, g4c1yjump2start;
 bool g4isjumping1, g4isjumping2,g4isBottom,g4jumping1process=false, g4jumping2process = false;
 double g4c1jump1cache, g4c1jump2cache;
+bool g4jump1_1front, g4jump1_1back, g4jump2_1front, g4jump2_1back;
+bool g4jump2ban=false;
 
 //-------------
 double jump1_1xcache=-100, jump2_1xcache = -100, g4jump2_1firstpositioncache;
@@ -302,6 +304,7 @@ void g4death() {
                 stopTimer(g4obmove);
                 showMessage("dead");         
                 playSound(g1deadsound);
+                stopSound(g4theme);
                 g4scoremessage();
                 showObject(g4restartbutton);
                 showObject(g4goMapButton);
@@ -317,6 +320,7 @@ void g4death() {
                             stopTimer(g4obmove);
                             showMessage("dead");
                             playSound(g1deadsound);
+                            stopSound(g4theme);
                             g4scoremessage();
                             showObject(g4restartbutton);
                             showObject(g4goMapButton);
@@ -330,6 +334,7 @@ void g4death() {
                     stopTimer(g4obmove);
                     showMessage("dead");
                     playSound(g1deadsound);
+                    stopSound(g4theme);
                     g4scoremessage();
                     showObject(g4restartbutton);
                     showObject(g4goMapButton);
@@ -343,6 +348,7 @@ void g4death() {
                     stopTimer(g4obmove);
                     showMessage("dead");
                     playSound(g1deadsound);
+                    stopSound(g4theme);
                     g4scoremessage();
                     showObject(g4restartbutton);
                     showObject(g4goMapButton);
@@ -363,17 +369,48 @@ void g4death() {
     
 }
 
+void g4jumpstate() {
+    if (jump1_1xcache <= 0 && jump1_1xcache >= -100) {
+        g4jump1_1front = true;
+        g4jump1_1back = false;
+        g4jump2_1front = false;
+        g4jump2_1back = false;
+
+    }
+    if (jump1_1xcache <= 100 && jump1_1xcache > 0) {
+        g4jump1_1front = false;
+        g4jump1_1back = true;
+        g4jump2_1front = false;
+        g4jump2_1back = false;
+
+    }
+    if (jump2_1xcache <= 0 && jump2_1xcache > -100) {
+        g4jump1_1front = false;
+        g4jump1_1back = false;
+        g4jump2_1front = true;
+        g4jump2_1back = false;
+
+    }
+    if (jump2_1xcache <= 100 &&jump2_1xcache > 0) {
+        g4jump1_1front = false;
+        g4jump1_1back = false;
+        g4jump2_1front = false;
+        g4jump2_1back = true;
+
+    }
+}
 
 void g4jump1_1() {
     double g4c1ycache;
-    if (jump1_1xcache >= 90 || jump1_1xcache < -100) {//계산 밖일때
+    
+    if (jump1_1xcache >= 100 || jump1_1xcache < -100) {//계산 밖일때
         jump1_1xcache = -100;
         //g4jumping1_1 = false;
         g4c1y = floor_y;
         g4jumping1_1 = false;
     }
     else {
-        jump1_1xcache = jump1_1xcache +10;
+        jump1_1xcache = jump1_1xcache +4;
     }
     g4c1ycache = -(jump1_1xcache * jump1_1xcache)/40+ 250;
     g4c1y = floor_y + g4c1ycache;
@@ -381,7 +418,7 @@ void g4jump1_1() {
 }
 void g4jump2_1(double g4c1positiony) {
     double g4c1ycache;
-    if (jump2_1xcache >= 90 || jump2_1xcache < -100) {//계산 밖일때
+    if (jump2_1xcache >= 100 || jump2_1xcache < -100) {//계산 밖일때
         jump2_1xcache = -100;
         //g4jumping1_1 = false;
         g4c1y = g4c1positiony;
@@ -390,7 +427,7 @@ void g4jump2_1(double g4c1positiony) {
         stopTimer(g4timer2);
     }
     else {
-        jump2_1xcache = jump2_1xcache + 10;
+        jump2_1xcache = jump2_1xcache + 4;
     }
     g4c1ycache = -(jump2_1xcache * jump2_1xcache) / 40 + 250;
     g4c1y = floor_y + g4c1positiony+ g4c1ycache;
@@ -602,6 +639,16 @@ void g4stageclear() {
 }
 
 void g4update() {
+    g4jumpstate();
+    if (g4jumping2_1 == true) {
+        g4jump2ban = true;
+    }
+    else {
+        if(g4c1y==110){
+            g4jump2ban = false;
+        }
+    }
+
     g4c1animation();
     g4obj1animation();
     g4obj2animation();
@@ -664,6 +711,7 @@ void g4update() {
 
 void g4gamestart() {
     hideObject(g4goMapButton);
+    playSound(g4theme);
     g4howfar = 0;
     for (int i = 0; i < 4; i++) {
         srand((unsigned int)time(NULL));          
@@ -743,10 +791,10 @@ void Game4_timerCallback(TimerID timer) {
             g4jump1_1();
            
         }
-        setTimer(g4timer1, 0.04f);
+        setTimer(g4timer1, 0.01f);
         startTimer(g4timer1);
 	}
-    else if (timer == g4timer2) {//점프 2
+    if (timer == g4timer2) {//점프 2
         /*g4jump2(); 
         setTimer(g4timer2, 0.01f);
         startTimer(g4timer2);*/
@@ -754,7 +802,7 @@ void Game4_timerCallback(TimerID timer) {
             g4jump2_1(g4jump2_1firstpositioncache);
 
         }
-        setTimer(g4timer2, 0.04f);
+        setTimer(g4timer2, 0.01f);
         startTimer(g4timer2);
     }
     if (timer == g4obmove) {//장애물 움직임
@@ -774,23 +822,33 @@ void Game4_soundCallback(SoundID sound) {
 
 void Game4_keyboardCallback(KeyCode code, KeyState state)
 {
-    if (code == 75) {			// 
+     if (code == 75) {			// 
         if (nowGameSceneNum == 4) {
             //g4jumping1_1 = (state == KeyState::KEYBOARD_PRESSED ? true : false);
             if (state == KeyState::KEYBOARD_PRESSED) {//
-                if (g4jumping1_1 == false) {
-                    g4jumping1_1 = true;
-                }
-                else if (g4jumping1_1 == true) {
-                    if (g4jumping2_1 == false) {
-                        g4jump2_1firstpositioncache = g4c1y;
-                        stopTimer(g4timer1);
-                        startTimer(g4timer2);
-                        g4jumping2_1 = true;
+                
+                    if (g4jumping1_1 == false) {
+                        g4jumping1_1 = true;
                     }
-                    else if (g4jumping2_1 == true) {
+                    else if (g4jumping1_1 == true) {
+                        if (g4jump1_1front == false) {//1단점프 앞부분에서 점프 금지
+                            if (g4jump2ban == false) {//2단 점프후 점프 금지
+                                if (g4jump2_1back == false) {
+
+                                    if (g4jumping2_1 == false) {
+                                        g4jump2_1firstpositioncache = g4c1y;
+                                        stopTimer(g4timer1);
+                                        startTimer(g4timer2);
+                                        g4jumping2_1 = true;
+                                    }
+                                    else if (g4jumping2_1 == true) {
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
+                
+
             }
         }
     }
