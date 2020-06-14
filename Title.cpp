@@ -499,9 +499,12 @@ void Title_main() {
 	readdata();
 	titleScene = createScene("전체 맵", "image/Title/worldmap.png");
 	
-
+	//-------게임 버튼
 	for (int i = 0; i < 6; i++)
 		GameIcon[i] = createObject("image/Title/검은아이콘.png", titleScene, IconX[i] +10 , IconY[i] - 15, true, 1.0f);
+	setObjectImage(GameIcon[0], "image/Title/파란아이콘.png");
+	setObjectImage(GameIcon[1], "image/Title/빨간아이콘.png");
+	setObjectImage(GameIcon[5], "image/Title/빨간아이콘.png");
 	if (stage2Clear==true) {
 		setObjectImage(GameIcon[1], "image/Title/초록아이콘.png");
 		setObjectImage(GameIcon[2], "image/Title/파란아이콘.png");
@@ -520,7 +523,7 @@ void Title_main() {
 		key = 2;
 		setObjectImage(key2, "image/Title/key.png");
 	}
-
+	//---------게임버튼끝
 	
 
 	Mario = createObject("image/Title/마리오애니/1.png", titleScene, IconX[0], IconY[0], true, 1.4f);
