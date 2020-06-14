@@ -8,7 +8,7 @@
 
 extern SceneID scene_g1, scene1_g2, scene1_g3, scene_g4, scene_g5, scene_g6, scene_g62, scene_g63;
 
-extern SoundID buttonClickSound, gameClearSound, gameOverSound, GameEnterSound;
+extern SoundID buttonClickSound, gameClearSound, gameOverSound, gameEnterSound;
 extern SoundID bgm_g3, g4theme, bgm_g2, bgm_g1, bgm_g5, bgm_g6;
 
 SceneID titleScene;
@@ -267,11 +267,11 @@ void stageUnlock(int stage) {
 }
 
 void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
-	
+
 
 	//검은아이콘(클릭불가)이 아니면 팝업창 띄움
 	for (int i = 0; i < 6; i++) {
-		
+
 		if (object == GameIcon[i] && stageBlack[i] == false) {
 			playSound(buttonClickSound);
 			hideUI();
@@ -296,9 +296,9 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			hideObject(GameEnterButton[i]);
 		}
 	}
-	
+
 	if (object == Mario) {
-		
+
 		if (stageBlack[nowMarioOn] == false) {
 			playSound(buttonClickSound);
 			hideUI();
@@ -307,12 +307,12 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 		}
 	}
 
-	
+
 	///////게임 입장 버튼//////
 	//평원
 	else if (object == GameEnterButton[0]) {
 		nowGameSceneNum = 3;
-		
+
 		hideObject(GamePopup[0]);
 		hideObject(GameEnterButton[0]);
 
@@ -427,7 +427,7 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			else
 				showMessage("이미 클리어 한 스테이지입니다");
 		}
-	
+
 	}
 
 	//쿠파성
@@ -449,24 +449,27 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 			playSound(bgm_g5);
 			enterScene(scene_g5);
 		}
-	}	
-	
+	}
+
 	else if (object == titlestartbutton) {
-	startTimer(titleanimationtimer);
-	hideObject(titlestartbutton);
-	
+		playSound(buttonClickSound);
+		startTimer(titleanimationtimer);
+		hideObject(titlestartbutton);
+
 	}
 	else if (object == savebutton) {
+		playSound(buttonClickSound);
 		savedata();
 		showMessage("저장 완료!");
 	}
 	else if (object == explainbutton) {
-	showObject(explainwindow);
+		playSound(buttonClickSound);
+		showObject(explainwindow);
 	}
 	else if (object == explainwindow) {
-	hideObject(explainwindow);
+		hideObject(explainwindow);
 	}
-	
+
 }
 
 void Title_timerCallback(TimerID timer) {
@@ -505,7 +508,7 @@ void Title_main() {
 	setObjectImage(GameIcon[0], "image/Title/파란아이콘.png");
 	setObjectImage(GameIcon[1], "image/Title/빨간아이콘.png");
 	setObjectImage(GameIcon[5], "image/Title/빨간아이콘.png");
-	if (stage2Clear==true) {
+	if (stage2Clear == true) {
 		setObjectImage(GameIcon[1], "image/Title/초록아이콘.png");
 		setObjectImage(GameIcon[2], "image/Title/파란아이콘.png");
 		setObjectImage(GameIcon[3], "image/Title/파란아이콘.png");
@@ -517,7 +520,7 @@ void Title_main() {
 	}
 
 	//하늘지대 클리어했으면
-	else if (stage5Clear=true) {
+	else if (stage5Clear == true) {
 		setObjectImage(GameIcon[4], "image/Title/초록아이콘.png");
 
 		key = 2;
