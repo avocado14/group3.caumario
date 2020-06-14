@@ -854,7 +854,6 @@ void Game5_main() {
     playerAnimationTimer_g5 = createTimer(0.05f);
     koopaAnimationTimer = createTimer(0.2f);
 
-    //bgm_g5 = createSound("image/game5/쿠파성브금.mp3");
     bgm_g5 = createSound("sounds/배경음/쿠파성.mp3");
 
     jumpSound_g5 = createSound("sounds/공통/점프.mp3");

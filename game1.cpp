@@ -592,7 +592,6 @@ void Game1_keyboardCallback(KeyCode code, KeyState state)
 
 void Game1_main() {
 
-	//setGameOption(GameOption::GAME_OPTION_ROOM_TITLE, false);
 	setGameOption(GameOption::GAME_OPTION_INVENTORY_BUTTON, false);
 	setGameOption(GameOption::GAME_OPTION_MESSAGE_BOX_BUTTON, false);
 	
@@ -624,7 +623,6 @@ void Game1_main() {
 	g1c1move = createTimer(0.01f);
 	g1score = createTimer(100);
 	g1difficult = createTimer(4.f);
-	//bgm_g1 = createSound("sounds/game/ghost theme.wav");
 	bgm_g1 = createSound("sounds/배경음/유령의집.mp3");
 	g1deadsound = createSound("sounds/공통/죽을때.mp3");
 }

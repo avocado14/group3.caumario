@@ -294,7 +294,6 @@ void Game2_main() {
 	heart3_g2 = createObject_g2("image/game2/heart.png", scene2_g2, 970, 650, true);
 	scaleObject(heart3_g2, 0.05f);
 
-	//bgm_g2 = createSound("image/game2/bgm.wav");
 	bgm_g2 = createSound("sounds/배경음/바다.mp3");
 	normalHit_g2 = createSound("image/game2/normalHit.mp3");
 	normalHit1_g2 = createSound("image/game2/normalHit1.mp3");
