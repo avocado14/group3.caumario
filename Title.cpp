@@ -8,7 +8,7 @@
 
 extern SceneID scene_g1, scene1_g2, scene1_g3, scene_g4, scene_g5, scene_g6, scene_g62, scene_g63;
 
-extern SoundID buttonClickSound, gameClearSound, gameOverSound, gameEnterSound;
+extern SoundID buttonClickSound, gameClearSound, gameOverSound, GameEnterSound;
 extern SoundID bgm_g3, g4theme, bgm_g2, bgm_g1, bgm_g5, bgm_g6;
 
 SceneID titleScene;
@@ -25,7 +25,7 @@ bool stageLocked[6] = { 0,1,0,1,1,1 };
 bool stageBlack[6] = { 0,0,1,1,1,0 };		//0,0,1,1,1,0
 int stageUnlockCost[6] = { 0, 30, 0,30,150,0 };	//6번째 : 열쇠 2개 필요
 int coin; //점수  코인개수
-int key ;
+int key;
 
 int coinNum100, coinNum10, coinNum1;
 
@@ -55,7 +55,7 @@ typedef struct {
 
 	bool stage2Clear;
 
-	bool stage5Clear; 
+	bool stage5Clear;
 
 	int key;
 
@@ -63,9 +63,9 @@ typedef struct {
 
 int savedata() {
 	SaveData_t Data = { coin,
-		stageBlack[0],stageBlack[1],stageBlack[2],stageBlack[3],stageBlack[4],stageBlack[5], 
+		stageBlack[0],stageBlack[1],stageBlack[2],stageBlack[3],stageBlack[4],stageBlack[5],
 		stageLocked[0],stageLocked[1],stageLocked[2],stageLocked[3],stageLocked[4],stageLocked[5],
-		stage2Clear,stage5Clear,key};
+		stage2Clear,stage5Clear,key };
 	FILE* fp = fopen("savedata.dat", "wb");
 
 	if (fp == NULL) {
@@ -193,7 +193,7 @@ void hideUI() {
 
 //0은 클리어x 2스테이지(사막), 5스테이지(하늘) 받음 
 void enterTitle(int clearScene) {
-	
+
 	setGameOption(GameOption::GAME_OPTION_ROOM_TITLE, false);
 	showCoinCount();
 
@@ -210,7 +210,7 @@ void enterTitle(int clearScene) {
 		setObjectImage(GameIcon[3], "image/Title/파란아이콘.png");
 		stageBlack[2] = false;
 		stageBlack[3] = false;
-		
+
 		//key = 1;
 		//setObjectImage(key1, "image/Title/key.png");
 	}
@@ -218,7 +218,7 @@ void enterTitle(int clearScene) {
 	//하늘지대 클리어했으면
 	else if (clearScene == 5) {
 		setObjectImage(GameIcon[4], "image/Title/초록아이콘.png");
-		
+
 		//key = 2;
 		//setObjectImage(key2, "image/Title/key.png");
 	}
@@ -229,19 +229,19 @@ void enterTitle(int clearScene) {
 //0번 2번은 실행 안됨
 void stageUnlock(int stage) {
 
-	if (stage != 5 ) {
+	if (stage != 5) {
 		if (coin >= stageUnlockCost[stage]) {
 
 			coin -= stageUnlockCost[stage];		//돈 내고
 			showCoinCount();
 			stageLocked[stage] = false;			//열림으로 바꿔주고
-			
+
 			sprintf(path, "image/Title/팝업/%d-2.png", stage + 1);
 			setObjectImage(GamePopup[stage], path);
 			setObjectImage(GameEnterButton[stage], "image/Title/enter.png");
 			locateObject(GameEnterButton[stage], titleScene, 950, 100);
 
-			if(stage == 4)
+			if (stage == 4)
 				locateObject(GameEnterButton[stage], titleScene, 70, 100);
 
 		}
@@ -251,7 +251,7 @@ void stageUnlock(int stage) {
 	}
 
 	//쿠파성
-	else  {
+	else {
 		if (key == 2) {
 
 			stageLocked[5] = false;
@@ -260,7 +260,7 @@ void stageUnlock(int stage) {
 			setObjectImage(GameEnterButton[5], "image/Title/enter.png");
 			locateObject(GameEnterButton[stage], titleScene, 70, 100);
 		}
-		
+
 		else
 			showMessage("열쇠가 부족합니다");
 	}
@@ -452,18 +452,15 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	}
 
 	else if (object == titlestartbutton) {
-		playSound(buttonClickSound);
 		startTimer(titleanimationtimer);
 		hideObject(titlestartbutton);
 
 	}
 	else if (object == savebutton) {
-		playSound(buttonClickSound);
 		savedata();
 		showMessage("저장 완료!");
 	}
 	else if (object == explainbutton) {
-		playSound(buttonClickSound);
 		showObject(explainwindow);
 	}
 	else if (object == explainwindow) {
@@ -501,10 +498,10 @@ void Title_soundCallback(SoundID sound) {
 void Title_main() {
 	readdata();
 	titleScene = createScene("전체 맵", "image/Title/worldmap.png");
-	
+
 	//-------게임 버튼
 	for (int i = 0; i < 6; i++)
-		GameIcon[i] = createObject("image/Title/검은아이콘.png", titleScene, IconX[i] +10 , IconY[i] - 15, true, 1.0f);
+		GameIcon[i] = createObject("image/Title/검은아이콘.png", titleScene, IconX[i] + 10, IconY[i] - 15, true, 1.0f);
 	setObjectImage(GameIcon[0], "image/Title/파란아이콘.png");
 	setObjectImage(GameIcon[1], "image/Title/빨간아이콘.png");
 	setObjectImage(GameIcon[5], "image/Title/빨간아이콘.png");
@@ -520,14 +517,14 @@ void Title_main() {
 	}
 
 	//하늘지대 클리어했으면
-	else if (stage5Clear==true) {
+	else if (stage5Clear == true) {
 		setObjectImage(GameIcon[4], "image/Title/초록아이콘.png");
 
 		key = 2;
 		setObjectImage(key2, "image/Title/key.png");
 	}
 	//---------게임버튼끝
-	
+
 
 	Mario = createObject("image/Title/마리오애니/1.png", titleScene, IconX[0], IconY[0], true, 1.4f);
 
@@ -541,9 +538,9 @@ void Title_main() {
 	}
 	coinImage = createObject("image/Title/coin.png", titleScene, 5, 637, true, 1.0f);
 	xText = createObject("image/Title/숫자/x.png", titleScene, 50, 630, true, 1.0f);
-	
+
 	for (int i = 0; i < 3; i++) {
-		coinText[i] = createObject("image/Title/숫자/2.png", titleScene, 90 + 30 * i , 630, false, 1.0f);
+		coinText[i] = createObject("image/Title/숫자/2.png", titleScene, 90 + 30 * i, 630, false, 1.0f);
 	}
 
 	savebutton = createObject("image/Title/save.png", titleScene, 1050, 650, true, 1.0f);
@@ -563,7 +560,7 @@ void Title_main() {
 	GameEnterButton[3] = createObject("image/Title/unlock.png", titleScene, 950, 70, false, 1.0f);
 	GameEnterButton[4] = createObject("image/Title/unlock.png", titleScene, 70, 70, false, 1.0f);
 	GameEnterButton[5] = createObject("image/Title/unlock.png", titleScene, 70, 70, false, 1.0f);
-	
+
 
 	maintitle = createObject("image/Title/title.png", titleScene, 0, 0, true, 1.0f);
 	titlestartbutton = createObject("image/Title/start.png", titleScene, 900, 110, true, 1.0f);
