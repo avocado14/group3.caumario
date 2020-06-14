@@ -33,6 +33,7 @@ SceneID scene_g4;
 ObjectID g4c1, g4goMapButton,g4startbutton, g4restartbutton,g4obj1[4], g4obj2[4], g4obj3[4], g4obj4[4], g4obj5[4],g4floor1,g4floor2, g4background1, g4background2, g4clear;
 TimerID g4timer1, g4timer2, g4obmove,g4difficult;
 SoundID g4theme, g4clearsound;
+extern SoundID g1deadsound;
 
 const char* g4objfile[5] =
 { "image/game4/선인/선인 애니메이션 1.png" ,"image/game4/해골 거북이/1.png" ,"image/game4/하늘 거북이/하늘거북이 애니메이션 1.png" ,"image/game4/c5.png" ,"image/game4/c6.png"  };
@@ -269,7 +270,7 @@ void g4flooranimation() {
         g4howfar = g4howfar + 11 + 2 * g4difficulty;
         g4score = g4howfar* 0.006;
     }
-    if (g4background1x < -2100) {
+    /*if (g4background1x < -2100) {
         g4background1x = g4background2x + 2000;
 
     }
@@ -278,10 +279,10 @@ void g4flooranimation() {
 
     }
     else {
-        g4background1x = g4background1x - 3;
-        g4background2x = g4background2x - 3;
+        g4background1x = g4background1x - 2;
+        g4background2x = g4background2x - 2;
         
-    }
+    }*/
     
 }
 
@@ -300,18 +301,38 @@ void g4death() {
                 stopTimer(g4timer2);
                 stopTimer(g4obmove);
                 showMessage("dead");         
+                playSound(g1deadsound);
                 g4scoremessage();
                 showObject(g4restartbutton);
+                showObject(g4goMapButton);
             }
             if (g4score > 25) {
+                if (g4score > 25 && g4score < 35) {
+                    if ((500 < (g4obj2x[i] + g4_obj1_size_width)) && 1280 > g4obj2x[i])
+                    {
+                        if ((220 < (g4obj2x[i] + g4_obj2_size_width)) && (210 + g4_character_size_width > g4obj2x[i]) &&
+                            (g4c1y < (g4obj2y[i] + g4_obj2_size_length)) && (g4c1y + g4_character_size_length > g4obj2y[i])) {
+                            stopTimer(g4timer1);
+                            stopTimer(g4timer2);
+                            stopTimer(g4obmove);
+                            showMessage("dead");
+                            playSound(g1deadsound);
+                            g4scoremessage();
+                            showObject(g4restartbutton);
+                            showObject(g4goMapButton);
+                        }
+                    }
+                }
                 if ((220 < (g4obj2x[i] + g4_obj2_size_width)) && (210 + g4_character_size_width > g4obj2x[i]) &&
                     (g4c1y < (g4obj2y[i] + g4_obj2_size_length)) && (g4c1y + g4_character_size_length > g4obj2y[i])) {
                     stopTimer(g4timer1);
                     stopTimer(g4timer2);
                     stopTimer(g4obmove);
                     showMessage("dead");
+                    playSound(g1deadsound);
                     g4scoremessage();
                     showObject(g4restartbutton);
+                    showObject(g4goMapButton);
                 }
             }
             if (g4score > 60) {
@@ -321,8 +342,10 @@ void g4death() {
                     stopTimer(g4timer2);
                     stopTimer(g4obmove);
                     showMessage("dead");
+                    playSound(g1deadsound);
                     g4scoremessage();
                     showObject(g4restartbutton);
+                    showObject(g4goMapButton);
                 }
             }
             if ((210 < (g4obj4x[i] + g4_obj4_size_width)) && (210 + g4_character_size_width > g4obj4x[i]) &&
@@ -331,6 +354,7 @@ void g4death() {
                 stopTimer(g4timer2);
                 stopTimer(g4obmove);
                 showMessage("dead");
+                playSound(g1deadsound);
                 g4scoremessage();
                 showObject(g4restartbutton);
             }
@@ -481,10 +505,10 @@ void g4obstaclemove(ObjectID obstacle,SceneID scene,int movetype,int objID) {
                 int num = rand();
                 int rndvalue = num % 5;
                 if (objID == 1 || objID == 2 || objID == 3) {
-                    g4obj2x[objID] = g4obj2x[objID - 1] + 320 + (500 - g4difficulty * 10) + rndvalue * 50;
+                    g4obj2x[objID] = g4obj2x[objID - 1] +400 + (500 - g4difficulty * 10) + rndvalue * 50;
                 }
                 else if (objID == 0) {
-                    g4obj2x[objID] = g4obj2x[3] + 320 + (500 - g4difficulty * 10) + rndvalue * 50;
+                    g4obj2x[objID] = g4obj2x[3] + 400 + (500 - g4difficulty * 10) + rndvalue * 50;
                 }
             }
             else {
@@ -614,8 +638,8 @@ void g4update() {
     }    
     locateObject(g4floor1, scene_g4, g4floor1x, 0);
     locateObject(g4floor2, scene_g4, g4floor2x, 0);
-    locateObject(g4background1, scene_g4, g4background1x, 0);
-    locateObject(g4background2, scene_g4, g4background2x, 0);
+    //locateObject(g4background1, scene_g4, g4background1x, 0);
+    //locateObject(g4background2, scene_g4, g4background2x, 0);
     locateObject(g4c1, scene_g4, 210, g4c1y);
 
 //-------난이도
@@ -638,6 +662,7 @@ void g4update() {
 }
 
 void g4gamestart() {
+    hideObject(g4goMapButton);
     g4howfar = 0;
     for (int i = 0; i < 4; i++) {
         srand((unsigned int)time(NULL));          
@@ -776,7 +801,7 @@ void Game4_main() {
     setGameOption(GameOption::GAME_OPTION_MESSAGE_BOX_BUTTON, false);
 
 	scene_g4 = createScene("STAGE2 사막", "image/game4/배경.png");
-    g4background1 = g4createObject("image/game4/배경.png", scene_g4, 0, 0, true);
+    g4background1 = g4createObject("image/game4/배경.png", scene_g4, -500, 0, true);
     g4background2 = g4createObject("image/game4/배경.png", scene_g4, 2000, 0, true);
     g4floor1 = g4createObject("image/game4/바닥.png", scene_g4, 0, 0, true);
     g4floor2 = g4createObject("image/game4/바닥.png", scene_g4, 2500, 0, true);

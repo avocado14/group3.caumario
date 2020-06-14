@@ -18,7 +18,7 @@ extern SoundID buttonClickSound;
 SceneID scene_g1;
 ObjectID g1c1, g1obj1[6][10],g1startbutton, g1restartbutton, g1goMapButton;//[세로][가로][j][i]
 TimerID g1timer1, g1c1move,g1levelupgrade,g1score, g1difficult;
-SoundID bgm_g1;
+SoundID bgm_g1,g1deadsound;
 
 extern int nowGameSceneNum,coin;
 
@@ -116,7 +116,7 @@ void g1c1animation() {
 			setObjectImage(g1c1, g1c1animationfilefront[9]);
 		}
 
-		g1c1animationcache1 = g1c1animationcache1 + 1;
+		
 
 	}
 	else if (g1c1heading == 1) {//뒤
@@ -141,7 +141,7 @@ void g1c1animation() {
 		}
 		
 
-		g1c1animationcache1 = g1c1animationcache1 +1;
+		
 
 	}
 	else if (g1c1heading == 2) {//왼쪽
@@ -177,11 +177,11 @@ void g1c1animation() {
 			setObjectImage(g1c1, g1c1animationfileleft[9]);
 		}
 
-		g1c1animationcache1 = g1c1animationcache1 + 0.7;
+		
 
 	}
 	else if (g1c1heading == 3) {//오른쪽
-	g1c1animationcache = fmod(g1c1animationcache1, 10);
+		g1c1animationcache = fmod(g1c1animationcache1, 10);
 		if (g1c1animationcache >= 0 && g1c1animationcache < 1) {
 			setObjectImage(g1c1, g1c1animationfileright[0]);
 		}
@@ -212,10 +212,10 @@ void g1c1animation() {
 		else  if (g1c1animationcache >= 9 && g1c1animationcache < 10) {
 			setObjectImage(g1c1, g1c1animationfileright[9]);
 		}
-
-		g1c1animationcache1 = g1c1animationcache1 + 0.7;
-
 	}
+		g1c1animationcache1 = g1c1animationcache1 + 0.5;
+
+	
 }
 
 void g1obj1firstposition() {// 리턴 해주어야 하나?.. i가 가로j가 세로
@@ -400,6 +400,7 @@ void g1death() {
 				stopTimer(g1timer1);
 				stopTimer(g1c1move);
 				stopTimer(g1difficult);
+				playSound(g1deadsound);
 				showMessage("end");
 				score();
 				//savedata_g1();
@@ -409,6 +410,7 @@ void g1death() {
 				stopTimer(g1timer1);
 				stopTimer(g1c1move);
 				stopTimer(g1difficult);
+				playSound(g1deadsound);
 				showMessage("out of bounds");
 				score();
 				showObject(g1restartbutton);
@@ -421,6 +423,7 @@ void g1death() {
 			stopTimer(g1timer1);
 			stopTimer(g1c1move);
 			stopTimer(g1difficult);
+			playSound(g1deadsound);
 			showMessage("end1");
 			score();
 			//savedata_g1();
@@ -623,4 +626,5 @@ void Game1_main() {
 	g1difficult = createTimer(4.f);
 	//bgm_g1 = createSound("sounds/game/ghost theme.wav");
 	bgm_g1 = createSound("sounds/배경음/유령의집.mp3");
+	g1deadsound = createSound("sounds/공통/죽을때.mp3");
 }
