@@ -23,11 +23,9 @@ using namespace std;
 
 #define floor_y 110
 
-//스페이스바 쓸 때 game5랑 코드가 충돌되길래 그 부분 방지할 수 있는 코드 추가 했습니다. 못보던 변수가 생겨서 당황하실까봐 주석 남깁니당
-//확인하시면 주석 삭제해주세용ㅎㅎ!
 extern int nowGameSceneNum;     
 
-extern SoundID buttonClickSound;
+extern SoundID buttonClickSound, jumpSound_g5, jumpSound2_g5;
 extern void enterTitle(int clearScene);
 SceneID scene_g4;
 ObjectID g4c1, g4goMapButton,g4startbutton, g4restartbutton,g4obj1[4], g4obj2[4], g4obj3[4], g4obj4[4], g4obj5[4],g4floor1,g4floor2, g4background1, g4background2, g4clear;
@@ -895,8 +893,7 @@ void Game4_main() {
     g4obmove = createTimer(0.05f);
     g4difficult = createTimer(5.f);
     
-
-    //g4theme = createSound("sounds/game/desert theme.wav");
     g4theme = createSound("sounds/배경음/사막.mp3");
     g4clearsound = createSound("sounds/공통/게임클리어.wav");
+
 }

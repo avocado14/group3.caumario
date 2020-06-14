@@ -22,7 +22,7 @@ TimerID playTimer_g5, jumpTimer_g5, koopaJumpTimer, fire1MoveTimer, fire2MoveTim
 TimerID kFireMoveTimer1, kFireMoveTimer2, kBallMoveTimer;
 TimerID kFireCoolTimer1, kFireCoolTimer2, kBallCoolTimer, koopaJumpCoolTimer;
 TimerID playerAnimationTimer_g5, koopaAnimationTimer;
-SoundID bgm_g5, jumpSound_g5, playerFireSound1, playerFireSound2, koopaFireSound1, koopaFireSound2, koopaFireSound3; 
+SoundID bgm_g5, jumpSound_g5, jumpSound2_g5, playerFireSound1, playerFireSound2, koopaFireSound1, koopaFireSound2, koopaFireSound3;
 SoundID koopaDamageSound1, koopaDamageSound2, playerDamageSound;
 extern SoundID buttonClickSound, gameClearSound, gameOverSound;
 
@@ -858,6 +858,7 @@ void Game5_main() {
     bgm_g5 = createSound("sounds/배경음/쿠파성.mp3");
 
     jumpSound_g5 = createSound("sounds/공통/점프.mp3");
+    jumpSound2_g5 = createSound("sounds/공통/점프2.mp3");
 
     playerFireSound1 = createSound("sounds/game5/마리오불공격1.wav");
     playerFireSound2 = createSound("sounds/game5/마리오불공격2.wav");
