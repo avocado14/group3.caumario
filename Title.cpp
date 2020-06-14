@@ -66,7 +66,7 @@ int savedata() {
 		stageBlack[0],stageBlack[1],stageBlack[2],stageBlack[3],stageBlack[4],stageBlack[5],
 		stageLocked[0],stageLocked[1],stageLocked[2],stageLocked[3],stageLocked[4],stageLocked[5],
 		stage2Clear,stage5Clear,key };
-	FILE* fp = fopen("savedata.dat", "wb");
+	FILE* fp = fopen("c:savedata.dat", "wb");
 
 	if (fp == NULL) {
 
@@ -87,7 +87,7 @@ int savedata() {
 int readdata() {
 	SaveData_t Data;
 
-	FILE* fp = fopen("savedata.dat", "rb");
+	FILE* fp = fopen("c:savedata.dat", "rb");
 
 	if (fp == NULL) {
 
