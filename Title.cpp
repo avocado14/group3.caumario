@@ -8,7 +8,7 @@
 
 extern SceneID scene_g1, scene1_g2, scene1_g3, scene_g4, scene_g5, scene_g6, scene_g62, scene_g63;
 
-extern SoundID buttonClickSound, gameClearSound, gameOverSound, GameEnterSound;
+extern SoundID buttonClickSound, gameClearSound, gameOverSound, gameEnterSound;
 extern SoundID bgm_g3, g4theme, bgm_g2, bgm_g1, bgm_g5, bgm_g6;
 
 SceneID titleScene;
@@ -18,8 +18,8 @@ ObjectID coinText[3];
 TimerID marioAnimationTimer, titleanimationtimer;
 SoundID bgm_title;
 
-int IconX[6] = { 30,22,570,555,1050,1170 };
-int IconY[6] = { 115,385,225,575,275,465 };
+int IconX[6] = { 30,22,570,560,1050,1170 };
+int IconY[6] = { 115,385,215,565,275,465 };
 
 bool stageLocked[6] = { 0,1,0,1,1,1 };
 bool stageBlack[6] = { 0,0,1,1,1,0 };		//0,0,1,1,1,0
@@ -211,16 +211,16 @@ void enterTitle(int clearScene) {
 		stageBlack[2] = false;
 		stageBlack[3] = false;
 
-		//key = 1;
-		//setObjectImage(key1, "image/Title/key.png");
+		key = 1;
+		setObjectImage(key1, "image/Title/key.png");
 	}
 
 	//하늘지대 클리어했으면
 	else if (clearScene == 5) {
 		setObjectImage(GameIcon[4], "image/Title/초록아이콘.png");
 
-		//key = 2;
-		//setObjectImage(key2, "image/Title/key.png");
+		key = 2;
+		setObjectImage(key2, "image/Title/key.png");
 	}
 
 	enterScene(titleScene);
@@ -452,15 +452,18 @@ void Title_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 	}
 
 	else if (object == titlestartbutton) {
+		playSound(buttonClickSound);
 		startTimer(titleanimationtimer);
 		hideObject(titlestartbutton);
 
 	}
 	else if (object == savebutton) {
+		playSound(buttonClickSound);
 		savedata();
 		showMessage("저장 완료!");
 	}
 	else if (object == explainbutton) {
+		playSound(buttonClickSound);
 		showObject(explainwindow);
 	}
 	else if (object == explainwindow) {
@@ -502,40 +505,20 @@ void Title_main() {
 	//-------게임 버튼
 	for (int i = 0; i < 6; i++)
 		GameIcon[i] = createObject("image/Title/검은아이콘.png", titleScene, IconX[i] + 10, IconY[i] - 15, true, 1.0f);
+
 	setObjectImage(GameIcon[0], "image/Title/파란아이콘.png");
 	setObjectImage(GameIcon[1], "image/Title/빨간아이콘.png");
 	setObjectImage(GameIcon[5], "image/Title/빨간아이콘.png");
-	if (stage2Clear == true) {
-		setObjectImage(GameIcon[1], "image/Title/초록아이콘.png");
-		setObjectImage(GameIcon[2], "image/Title/파란아이콘.png");
-		setObjectImage(GameIcon[3], "image/Title/파란아이콘.png");
-		stageBlack[2] = false;
-		stageBlack[3] = false;
 
-		key = 1;
-		setObjectImage(key1, "image/Title/key.png");
-	}
 
-	//하늘지대 클리어했으면
-	else if (stage5Clear == true) {
-		setObjectImage(GameIcon[4], "image/Title/초록아이콘.png");
-
-		key = 2;
-		setObjectImage(key2, "image/Title/key.png");
-	}
 	//---------게임버튼끝
-
 
 	Mario = createObject("image/Title/마리오애니/1.png", titleScene, IconX[0], IconY[0], true, 1.4f);
 
 	key1 = createObject("image/Title/noKey.png", titleScene, 250, 650, true, 1.0f);
 	key2 = createObject("image/Title/noKey.png", titleScene, 300, 650, true, 1.0f);
-	if (key >= 1) {
-		setObjectImage(key1, "image/Title/key.png");
-	}
-	if (key == 2) {
-		setObjectImage(key2, "image/Title/key.png");
-	}
+
+
 	coinImage = createObject("image/Title/coin.png", titleScene, 5, 637, true, 1.0f);
 	xText = createObject("image/Title/숫자/x.png", titleScene, 50, 630, true, 1.0f);
 
@@ -562,6 +545,45 @@ void Title_main() {
 	GameEnterButton[5] = createObject("image/Title/unlock.png", titleScene, 70, 70, false, 1.0f);
 
 
+	if (stage2Clear == true) {
+		enterTitle(2);
+		//setObjectImage(GameIcon[1], "image/Title/초록아이콘.png");
+		//setObjectImage(GameIcon[2], "image/Title/파란아이콘.png");
+		//setObjectImage(GameIcon[3], "image/Title/파란아이콘.png");
+		//stageBlack[2] = false;
+		//stageBlack[3] = false;
+
+		//key = 1;
+		//setObjectImage(key1, "image/Title/key.png");
+	}
+
+	//하늘지대 클리어했으면
+	else if (stage5Clear == true) {
+		//setObjectImage(GameIcon[4], "image/Title/초록아이콘.png");
+		enterTitle(5);
+		//key = 2;
+		//setObjectImage(key2, "image/Title/key.png");
+	}
+
+	for (int i = 0; i < 6; i++) {
+
+		if (i != 0 && i != 2) {
+
+			if (stageLocked[i] == false) {
+				sprintf(path, "image/Title/팝업/%d-2.png", i + 1);
+				setObjectImage(GamePopup[i], path);
+				setObjectImage(GameEnterButton[i], "image/Title/enter.png");
+				locateObject(GameEnterButton[i], titleScene, 950, 100);
+
+				if (i == 4)
+					locateObject(GameEnterButton[i], titleScene, 70, 100);
+			}
+		}
+
+	}
+
+
+
 	maintitle = createObject("image/Title/title.png", titleScene, 0, 0, true, 1.0f);
 	titlestartbutton = createObject("image/Title/start.png", titleScene, 900, 110, true, 1.0f);
 	marioAnimationTimer = createTimer(MARIO_ANIMATION_TIME);
@@ -570,6 +592,7 @@ void Title_main() {
 
 	bgm_title = createSound("sounds/배경음/메인맵.mp3");
 	playSound(bgm_title, true);
+
 
 	showCoinCount();
 
