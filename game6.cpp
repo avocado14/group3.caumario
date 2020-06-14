@@ -347,7 +347,6 @@ void Game6_main()
 	countDownTimer = createTimer(0.7f);
 	growUpTimer_g6 = createTimer(0.07f);
 
-	//bgm_g6 = createSound("image/game6/하늘브금.mp3");
 	bgm_g6 = createSound("sounds/배경음/하늘섬.mp3");
 	countDownSound_g6 = createSound("sounds/game6/카운트다운.mp3");
 	catchSound1_g6 = createSound("sounds/game6/정답1.mp3");

@@ -155,6 +155,5 @@ int main() {
 	
 	startGame(titleScene);
 	
-	//startGame(endingScene);
 
 }

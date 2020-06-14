@@ -13,7 +13,7 @@ SoundID bgm_g3, finalHit_g3, finalHit1_g3, normalHit_g3, normalHit1_g3, normalHi
 int pattern[150] = { 0, }, Elife[150] = { 0, }, locate[150] = { 0, };
 int count_g3 = 0, clear_g3 = 0, life_g3 = 3, location = 60, NhitCount_g3 = 0, FhitCount_g3 = 0, score_g3 = 0;
 char name[30] = { 0, }, info_g3[30] = { 0, };
-float duration_g3 = 1.0f;
+float duration_g3 = 0.8f;
 
 extern int coin;
 
@@ -367,7 +367,6 @@ void Game3_main() {
 
 	damaged_g3 = createObject_g3("image/game3/damage.png", scene2_g3, 0, 0, false);
 	
-	//bgm_g3 = createSound("image/game3/bgm.wav");
 	bgm_g3 = createSound("sounds/배경음/평원.mp3");
 	normalHit_g3 = createSound("image/game3/normalHit.mp3");
 	normalHit1_g3 = createSound("image/game3/normalHit1.mp3");
