@@ -389,7 +389,7 @@ void score(){
 	sprintf_s(buf, "%d ÄÚÀÎ È¹µæ!\n", (int)(9999 - g1result) * 2, scene_g1);
 	showMessage(buf);
 
-	coin += (int)(9999 - g1result);
+	coin += (int)(9999 - g1result) * 2;
 
 }
 

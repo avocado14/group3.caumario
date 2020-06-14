@@ -7,7 +7,8 @@
 #define MARIO_PEACH_MOVE_TIME       0.01f
 #define MARIO_PEACH_ANIMATION_TIME  0.15f
 
-
+extern void enterTitle(int clearScene);
+extern int savedata();
 SceneID endingScene;
 ObjectID marioPeach, clearText, goTitleButton;
 TimerID endingAnimationTimer1, endingAnimationTimer2, endingAnimationTimer3, marioPeachMoveTimer, textMoveTimer, VanimationTimer;
@@ -48,7 +49,8 @@ void Ending_mouseCallback(ObjectID object, int x, int y, MouseAction action) {
 
     if (object == goTitleButton) {
         playSound(buttonClickSound);
-        //타이틀로 이동
+        savedata();
+        endGame();
     }
 
 
