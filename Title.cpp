@@ -53,12 +53,19 @@ typedef struct {
 
 	bool stageLocked[6];
 
+	bool stage2Clear;
+
+	bool stage5Clear; 
+
+	int key;
+
 }SaveData_t;
 
 int savedata() {
 	SaveData_t Data = { coin,
 		stageBlack[0],stageBlack[1],stageBlack[2],stageBlack[3],stageBlack[4],stageBlack[5], 
-		stageLocked[0],stageLocked[1],stageLocked[2],stageLocked[3],stageLocked[4],stageLocked[5] };
+		stageLocked[0],stageLocked[1],stageLocked[2],stageLocked[3],stageLocked[4],stageLocked[5],
+		stage2Clear,stage5Clear,key};
 	FILE* fp = fopen("savedata.dat", "wb");
 
 	if (fp == NULL) {
@@ -98,6 +105,10 @@ int readdata() {
 	for (int i = 0; i < 6; i++) {
 		stageLocked[i] = Data.stageLocked[i];
 	}
+	stage2Clear = Data.stage2Clear;
+	stage5Clear = Data.stage5Clear;
+
+	key = Data.key;
 
 	//printf("HP=%d\nMP=%d\n소지금=%d\n경험치=%d\n",Data.HP, Data.MP, Data.Money, Data.Exp);
 
@@ -200,16 +211,16 @@ void enterTitle(int clearScene) {
 		stageBlack[2] = false;
 		stageBlack[3] = false;
 		
-		key = 1;
-		setObjectImage(key1, "image/Title/key.png");
+		//key = 1;
+		//setObjectImage(key1, "image/Title/key.png");
 	}
 
 	//하늘지대 클리어했으면
 	else if (clearScene == 5) {
 		setObjectImage(GameIcon[4], "image/Title/초록아이콘.png");
 		
-		key = 2;
-		setObjectImage(key2, "image/Title/key.png");
+		//key = 2;
+		//setObjectImage(key2, "image/Title/key.png");
 	}
 
 	enterScene(titleScene);
@@ -491,9 +502,24 @@ void Title_main() {
 
 	for (int i = 0; i < 6; i++)
 		GameIcon[i] = createObject("image/Title/검은아이콘.png", titleScene, IconX[i] +10 , IconY[i] - 15, true, 1.0f);
-	setObjectImage(GameIcon[0], "image/Title/파란아이콘.png");
-	setObjectImage(GameIcon[1], "image/Title/빨간아이콘.png");
-	setObjectImage(GameIcon[5], "image/Title/빨간아이콘.png");
+	if (stage2Clear==true) {
+		setObjectImage(GameIcon[1], "image/Title/초록아이콘.png");
+		setObjectImage(GameIcon[2], "image/Title/파란아이콘.png");
+		setObjectImage(GameIcon[3], "image/Title/파란아이콘.png");
+		stageBlack[2] = false;
+		stageBlack[3] = false;
+
+		key = 1;
+		setObjectImage(key1, "image/Title/key.png");
+	}
+
+	//하늘지대 클리어했으면
+	else if (stage5Clear=true) {
+		setObjectImage(GameIcon[4], "image/Title/초록아이콘.png");
+
+		key = 2;
+		setObjectImage(key2, "image/Title/key.png");
+	}
 
 	
 
@@ -501,6 +527,12 @@ void Title_main() {
 
 	key1 = createObject("image/Title/noKey.png", titleScene, 250, 650, true, 1.0f);
 	key2 = createObject("image/Title/noKey.png", titleScene, 300, 650, true, 1.0f);
+	if (key >= 1) {
+		setObjectImage(key1, "image/Title/key.png");
+	}
+	if (key == 2) {
+		setObjectImage(key2, "image/Title/key.png");
+	}
 	coinImage = createObject("image/Title/coin.png", titleScene, 5, 637, true, 1.0f);
 	xText = createObject("image/Title/숫자/x.png", titleScene, 50, 630, true, 1.0f);
 	

@@ -597,6 +597,7 @@ void g4stageclear() {
         stage2Clear = true;
         g4scoremessage();
         showObject(g4restartbutton);
+        showObject(g4goMapButton);
     }
 }
 
